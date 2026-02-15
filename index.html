@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b1tr0n1n — Builder. Thinker. Maker.</title>
+<meta name="description" content="Game design, tools, music, philosophy. Projects by b1tr0n1n.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --panel: #1a1814;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --red: #a63d2f;
+    --green: #4a7a45;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ══════ NOISE OVERLAY ══════ */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ══════ GRID BACKGROUND ══════ */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ══════ NAV ══════ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,9,8,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-brand {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ══════ HERO ══════ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 120px 40px 80px;
+  }
+  .hero-inner {
+    max-width: 900px;
+    width: 100%;
+    position: relative;
+  }
+  .hero-tag {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: -2px;
+    line-height: 1.0;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+  .hero-name span { color: var(--accent); }
+  .hero-desc {
+    font-size: 15px;
+    color: var(--text-dim);
+    max-width: 540px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+  .hero-line {
+    position: absolute;
+    top: 50%;
+    right: -40px;
+    width: 1px;
+    height: 200px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    transform: translateY(-50%);
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1s;
+  }
+  .hero-coords {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    font-size: 10px;
+    color: var(--border-lt);
+    letter-spacing: 2px;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.2s;
+  }
+
+  /* ══════ SECTIONS ══════ */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 40px;
+  }
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 600;
+    color: var(--text-bright);
+    letter-spacing: -1px;
+    margin-bottom: 48px;
+    line-height: 1.1;
+  }
+  .section-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--accent);
+    margin-bottom: 48px;
+  }
+
+  /* ══════ PROJECTS ══════ */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s, transform 0.3s;
+    cursor: default;
+  }
+  .project-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .project-status {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  .status-active { background: rgba(74,122,69,0.2); color: var(--green); border: 1px solid rgba(74,122,69,0.3); }
+  .status-released { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(201,162,39,0.2); }
+  .status-ongoing { background: rgba(166,61,47,0.15); color: var(--red); border: 1px solid rgba(166,61,47,0.3); }
+  .project-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .project-card.featured .project-title { font-size: 36px; }
+  .project-type {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 16px;
+  }
+  .project-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .project-tags span {
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 2px;
+  }
+
+  /* ══════ ABOUT ══════ */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-text {
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .about-text p { margin-bottom: 24px; }
+  .about-text em { color: var(--accent); font-style: italic; }
+  .about-sidebar {
+    border-left: 1px solid var(--border);
+    padding-left: 40px;
+  }
+  .about-stat {
+    margin-bottom: 32px;
+  }
+  .about-stat-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 8px;
+  }
+  .about-stat-value {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ══════ PHILOSOPHY ══════ */
+  .philosophy-content {
+    max-width: 680px;
+  }
+  .philosophy-quote {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.6;
+    padding-left: 32px;
+    border-left: 2px solid var(--accent);
+    margin-bottom: 48px;
+  }
+  .philosophy-body {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+  .philosophy-body p { margin-bottom: 20px; }
+
+  /* ══════ WRITING / BLOG ══════ */
+  .writing-list { list-style: none; }
+  .writing-item {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    transition: padding-left 0.3s;
+    cursor: default;
+  }
+  .writing-item:hover { padding-left: 12px; }
+  .writing-item:first-child { border-top: 1px solid var(--border); }
+  .writing-date {
+    font-size: 11px;
+    color: var(--text-dim);
+    padding-top: 4px;
+  }
+  .writing-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    line-height: 1.3;
+    transition: color 0.3s;
+  }
+  .writing-item:hover .writing-title { color: var(--accent); }
+  .writing-excerpt {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .writing-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 4px;
+  }
+
+  /* ══════ MUSIC ══════ */
+  .music-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .music-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .music-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+  .music-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .music-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+  .music-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ══════ FOOTER ══════ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-left {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ══════ ANIMATIONS ══════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ══════ RESPONSIVE ══════ */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 9px; letter-spacing: 1px; }
+    section { padding: 60px 20px; }
+    .hero { padding: 100px 20px 60px; }
+    .hero-line { display: none; }
+    .hero-coords { display: none; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .about-sidebar { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 40px; }
+    .music-grid { grid-template-columns: 1fr; }
+    .writing-item { grid-template-columns: 1fr; gap: 4px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand">b1tr0n1n</a>
+  <div class="nav-links">
+    <a href="#projects">Projects</a>
+    <a href="#about">About</a>
+    <a href="#philosophy">Philosophy</a>
+    <a href="#writing">Writing</a>
+    <a href="#music">Music</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <div class="hero-tag">Builder · Thinker · Maker</div>
+    <h1 class="hero-name">b1tr0n1<span>n</span></h1>
+    <p class="hero-desc">
+      Game designer. Tool builder. Systems thinker. Marine veteran.<br>
+      I build frameworks for understanding — through games, code, music, and structured thought.
+    </p>
+    <div class="hero-line"></div>
+  </div>
+  <div class="hero-coords">39.7684° N, 86.1581° W</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-label reveal">01 — Projects</div>
+    <h2 class="section-title reveal">What I'm Building</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="projects-grid">
+      <!-- FEATURED: Contact Front -->
+      <div class="project-card featured reveal">
+        <div>
+          <span class="project-status status-active">In Development</span>
+          <h3 class="project-title">Contact Front!</h3>
+          <div class="project-type">Tactical Card Game</div>
+          <p class="project-desc">
+            A WW2-themed solo tactical card game built on a standard 54-card deck. 68 custom battlefield-illustrated cards with doctrine mechanics, scar systems, and a full campaign mode. Balanced through Monte Carlo simulation to hit a 38% win rate — hard enough to punish bad decisions, fair enough to reward good ones.
+          </p>
+          <div class="project-tags">
+            <span>Game Design</span>
+            <span>AI Art</span>
+            <span>Flux / ComfyUI</span>
+            <span>Monte Carlo</span>
+            <span>Solo</span>
+          </div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:2px;height:280px;display:flex;align-items:center;justify-content:center;">
+          <div style="text-align:center;color:var(--text-dim);font-size:12px;">
+            <div style="font-size:48px;margin-bottom:12px;filter:grayscale(0.3);">🎴</div>
+            <div style="letter-spacing:2px;text-transform:uppercase;font-size:9px;">68 Cards · Campaign Mode</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FoF Tracker -->
+      <div class="project-card reveal">
+        <span class="project-status status-released">Released</span>
+        <h3 class="project-title">FoF Deluxe Tracker</h3>
+        <div class="project-type">Digital Play Aid</div>
+        <p class="project-desc">
+          Browser-based mission tracker for Fields of Fire. Full turn sequence walkthrough, NCM calculator, unit roster, command tracking, and campaign log. All four campaigns. 75KB, zero dependencies, works offline.
+        </p>
+        <div class="project-tags">
+          <span>React</span>
+          <span>PWA</span>
+          <span>Fields of Fire</span>
+          <span>Solo Tool</span>
+        </div>
+      </div>
+
+      <!-- Game Design -->
+      <div class="project-card reveal">
+        <span class="project-status status-ongoing">Ongoing</span>
+        <h3 class="project-title">Game Systems Lab</h3>
+        <div class="project-type">Design & Analysis</div>
+        <p class="project-desc">
+          Systematic study of decision-making under pressure through wargames and solo systems. Fields of Fire as decision laboratory. Excel tracking systems, rule analysis, and mechanical breakdowns that treat games as structured problem spaces.
+        </p>
+        <div class="project-tags">
+          <span>Wargaming</span>
+          <span>Mage Knight</span>
+          <span>One Deck Dungeon</span>
+          <span>Analysis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="background:var(--bg2);">
+  <div class="section-inner">
+    <div class="section-label reveal">02 — About</div>
+    <h2 class="section-title reveal">Who I Am</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p>
+          I'm a Marine veteran who works in IT infrastructure by day and builds systems by night — card games, digital tools, music, and frameworks for thinking clearly under friction.
+        </p>
+        <p>
+          Everything I make shares a common thread: <em>structure beneath chaos</em>. Whether it's balancing a card game through simulation, tracking a 10-turn tactical mission, or writing about decision-making under uncertainty, I'm looking for the signal inside the noise.
+        </p>
+        <p>
+          I don't chase polish for its own sake. I build things that work, test them until they break, and refine what survives. If a system can't hold up under pressure, it wasn't a system — it was a hope.
+        </p>
+      </div>
+      <div class="about-sidebar">
+        <div class="about-stat">
+          <div class="about-stat-label">Background</div>
+          <div class="about-stat-value">U.S. Marine Corps<br>IT Infrastructure</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-label">Focus Areas</div>
+          <div class="about-stat-value">Game Design<br>Tool Building<br>Music Production<br>Philosophy</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-label">Currently Playing</div>
+          <div class="about-stat-value">Fields of Fire<br>Mage Knight<br>Dragons of Etchinstone<br>One Deck Dungeon<br>A Quiet Year</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-label">Studies</div>
+          <div class="about-stat-value">Clausewitz<br>Military Philosophy<br>Decision Theory</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+  <div class="section-inner">
+    <div class="section-label reveal">03 — Philosophy</div>
+    <h2 class="section-title reveal">How I Think</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="philosophy-content reveal">
+      <blockquote class="philosophy-quote">
+        "War is the realm of uncertainty; three quarters of the factors on which action is based are wrapped in a fog of greater or lesser uncertainty."
+      </blockquote>
+      <div class="philosophy-body">
+        <p>
+          I study Clausewitz not because I romanticize war, but because no other thinker has mapped the anatomy of decision-making under friction with such precision. The fog, the friction, the gap between plan and execution — these aren't military problems. They're human problems.
+        </p>
+        <p>
+          Every system I build is a laboratory for testing how structure holds up against entropy. A card game is a compressed decision space. A tracking tool is a weapon against cognitive overload. Music is pattern recognition made audible.
+        </p>
+        <p>
+          I believe competence is earned through testing, not assumed through confidence. Identity isn't what you claim — it's what survives contact with reality.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WRITING -->
+<section id="writing" style="background:var(--bg2);">
+  <div class="section-inner">
+    <div class="section-label reveal">04 — Writing</div>
+    <h2 class="section-title reveal">Field Notes</h2>
+    <div class="section-divider reveal"></div>
+
+    <ul class="writing-list">
+      <li class="writing-item reveal">
+        <div class="writing-date">2026.02</div>
+        <div>
+          <div class="writing-tag">Game Design</div>
+          <h3 class="writing-title">Balancing Contact Front: Monte Carlo and the 38% Solution</h3>
+          <p class="writing-excerpt">How I used 10,000 simulated games to find the difficulty sweet spot — hard enough to matter, fair enough to learn from.</p>
+        </div>
+      </li>
+      <li class="writing-item reveal">
+        <div class="writing-date">2026.01</div>
+        <div>
+          <div class="writing-tag">Philosophy</div>
+          <h3 class="writing-title">Friction as Feature: What Clausewitz Teaches Game Designers</h3>
+          <p class="writing-excerpt">The fog of war isn't a bug to be eliminated — it's the entire point. On uncertainty as the engine of meaningful decisions.</p>
+        </div>
+      </li>
+      <li class="writing-item reveal">
+        <div class="writing-date">2025.12</div>
+        <div>
+          <div class="writing-tag">Tools</div>
+          <h3 class="writing-title">Building the Fields of Fire Tracker: Structure vs. Chaos</h3>
+          <p class="writing-excerpt">Why I digitized the most complex solitaire wargame on the market, and what I learned about taming information overload.</p>
+        </div>
+      </li>
+      <li class="writing-item reveal">
+        <div class="writing-date">2025.11</div>
+        <div>
+          <div class="writing-tag">Philosophy</div>
+          <h3 class="writing-title">Earned Identity: On Testing vs. Claiming</h3>
+          <p class="writing-excerpt">You don't know who you are until something tries to break you. On the difference between hypothetical confidence and demonstrated capability.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- MUSIC -->
+<section id="music">
+  <div class="section-inner">
+    <div class="section-label reveal">05 — Music</div>
+    <h2 class="section-title reveal">Sound Design</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="music-grid">
+      <div class="music-card reveal">
+        <div class="music-icon">🎛️</div>
+        <h3 class="music-title">Production</h3>
+        <p class="music-desc">Building tracks from structure up — rhythm as architecture, melody as signal. Systems-first approach to sound.</p>
+      </div>
+      <div class="music-card reveal">
+        <div class="music-icon">🎧</div>
+        <h3 class="music-title">Sound Design</h3>
+        <p class="music-desc">Texture, atmosphere, tension. Creating sonic spaces that serve a purpose beyond decoration.</p>
+      </div>
+      <div class="music-card reveal">
+        <div class="music-icon">📐</div>
+        <h3 class="music-title">Visual Design</h3>
+        <p class="music-desc">AI art workflows with Flux and ComfyUI. Prompt engineering for consistent style across large visual projects.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <span style="color:var(--accent);font-weight:600;">b1tr0n1n</span>
+    <span style="margin:0 12px;color:var(--border);">—</span>
+    <span>Builder. Thinker. Maker.</span>
+  </div>
+  <div class="footer-links">
+    <a href="#">BGG</a>
+    <a href="#">GitHub</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<!-- SCROLL REVEAL -->
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
