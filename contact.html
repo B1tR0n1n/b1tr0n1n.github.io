@@ -37,7 +37,7 @@
 
   .contact-note{margin-top:64px;font-family:var(--serif);font-size:16px;font-style:italic;color:var(--text-dim);line-height:1.8;max-width:500px;padding-left:28px;border-left:2px solid var(--accent)}
 
-  .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+  .reveal{opacity:1;transform:none;transition:opacity 0.6s ease,transform 0.6s ease}.js-loaded .reveal{opacity:0;transform:translateY(30px)}.js-loaded .reveal.visible{opacity:1;transform:translateY(0)}.reveal.no-js{opacity:1;transform:none}
   footer{border-top:1px solid var(--border);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.footer-left{font-size:11px;color:var(--text-dim)}.footer-links{display:flex;gap:24px}.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--accent)}
   @media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:block}.nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}.page-content{padding:100px 20px 60px}.contact-row{grid-template-columns:100px 1fr}.contact-label{font-size:10px;padding:18px 10px 18px 0}.contact-value{padding:18px 0 18px 14px}footer{flex-direction:column;gap:16px;text-align:center}}
 </style>
@@ -64,7 +64,7 @@
   <div class="contact-channels reveal">
     <div class="contact-row">
       <div class="contact-label">Email</div>
-      <div class="contact-value"><a href="/cdn-cgi/l/email-protection#8ff9bcfde6fbeefcd0e9e0fcfccffffde0fbe0e1a1e2ea"><span class="__cf_email__" data-cfemail="4c3a7f3e25382d3f132a233f3f0c3c3e23382322622129">[email&#160;protected]</span></a></div>
+      <div class="contact-value"><a href="mailto:v3ritas_foss@proton.me">v3ritas_foss@proton.me</a></div>
     </div>
     <div class="contact-row">
       <div class="contact-label">GitHub</div>
@@ -90,5 +90,9 @@
   <div class="footer-links"><a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a><a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a><a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a><a href="contact.html">Contact</a></div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-const observer = new IntersectionObserver((entries) => { entr
+<script>
+document.body.classList.add("js-loaded");const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
