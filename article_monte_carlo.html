@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balancing Contact Front!: Monte Carlo and the 38% Solution — b1tr0n1n</title>
+<meta name="description" content="On simulation, difficulty, and the mathematics of meaningful loss">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0908;--bg2:#0f0e0b;--bg3:#161410;--panel:#1a1814;--border:#2a2620;--border-lt:#3d362c;--text:#c8bda0;--text-dim:#7a7060;--text-bright:#ede5d0;--accent:#c9a227;--accent-dim:#8b7320;--accent-glow:rgba(201,162,39,0.12);--mono:'JetBrains Mono','Fira Code',monospace;--serif:'Cormorant Garamond','Georgia',serif; }
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.7;overflow-x:hidden}::selection{background:var(--accent);color:var(--bg)}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-lt);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.08;pointer-events:none;z-index:0}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,9,8,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .nav-brand{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;text-decoration:none}
+  .nav-links{display:flex;gap:32px}.nav-links a{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s;position:relative}.nav-links a:hover{color:var(--accent)}.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s}.nav-links a:hover::after{width:100%}.nav-links a.active{color:var(--accent)}.nav-links a.active::after{width:100%}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;z-index:101}.nav-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:all 0.3s}.nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.nav-toggle.open span:nth-child(2){opacity:0}.nav-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+  .article-content{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:120px 40px 100px}
+  .article-tag{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:12px}
+  .article-title{font-family:var(--serif);font-size:clamp(28px,4.5vw,42px);font-weight:700;color:var(--text-bright);letter-spacing:-0.5px;margin-bottom:12px;line-height:1.15}
+  .article-subtitle{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:24px}
+  .article-meta{font-size:11px;color:var(--text-dim);margin-bottom:8px;display:flex;align-items:center;gap:16px}
+  .article-meta a{color:var(--accent);text-decoration:none;font-weight:600;transition:color 0.3s}.article-meta a:hover{color:var(--text-bright)}
+  .article-divider{width:60px;height:1px;background:var(--accent);margin-bottom:48px}
+  .article-body h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text-bright);margin:40px 0 16px;letter-spacing:0.3px}
+  .article-body p{font-family:var(--serif);font-size:17px;line-height:1.85;color:var(--text);margin-bottom:20px}
+  .article-body blockquote{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--text-bright);line-height:1.7;padding-left:28px;border-left:2px solid var(--accent);margin:32px 0}
+  .article-back{display:inline-block;margin-top:48px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);text-decoration:none;transition:color 0.3s}.article-back:hover{color:var(--text-bright)}
+
+  footer{border-top:1px solid var(--border);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.footer-left{font-size:11px;color:var(--text-dim)}.footer-links{display:flex;gap:24px}.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--accent)}
+  @media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:block}.nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}.article-content{padding:100px 20px 60px}footer{flex-direction:column;gap:16px;text-align:center}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="index.html" class="nav-brand">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');"><span></span><span></span><span></span></button>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="designation.html">Designation</a><a href="projects.html">Projects</a><a href="about.html">About</a><a href="philosophy.html">Philosophy</a><a href="writing.html" class="active">Writing</a><a href="music.html">Music</a><a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="article-content">
+  <div class="article-tag">Game Design</div>
+  <h1 class="article-title">Balancing Contact Front!: Monte Carlo and the 38% Solution</h1>
+  <div class="article-subtitle">On simulation, difficulty, and the mathematics of meaningful loss</div>
+  <div class="article-meta">
+    <span>b1tr0n1n</span>
+    <span style="color:var(--border);">|</span>
+    <a href="article_monte_carlo.pdf" download>Download PDF ↓</a>
+  </div>
+  <div class="article-divider"></div>
+  <div class="article-body">
+    
+<h2>The Problem</h2>
+<p>Contact Front! started as a feel. A WW2-themed solo card game played on a standard 54-card deck, where every draw is a tactical decision and every round could be your last. The mechanics felt right in my hands — the doctrine system gave strategic depth, the scar mechanics created narrative weight, and the campaign mode turned individual missions into something you cared about losing.</p>
+<p>But feel is not balance. I could play fifty games and think the difficulty was fair, but I'd be testing against one brain — mine. I'd learned the patterns. I'd internalized the optimal lines. What I needed was a way to test the system against ten thousand brains that played every possible way, from brilliant to reckless.</p>
+<p>I needed Monte Carlo simulation.</p>
+
+<h2>What Monte Carlo Actually Does</h2>
+<p>Monte Carlo simulation is simple in concept: run the game thousands of times with randomized decisions and measure the outcomes. No AI, no optimization — just brute statistical force applied to your system. You feed it the rules, the deck composition, and a decision model, and it tells you what happens when probability plays itself out across a large enough sample.</p>
+<p>For Contact Front!, I built a Python simulation that modeled the full game loop: draw phase, tactical deployment, combat resolution, morale checks, and doctrine activation. Each simulated player made decisions using weighted randomness — sometimes optimal, sometimes suboptimal, roughly approximating the decision quality of a real human learning the game.</p>
+<p>Then I ran it ten thousand times.</p>
+
+<h2>Finding the Number</h2>
+<p>The first pass came back at 52% win rate. Too easy. A game you win more than half the time doesn't create the tension that makes solo gaming worth the table space. You need to feel like the system is hunting you.</p>
+<p>I started adjusting: enemy scaling, draw limits, morale thresholds, doctrine costs. Each change rippled through the simulation. Tighten one knob and win rates drop, but so does the feeling that your decisions matter — if the game kills you regardless of what you do, that's not difficulty, that's nihilism.</p>
+<p>The target emerged through iteration: 38%. Just over one in three. High enough that a skilled player feels rewarded for good decisions. Low enough that every win feels earned and every loss feels like it could have gone differently. The gap between 38% and 50% is where all the interesting decisions live.</p>
+<blockquote>A game that's too easy teaches you nothing. A game that's too hard teaches you to quit. The sweet spot is where you lose often enough to respect the system and win just enough to believe you can beat it.</blockquote>
+
+<h2>What the Data Revealed</h2>
+<p>The simulation didn't just find the win rate — it exposed the architecture of difficulty. I could see which cards were dead draws, which doctrine combinations were dominant, and where the decision tree collapsed into obvious choices. Data like that is invisible from inside the game. You need distance.</p>
+<p>Three specific findings reshaped the final design. First, the original morale system was too binary — you were either fine or dead, with no middle ground. I added degradation states that created a slow bleed rather than a cliff. Second, two doctrine cards were accounting for a disproportionate share of wins. I didn't nerf them — I increased their cost, turning them into high-risk commitments rather than free advantages. Third, late-game draws were statistically irrelevant because the outcome was usually decided by turn four. I restructured the draw economy to keep late turns meaningful.</p>
+<p>None of these changes came from intuition. They came from letting the numbers speak.</p>
+
+<h2>The Lesson</h2>
+<p>Game design is systems design, and systems design requires testing at scale. Your gut tells you what feels right. Simulation tells you what is right. The two don't always agree, and when they don't, the data wins.</p>
+<p>Contact Front! ships at 38% not because that number sounds good, but because ten thousand simulated games proved it's the point where difficulty becomes meaningful. Where losing teaches you something and winning means you actually learned it.</p>
+<p>That's the only kind of balance worth shipping.</p>
+
+  </div>
+  <a href="writing.html" class="article-back">← Back to Field Notes</a>
+</div>
+
+<footer>
+  <div class="footer-left"><span style="color:var(--accent);font-weight:600;">b1tr0n1n</span><span style="margin:0 12px;color:var(--border);">—</span><span>Builder. Thinker. Maker.</span></div>
+  <div class="footer-links"><a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a><a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a><a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a><a href="contact.html">Contact</a></div>
+</footer>
+</body>
+</html>

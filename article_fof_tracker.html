@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building the Fields of Fire Tracker: Structure vs. Chaos — b1tr0n1n</title>
+<meta name="description" content="On digitizing the most complex solitaire wargame on the market">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0908;--bg2:#0f0e0b;--bg3:#161410;--panel:#1a1814;--border:#2a2620;--border-lt:#3d362c;--text:#c8bda0;--text-dim:#7a7060;--text-bright:#ede5d0;--accent:#c9a227;--accent-dim:#8b7320;--accent-glow:rgba(201,162,39,0.12);--mono:'JetBrains Mono','Fira Code',monospace;--serif:'Cormorant Garamond','Georgia',serif; }
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.7;overflow-x:hidden}::selection{background:var(--accent);color:var(--bg)}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-lt);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.08;pointer-events:none;z-index:0}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,9,8,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .nav-brand{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;text-decoration:none}
+  .nav-links{display:flex;gap:32px}.nav-links a{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s;position:relative}.nav-links a:hover{color:var(--accent)}.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s}.nav-links a:hover::after{width:100%}.nav-links a.active{color:var(--accent)}.nav-links a.active::after{width:100%}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;z-index:101}.nav-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:all 0.3s}.nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.nav-toggle.open span:nth-child(2){opacity:0}.nav-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+  .article-content{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:120px 40px 100px}
+  .article-tag{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:12px}
+  .article-title{font-family:var(--serif);font-size:clamp(28px,4.5vw,42px);font-weight:700;color:var(--text-bright);letter-spacing:-0.5px;margin-bottom:12px;line-height:1.15}
+  .article-subtitle{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:24px}
+  .article-meta{font-size:11px;color:var(--text-dim);margin-bottom:8px;display:flex;align-items:center;gap:16px}
+  .article-meta a{color:var(--accent);text-decoration:none;font-weight:600;transition:color 0.3s}.article-meta a:hover{color:var(--text-bright)}
+  .article-divider{width:60px;height:1px;background:var(--accent);margin-bottom:48px}
+  .article-body h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text-bright);margin:40px 0 16px;letter-spacing:0.3px}
+  .article-body p{font-family:var(--serif);font-size:17px;line-height:1.85;color:var(--text);margin-bottom:20px}
+  .article-body blockquote{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--text-bright);line-height:1.7;padding-left:28px;border-left:2px solid var(--accent);margin:32px 0}
+  .article-back{display:inline-block;margin-top:48px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);text-decoration:none;transition:color 0.3s}.article-back:hover{color:var(--text-bright)}
+
+  footer{border-top:1px solid var(--border);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.footer-left{font-size:11px;color:var(--text-dim)}.footer-links{display:flex;gap:24px}.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--accent)}
+  @media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:block}.nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}.article-content{padding:100px 20px 60px}footer{flex-direction:column;gap:16px;text-align:center}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="index.html" class="nav-brand">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');"><span></span><span></span><span></span></button>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="designation.html">Designation</a><a href="projects.html">Projects</a><a href="about.html">About</a><a href="philosophy.html">Philosophy</a><a href="writing.html" class="active">Writing</a><a href="music.html">Music</a><a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="article-content">
+  <div class="article-tag">Tools</div>
+  <h1 class="article-title">Building the Fields of Fire Tracker: Structure vs. Chaos</h1>
+  <div class="article-subtitle">On digitizing the most complex solitaire wargame on the market</div>
+  <div class="article-meta">
+    <span>b1tr0n1n</span>
+    <span style="color:var(--border);">|</span>
+    <a href="article_fof_tracker.pdf" download>Download PDF ↓</a>
+  </div>
+  <div class="article-divider"></div>
+  <div class="article-body">
+    
+<h2>The Problem Space</h2>
+<p>Fields of Fire is the most demanding solitaire wargame ever published. Not because its rules are unclear — though they are dense — but because the information management burden is staggering. A single mission requires tracking unit positions, command states, ammunition, morale, terrain modifiers, communication status, casualty levels, and a turn sequence with more than a dozen discrete phases. On a physical table, this means a constellation of markers, charts, and reference cards that would overwhelm any surface.</p>
+<p>I've seen experienced wargamers abandon Fields of Fire not because they couldn't understand it, but because they couldn't hold it all in their heads at once. The cognitive load isn't a design flaw — it's a faithful simulation of the information overload a real tactical commander faces. But faithful simulation and playable game exist in tension, and without tools to manage that tension, the game becomes inaccessible to everyone except the most dedicated.</p>
+<p>So I built a tool.</p>
+
+<h2>Design Principles</h2>
+<p>The FoF Deluxe Tracker had three non-negotiable requirements. First, it had to be zero-dependency and work offline. No frameworks, no build step, no server — just a single HTML file you open in a browser. A wargamer sitting at a table with a laptop shouldn't need an internet connection to track their mission.</p>
+<p>Second, it had to follow the game's own structure. The tracker isn't a generic note-taking app — it walks you through the actual turn sequence, phase by phase, in the order the rulebook defines. This means you can't accidentally skip a phase or forget to check communication status, because the tool won't let you move forward without addressing it.</p>
+<p>Third, it had to be fast. Every interaction that takes more than a second breaks flow. Clicking a button to mark a unit as pinned should be instantaneous. Calculating Net Combat Modifier should happen in real time as you toggle modifiers. The tool has to keep pace with the game, not slow it down.</p>
+
+<h2>Architecture</h2>
+<p>The tracker is built as a single-page React application, compiled into one HTML file. 75 kilobytes total. No external dependencies. It uses React's state management to maintain the full game state — every unit, every marker, every phase — in memory, with the option to export and import saves as JSON.</p>
+<p>The interface is organized around the turn sequence. A persistent sidebar shows your current phase and lets you navigate forward and backward. The main panel displays context-appropriate controls: unit rosters during the command phase, combat calculators during the attack phase, morale tables during the morale phase. Everything you need for the current phase is visible. Everything you don't need is hidden.</p>
+<p>The NCM calculator deserves its own mention. Net Combat Modifier calculation in Fields of Fire involves summing terrain, range, unit quality, suppression, communication, and several conditional modifiers. Doing this by hand every combat round is tedious and error-prone. The tracker turns it into a series of toggles — click the relevant modifiers and the NCM updates in real time. What used to take thirty seconds of cross-referencing now takes two.</p>
+
+<h2>What I Learned</h2>
+<p>Building the tracker taught me something about the relationship between tools and understanding. The act of encoding the game's rules into software forced me to understand every edge case, every conditional, every interaction between systems. You can't automate what you don't fully understand.</p>
+<p>I found three rule interactions I'd been playing wrong for months. Not because the rules are badly written, but because the complexity creates blind spots that only systematic encoding reveals. The tracker didn't just help me play the game — it helped me understand it at a deeper structural level.</p>
+<p>There's a broader principle here: building a tool to manage a complex system is one of the best ways to understand that system. The tool is a mirror of the system's structure, and the act of building it forces you to see that structure clearly. Every bug you fix is a misunderstanding you correct. Every feature you add is a relationship between components you didn't see before.</p>
+<blockquote>The tool is not separate from the understanding. The tool is the understanding, made executable.</blockquote>
+
+<h2>Current State</h2>
+<p>The FoF Deluxe Tracker supports all four Fields of Fire campaigns: Normandy, Bulge, Korea, and Vietnam. It handles full unit roster management, turn sequence walkthrough, NCM calculation, command tracking, and campaign logging. It works on desktop and mobile browsers and can be installed as a Progressive Web App for offline use.</p>
+<p>It's free, it's open, and it's the tool I wish existed when I first opened the Fields of Fire box. If it helps one more person push through the learning curve and discover what might be the best solo wargame ever designed, it was worth every hour of development.</p>
+
+  </div>
+  <a href="writing.html" class="article-back">← Back to Field Notes</a>
+</div>
+
+<footer>
+  <div class="footer-left"><span style="color:var(--accent);font-weight:600;">b1tr0n1n</span><span style="margin:0 12px;color:var(--border);">—</span><span>Builder. Thinker. Maker.</span></div>
+  <div class="footer-links"><a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a><a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a><a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a><a href="contact.html">Contact</a></div>
+</footer>
+</body>
+</html>
