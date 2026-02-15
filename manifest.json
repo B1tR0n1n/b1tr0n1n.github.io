@@ -1,0 +1,17 @@
+{
+  "name": "Fields of Fire — Deluxe Mission Tracker",
+  "short_name": "FoF Tracker",
+  "description": "Complete tactical mission tracker for Fields of Fire",
+  "start_url": "/FoF_Deluxe_Tracker.html",
+  "display": "standalone",
+  "background_color": "#0f0e0c",
+  "theme_color": "#0f0e0c",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjMyIiBmaWxsPSIjMGYwZTBjIi8+PHRleHQgeD0iOTYiIHk9IjEwNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZmlsbD0iI2M5YTIyNyIgZm9udC13ZWlnaHQ9IjcwMCI+Rm9GPC90ZXh0Pjwvc3ZnPg==",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

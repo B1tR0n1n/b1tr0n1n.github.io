@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f0e0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FoF Tracker">
+<title>Fields of Fire — Deluxe Mission Tracker</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjMyIiBmaWxsPSIjMGYwZTBjIi8+PHRleHQgeD0iOTYiIHk9IjEwNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZmlsbD0iI2M5YTIyNyIgZm9udC13ZWlnaHQ9IjcwMCI+Rm9GPC90ZXh0Pjwvc3ZnPg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0f0e0c; overflow-x:hidden; font-family:'JetBrains Mono','Fira Code','SF Mono','Consolas',monospace; }
+  ::-webkit-scrollbar { width:7px; height:7px; }
+  ::-webkit-scrollbar-track { background:#1a1814; }
+  ::-webkit-scrollbar-thumb { background:#3d362c; border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:#c9a227; }
+  select, input { font-family: inherit; }
+  select option { background:#141210; color:#d4c9a8; }
+  @media (display-mode: standalone) { body { padding-top: env(safe-area-inset-top); } }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE_NAME = 'fof-tracker-v2';
+    const ASSETS = [
+      'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&display=swap',
+      'https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js'
+    ];
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(resp => {
+        if (resp.ok) {
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+        }
+        return resp;
+      }).catch(() => new Response('Offline', {status:503}))));
+    });
+  `;
+  const blob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl, {scope: '/'}).catch(()=>{});
+}
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+window.fofInstall = async () => { if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; } };
+</script>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FIELDS OF FIRE — DELUXE MISSION TRACKER
+// Complete turn sequence + all tracking sheets from the spreadsheet
+// ═══════════════════════════════════════════════════════════════════════════
+
+/* ---------- colour tokens ---------- */
+const C = {
+  bg: "#0f0e0c", panel: "#1a1814", border: "#2a2620", borderLt: "#3d362c",
+  text: "#d4c9a8", textDim: "#8a7f6a", textBright: "#f0e8d0",
+  accent: "#c9a227", accentDim: "#8b7320", accentBg: "rgba(201,162,39,0.08)",
+  red: "#c44", green: "#4a5", blue: "#58a",
+  inputBg: "#141210", inputBorder: "#2a2620",
+};
+
+/* ---------- Mission data ---------- */
+const CAMPAIGNS = {
+  Normandy:["M1:Trévières","M2:Cerisy","M3:StGeorges","M4:Hill192","M5:StGermain","M6:Vire","M7:Tinchebray"],
+  Heartbreak:["M1:Hill983Aug","M2:Hill773","M3:Hill983Sep","M4:Hill894","M5:Hill1024Atk","M6:Hill1024Def","M7:Hill867","M8:Hill1040"],
+  Naktong:["M1:Cloverleaf","M2:NaktongLine","M3:NKPA-I","M4:NKPA-II","M5:TFBradley","M6:Hill201","M7:Breakout"],
+  Vietnam:["M1:AlaMoana-I","M2:AlaMoana-II","M3:HoBoWoods","M4:Horseshoe","M5:Yellowstone","M6:WarZoneC","M7A:ToanThangA","M7B:ToanThangB","M8:MoleCity"],
+};
+
+const MD = {
+  "M1:Trévières":{type:"Offensive",turns:10,vis:"Daylight +0",rows:3,cols:4,tactics:"Delib Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
+  "M2:Cerisy":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"Fallschirmjäger",usG:"–4",enG:"–4"},
+  "M3:StGeorges":{type:"Patrol",turns:10,vis:"Moon +2-5",rows:4,cols:5,tactics:"Delib Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
+  "M4:Hill192":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:5,tactics:"Delib Def",eExp:"Veteran",eType:"Grenadier",usG:"–4",enG:"–4"},
+  "M5:StGermain":{type:"Patrol",turns:10,vis:"Moon +2-5",rows:4,cols:6,tactics:"Delib Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
+  "M6:Vire":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
+  "M7:Tinchebray":{type:"Offensive",turns:10,vis:"Daylight +0",rows:6,cols:4,tactics:"Delay Def",eExp:"Green",eType:"Grenadier",usG:"–4",enG:"–4"},
+  "M1:Hill983Aug":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M2:Hill773":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M3:Hill983Sep":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M4:Hill894":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Hasty Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M5:Hill1024Atk":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M6:Hill1024Def":{type:"Defensive",turns:10,vis:"Moon +2-5",rows:4,cols:4,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M7:Hill867":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Hasty Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M8:Hill1040":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M1:Cloverleaf":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M2:NaktongLine":{type:"Defensive",turns:10,vis:"Day/Moon",rows:5,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M3:NKPA-I":{type:"Defensive",turns:10,vis:"Moon",rows:3,cols:5,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M4:NKPA-II":{type:"Defensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M5:TFBradley":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M6:Hill201":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M7:Breakout":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3"},
+  "M1:AlaMoana-I":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"VC",usG:"–4",enG:"–3"},
+  "M2:AlaMoana-II":{type:"Defensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Assault",eExp:"Line",eType:"VC",usG:"–4",enG:"–3"},
+  "M3:HoBoWoods":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Hasty Def",eExp:"Line",eType:"VC/NVA",usG:"–4",enG:"–3"},
+  "M4:Horseshoe":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Delib Def",eExp:"Veteran",eType:"VC/NVA",usG:"–4",enG:"–3"},
+  "M5:Yellowstone":{type:"Defensive",turns:10,vis:"Moon",rows:5,cols:5,tactics:"Assault",eExp:"Line",eType:"NVA",usG:"–4",enG:"–3"},
+  "M6:WarZoneC":{type:"Patrol",turns:10,vis:"Daylight +0",rows:4,cols:5,tactics:"Hasty Def",eExp:"Line",eType:"VC/NVA",usG:"–4",enG:"–3"},
+  "M7A:ToanThangA":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Assault",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3"},
+  "M7B:ToanThangB":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Assault",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3"},
+  "M8:MoleCity":{type:"Defensive",turns:10,vis:"Moon",rows:5,cols:5,tactics:"Assault",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3"},
+};
+
+/* ---------- Dropdown option lists ---------- */
+const EXP = ["Green","Line","Veteran"];
+const VOF_OPTS = ["None","Pinned","S","A","H","G!","S!","D!","F!","Mines!","Incoming!","Air Strike!"];
+const STATUSES = ["Good Order","Pinned","Paralyzed","Litter Team","Fire Team","Assault Team","Casualty","Captured","Off Map","Eliminated"];
+const COVER_OPTS = ["0 None","+1 Basic","+1 Foxhole","+2 Bldg","+3 Trench","+3 Bunker","+3 Sm Bldg","+4 Pillbox","+4/+5 Deep Bnkr"];
+const ACTIVITY = ["No Contact","Contact","Engaged","Heavily Engaged"];
+const WEAPONS_LIST = ["HMG1","HMG2",".50cal","LMG1","LMG2","LMG3","60mmSec","60mm1","60mm2","60mm3","81mmSec","Bzk1","Bzk2","Bzk3","57RCL1","57RCL2","57RCL3","75RCL1","75RCL2","RG1","RG2","RG3","RG4","RG5","RG6","Flame","Demo1","Demo2","EnMG42-1","EnMG42-2","EnMG42-3","EnHMG1","EnHMG2","EnMtr1","EnMtr2"];
+const FM_LIST = ["15thFA HE","15thFA WP","15thFA Illum","15thFA TOT","BnMtr HE","BnMtr WP","BnMtr Illum","RegtCannon HE","RegtCannon WP","DivArty HE","7/11Arty HE","7/11Arty WP","3/13Arty HE","4.2Mtr HE","4.2Mtr WP","CAS","AC-47","FPF"];
+const RADIO_DEFS = [
+  {dev:"BN TAC",tp:"SCR300",net:"BN TAC"},{dev:"CO TAC1",tp:"SCR536",net:"CO TAC"},{dev:"CO TAC2",tp:"SCR536",net:"CO TAC"},
+  {dev:"CO TAC3",tp:"SCR536",net:"CO TAC"},{dev:"PLT1",tp:"SCR536",net:"CO TAC"},{dev:"PLT2",tp:"SCR536",net:"CO TAC"},
+  {dev:"PLT3",tp:"SCR536",net:"CO TAC"},{dev:"PLT4",tp:"SCR536",net:"CO TAC"},{dev:"Mtr",tp:"SCR536",net:"CO TAC"},
+  {dev:"ArtyFD",tp:"SCR610",net:"ArtyFD"},{dev:"MtrFD",tp:"SCR300",net:"MtrFD"},{dev:"AirCtl",tp:"SCR300",net:"AirCtl"},
+  {dev:"Phone1",tp:"EE8",net:"CO TAC"},{dev:"Phone2",tp:"EE8",net:"CO TAC"},{dev:"Phone3",tp:"EE8",net:"CO TAC"},{dev:"Phone4",tp:"EE8",net:"CO TAC"},
+];
+const ASSET_DEFS = [
+  ...Array(4).fill("HCSmoke"),...Array(4).fill("WPSmoke"),
+  "RedSmoke","GrnSmoke","YelSmoke","PurSmoke","RSP","GSP","RSC","GSC",
+  ...Array(8).fill("Illum"),...Array(2).fill("MtrIllum"),...Array(4).fill("IRScope"),
+];
+const TC_LABELS = ["LOD","LOA","Left Bound","Right Bound","Obj 1","Obj 2","Attack Pos","MLR","COP","FPL","FPF","CCP/MEDEVAC","RegTgt 1","RegTgt 2"];
+const HQ_NAMES = ["BN HQ","CO HQ","1ST PLT HQ","2ND PLT HQ","3RD PLT HQ","CO XO (Staff)","1ST SGT (Staff)"];
+
+const UNIT_DEFS = [
+  {n:"CO HQ",e:"Green",v:"S",g:"CO HQ"},{n:"CO XO",e:"Green",v:"None",g:"CO HQ"},{n:"CO 1Sgt",e:"Veteran",v:"None",g:"CO HQ"},
+  {n:"MtrSec",e:"Line",v:"H",g:"WPN PLT"},{n:"1/Mtr",e:"Line",v:"G!",g:"WPN PLT"},{n:"2/Mtr",e:"Line",v:"G!",g:"WPN PLT"},
+  {n:"3/Mtr",e:"Line",v:"G!",g:"WPN PLT"},{n:".50cal",e:"Line",v:"H",g:"WPN PLT"},{n:"1/LMG",e:"Line",v:"A",g:"WPN PLT"},
+  {n:"2/LMG",e:"Line",v:"A",g:"WPN PLT"},{n:"1/AT",e:"Line",v:"G!",g:"WPN PLT"},{n:"2/AT",e:"Line",v:"G!",g:"WPN PLT"},
+  {n:"3/AT",e:"Line",v:"G!",g:"WPN PLT"},
+  {n:"1PLT HQ",e:"Green",v:"None",g:"1ST PLT"},{n:"1/1",e:"Line",v:"S",g:"1ST PLT"},{n:"2/1",e:"Line",v:"S",g:"1ST PLT"},
+  {n:"3/1",e:"Line",v:"S",g:"1ST PLT"},{n:"1/W/1",e:"Line",v:"A",g:"1ST PLT"},{n:"2/W/1",e:"Line",v:"G!",g:"1ST PLT"},
+  {n:"2PLT HQ",e:"Green",v:"None",g:"2ND PLT"},{n:"1/2",e:"Line",v:"S",g:"2ND PLT"},{n:"2/2",e:"Line",v:"S",g:"2ND PLT"},
+  {n:"3/2",e:"Line",v:"S",g:"2ND PLT"},{n:"1/W/2",e:"Line",v:"A",g:"2ND PLT"},{n:"2/W/2",e:"Line",v:"G!",g:"2ND PLT"},
+  {n:"3PLT HQ",e:"Green",v:"None",g:"3RD PLT"},{n:"1/3",e:"Line",v:"S",g:"3RD PLT"},{n:"2/3",e:"Line",v:"S",g:"3RD PLT"},
+  {n:"3/3",e:"Line",v:"S",g:"3RD PLT"},{n:"1/W/3",e:"Line",v:"A",g:"3RD PLT"},{n:"2/W/3",e:"Line",v:"G!",g:"3RD PLT"},
+  {n:"4PLT HQ",e:"Line",v:"None",g:"4TH PLT"},{n:"1/4",e:"Line",v:"S",g:"4TH PLT"},{n:"2/4",e:"Line",v:"S",g:"4TH PLT"},
+  {n:"57RCL1",e:"Line",v:"G!",g:"ATTACH"},{n:"57RCL2",e:"Line",v:"G!",g:"ATTACH"},{n:"57RCL3",e:"Line",v:"G!",g:"ATTACH"},
+  {n:"75RCL1",e:"Line",v:"G!",g:"ATTACH"},{n:"75RCL2",e:"Line",v:"G!",g:"ATTACH"},
+  {n:"Engineers",e:"Line",v:"S",g:"ATTACH"},{n:"Tank",e:"Line",v:"H",g:"ATTACH"},
+  {n:"ArtyFO",e:"Line",v:"None",g:"ATTACH"},{n:"MtrFO",e:"Line",v:"None",g:"ATTACH"},{n:"FAC",e:"Line",v:"None",g:"ATTACH"},
+  {n:"Attach1",e:"Line",v:"None",g:"ATTACH"},{n:"Attach2",e:"Line",v:"None",g:"ATTACH"},
+];
+
+/* ---------- Turn Sequence Phases ---------- */
+const PHASES = [
+  {id:"3.1",t:"3.1 FRIENDLY HIGHER HQ EVENT PHASE",r:"§3.1",
+    steps:["Draw Action card — check for HQ radio icon *(Turn 2+)*","If icon present: draw another card, check R# on Friendly HQ Events Table","Follow event instructions (compulsory if possible)"],
+    note:"No event if impossible. Do not redraw. Only affects friendly units."},
+  {id:"3.2",t:"3.2 ENEMY ACTIVITY PHASE (Defensive: before Command)",r:"§3.2",defOnly:true,
+    subs:[
+      {id:"3.2.1",t:"Enemy Higher HQ Event Segment",r:"§3.2.1",steps:["Draw Action card — check for HQ radio icon *(Turn 2+)*","If icon: determine event on Enemy HQ Events Table","Enemy units from HQ Event skip Activity Checks in 3.2.2"]},
+      {id:"3.2.2",t:"Enemy Activity Check Segment",r:"§3.2.2",steps:["Place PC markers per mission instructions (§8.1)","Check every on-map enemy unit for activity *(skip 3.2.1 units)*","Determine card order randomly","On each card: check units per Hierarchy (§8.6.2)"]},
+    ]},
+  {id:"3.3",t:"3.3 FRIENDLY COMMAND PHASE",r:"§3.3, §4",
+    subs:[
+      {id:"3.3.1",t:"Activation Segment — min cmds = 1",r:"§3.3.1",
+        subs:[
+          {id:"3.3.1a",t:"BN HQ Impulse",r:"§3.3.1a",steps:["BN off-map + CO in comms via BN TAC → auto-Activate CO HQ","BN on-map → give max commands (6 day / 4 night), spend on orders *(no save)*","BN unavailable → skip to CO HQ Initiative (3.3.2a)"]},
+          {id:"3.3.1b",t:"CO HQ Impulse",r:"§3.3.1b",steps:["If CO Activated: draw Action card → helmet # = commands","Apply modifiers: Exp/Pinned/Cover/VOF/Activity","Spend: orders to self or subordinates, Activate PLT HQs/Staff *(or save)*","Flip activated PLT HQ/Staff to Commands Available","When done: flip CO to Activation Completed"]},
+          {id:"3.3.1c",t:"PLT HQ / CO Staff Impulse",r:"§3.3.1c",steps:["Select an Activated PLT HQ or CO Staff","Draw Action card → helmet # = commands, apply modifiers","Spend on self or subordinates in comms *(or save)*","Flip to Activation Completed → Saved zone","Repeat for each remaining PLT HQ / CO Staff"]},
+        ]},
+      {id:"3.3.2",t:"Initiative Segment — min cmds = 0",r:"§3.3.2",
+        subs:[
+          {id:"3.3.2a",t:"CO HQ Initiative",r:"§3.3.2a",steps:["If CO NOT activated: flip marker, draw card → star # = Initiative cmds","Apply modifiers, spend or save *(may reduce to 0)*"]},
+          {id:"3.3.2b",t:"PLT HQ Initiative",r:"§3.3.2b",steps:["Flip non-activated PLT HQ markers to Commands Available","Select PLT HQ → draw card → star # = Initiative cmds, apply mods","Spend or save, flip to Completed. Repeat each PLT HQ"]},
+          {id:"3.3.2c",t:"CO Staff Initiative",r:"§3.3.2c",steps:["Select non-activated CO Staff → give 1 command (no modifiers)","Spend or save. Repeat each CO Staff"]},
+          {id:"3.3.2d",t:"General Initiative",r:"§3.3.2d",steps:["Draw Action card → star # = General Initiative cmds *(halve single-PLT)*","Spend on ANY unit in play (no HQ/comms needed) *(no save)*"]},
+        ]},
+    ]},
+  {id:"3.4",t:"3.4 ENEMY ACTIVITY PHASE (Off/Patrol: after Command)",r:"§3.4",offOnly:true,
+    subs:[
+      {id:"3.4.1",t:"Enemy Higher HQ Event Segment",r:"§3.4.1",steps:["Draw Action card — check for HQ radio icon *(Turn 2+)*","If icon: determine event on Enemy HQ Events Table"]},
+      {id:"3.4.2",t:"Enemy Activity Check Segment",r:"§3.4.2",steps:["Cease Fire on enemies firing at cards with no valid targets","Check every on-map enemy unit for activity *(skip 3.4.1 units)*","Determine card order randomly, use Hierarchy (§8.6.2)"]},
+    ]},
+  {id:"3.5",t:"3.5 MUTUAL CAPTURE & RETREAT PHASE",r:"§3.5",
+    subs:[
+      {id:"3.5.1",t:"Capture Segment",r:"§3.5.1",steps:["Para/Litter alone w/ enemy unpinned inf → captured","No prisoners → casualties; else assign 1 guard step","Enemy casualties on friendly/empty cards auto-captured (no guard)"]},
+      {id:"3.5.2",t:"Retreat Segment",r:"§3.5.2",steps:["Check CS Gas on Good Order units w/o gas masks","Retreat unpinned non-Exposed Para under VOF *(1 card toward own edge)*","Retreat unpinned non-Exposed Litter + Casualty under VOF","Priority: no-VOF card → best C&C value","Mark retreating teams Exposed *(enemies at map edge retreat off)*"]},
+    ]},
+  {id:"3.6",t:"3.6 AT COMBAT & VEHICLE MOVEMENT PHASE",r:"§3.6, §10",
+    steps:["Move vehicles and carry out AT Combat w/ Activated units","Alternate if both sides have units: player (Off) or enemy (Def) first","Flip each unit's Activated marker when finished"]},
+  {id:"3.7",t:"3.7 MUTUAL COMBAT PHASE",r:"§3.7, §6",
+    subs:[
+      {id:"3.7.1",t:"Fire Mission Update Segment",r:"§3.7.1",steps:["Remove existing Incoming! and Air Strike! VOF markers","Flip Pending fire mission markers to active sides","Update Activity Level"]},
+      {id:"3.7.2",t:"PC Evaluation Segment",r:"§3.7.2, §8.2",steps:["For each card w/ PC marker AND friendly unit: evaluate PC","Update Activity Level immediately. Remove PC before next card"]},
+      {id:"3.7.3",t:"Pinned Recovery Segment",r:"§3.7.3",steps:["Remove Pinned markers from units NOT under any VOF *(incl Mines)*"]},
+      {id:"3.7.4",t:"Combat Effects Segment",r:"§3.7.4, §6.4",note:"SIMULTANEOUS — do NOT update VOF/PDF until Clean Up",
+        steps:["For each infantry on card w/ VOF:","→ Resolve Flamethrower first (§7.14)","→ Determine NCM (§6.4)","→ Draw Action card → check NCM result row","→ If Hit: draw another card → Hit effect by Exp","Update ammo for Basic VOF units (§7.18)"]},
+    ]},
+  {id:"3.8",t:"3.8 CLEAN UP PHASE",r:"§3.8",
+    steps:["Remove: Pyro, Smoke, Illum, Exposed, Moved/Fired markers","Remove: Conc Fire, Booby Trap, Grenade, Gren Miss markers","Evacuate casualties from evac cards (§5.1.7)","Cease Fire on enemies firing at empty cards","Defensive: remove unresolved PC markers","Flip Mine markers to 'Draw' side, move off units","Move Sniper VOF off non-vehicle targets","Adjust VOF, PDF, Activity from Combat Effects + Clean Up","Slide all HQ markers up into Command Tracking zone","Advance Turn marker → return to top *(final turn → §3.9)*"]},
+];
+
+/* ---------- helper ---------- */
+const uid = () => Math.random().toString(36).slice(2,10);
+
+/* ══════════════════════════════════════════════════════
+   STYLED MICRO-COMPONENTS
+   ══════════════════════════════════════════════════════ */
+
+const sInput = {background:C.inputBg,border:`1px solid ${C.inputBorder}`,color:C.text,padding:"4px 6px",fontSize:12,borderRadius:3,outline:"none",width:"100%",boxSizing:"border-box"};
+const sSelect = {...sInput, cursor:"pointer",minWidth:62};
+const sBtn = (active) => ({
+  padding:"5px 12px",fontSize:11,fontWeight:600,border:`1px solid ${active?C.accent:C.borderLt}`,
+  borderRadius:4,cursor:"pointer",transition:"all 0.15s",fontFamily:"inherit",
+  background:active?C.accent:C.panel, color:active?C.bg:C.textDim,
+});
+const sTh = {textAlign:"left",padding:"5px 8px",fontSize:11,color:C.textDim,borderBottom:`1px solid ${C.border}`,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,whiteSpace:"nowrap"};
+const sTd = {padding:"4px 6px",fontSize:12,borderBottom:`1px solid ${C.border}22`,verticalAlign:"top"};
+const sLabel = {color:C.textDim,fontSize:10,fontWeight:600,textTransform:"uppercase",letterSpacing:0.4};
+
+function Inp({value,onChange,type="text",style={},placeholder="",...p}){
+  const r = React.useRef(null);
+  const cb = React.useRef(onChange);
+  cb.current = onChange;
+  const handleChange = (e)=>{
+    const v = type==="number"?+e.target.value:e.target.value;
+    cb.current(v);
+  };
+  /* sync from parent only when not focused */
+  React.useEffect(()=>{
+    if(r.current && r.current !== document.activeElement){
+      r.current.value = value??"";
+    }
+  });
+  return <input ref={r} type={type} defaultValue={value??""} onChange={handleChange}
+    placeholder={placeholder} style={{...sInput,...style}} {...p}/>;
+}
+function Sel({value,onChange,options,style={}}){
+  return <select value={value??""} onChange={e=>onChange(e.target.value)} style={{...sSelect,...style}}>
+    {options.map(o=><option key={o} value={o}>{o}</option>)}
+  </select>;
+}
+function Section({children,title,sub}){
+  return <div style={{marginTop:sub?8:16}}>
+    <div style={{fontSize:sub?10:12,fontWeight:700,color:sub?C.accent:C.textBright,textTransform:"uppercase",letterSpacing:sub?0.5:0.8,
+      borderBottom:`1px solid ${sub?C.border:C.accentDim}`,paddingBottom:4,marginBottom:6,display:"flex",alignItems:"center",gap:6}}>
+      {!sub && <span style={{width:6,height:6,borderRadius:3,background:C.accent,display:"inline-block"}}/>}
+      {title}
+    </div>
+    {children}
+  </div>;
+}
+
+/* ══════════════════════════════════════════════════════
+   STABLE COMPONENTS (defined outside to prevent remounting)
+   ══════════════════════════════════════════════════════ */
+
+const Table = ({heads,children}) => (
+  <div style={{overflowX:"auto",marginTop:4}}>
+    <table style={{width:"100%",borderCollapse:"collapse"}}>
+      <thead><tr>{heads.map((h,i)=><th key={i} style={{...sTh,width:h.w||"auto"}}>{h.l}</th>)}</tr></thead>
+      <tbody>{children}</tbody>
+    </table>
+  </div>
+);
+
+function StepsList({steps,prefix,checks,tog}){
+  return steps.map((s,i)=>{
+    const k=`${prefix}-${i}`;
+    const done = checks[k];
+    return <label key={k} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"4px 8px",cursor:"pointer",borderRadius:3,
+      background:done?`${C.accent}08`:"transparent",transition:"background 0.15s"}}>
+      <input type="checkbox" checked={!!done} onChange={()=>tog(k)}
+        style={{marginTop:2,accentColor:C.accent,width:14,height:14,flexShrink:0}}/>
+      <span style={{fontSize:12,lineHeight:1.5,color:done?C.textDim:C.text,textDecoration:done?"line-through":"none",transition:"all 0.15s"}}>
+        {s.replace(/\*(.*?)\*/g, '<em>$1</em>').split(/<em>|<\/em>/).map((part,pi)=>
+          pi%2===1 ? <em key={pi} style={{color:C.accentDim,fontStyle:"italic"}}>{part}</em> : part
+        )}
+      </span>
+    </label>;
+  });
+}
+
+function PhaseTreeC({p,depth=0,checks,tog}){
+  if(!p) return null;
+  return <div style={{marginLeft:depth*12}}>
+    <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:4,marginTop:depth?6:0}}>
+      <span style={{fontSize:depth?11:14,fontWeight:700,color:depth===0?C.textBright:depth===1?C.accent:C.accentDim}}>{p.t}</span>
+      <span style={{fontSize:10,color:C.textDim}}>{p.r}</span>
+    </div>
+    {p.note && <div style={{background:`${C.accent}12`,border:`1px solid ${C.accent}30`,borderRadius:4,padding:"5px 10px",fontSize:11,color:C.accent,marginBottom:6}}>{p.note}</div>}
+    {p.steps && <div style={{marginBottom:6}}><StepsList steps={p.steps} prefix={p.id} checks={checks} tog={tog}/></div>}
+    {p.subs && p.subs.map(s=><div key={s.id} style={{borderLeft:`2px solid ${C.border}`,paddingLeft:10,marginBottom:4}}>
+      <PhaseTreeC p={s} depth={depth+1} checks={checks} tog={tog}/>
+    </div>)}
+  </div>;
+}
+
+/* ══════════════════════════════════════════════════════
+   MAIN APP COMPONENT
+   ══════════════════════════════════════════════════════ */
+
+function FoFTracker() {
+  /* --- NAV --- */
+  const TABS = ["Setup","Turn","Command","Units","Combat","Enemy","Weapons","Comms","Map","Journal","Campaign"];
+  const [tab, setTab] = useState("Setup");
+  const [phaseIdx, setPhaseIdx] = useState(0);
+  const [saveMsg, setSaveMsg] = useState("");
+  const [showSaves, setShowSaves] = useState(false);
+
+  /* --- SETUP --- */
+  const [campaign, setCampaign] = useState("Normandy");
+  const [mission, setMission] = useState("M1:Trévières");
+  const [turn, setTurn] = useState(1);
+  const [actLvl, setActLvl] = useState("No Contact");
+  const [overrides, setOverrides] = useState({});
+  const m = {...(MD[mission]||{}), ...overrides};
+  const [tcs, setTcs] = useState(TC_LABELS.map(c=>({c,loc:"",typ:"",notes:""})));
+  const updateTC = (i,f,v)=>setTcs(p=>p.map((t,j)=>j===i?{...t,[f]:v}:t));
+
+  /* --- UNITS --- */
+  const [units, setUnits] = useState(()=>UNIT_DEFS.map(d=>({id:uid(),name:d.n,group:d.g,max:0,cur:0,exp:d.e,vof:d.v,loc:"",status:"Good Order",cover:"0 None",underVOF:"No",exposed:"No",notes:""})));
+  const uU = (i,f,v)=>setUnits(p=>p.map((u,j)=>j===i?{...u,[f]:v}:u));
+
+  /* --- COMMAND --- */
+  const mkHQ = (n,ca=1,lim=6) => ({name:n,exp:"Line",act:"Yes",pin:"No",draw:0,vof:"None",cov:"No",autoMod:1,cmds:ca,savedP:0,total:ca,spent:0,saved:ca,limit:lim,log:[]});
+  const [hqs, setHqs] = useState([mkHQ("BN HQ",6,0),...HQ_NAMES.slice(1).map(n=>mkHQ(n))]);
+  const uH = (i,f,v)=>setHqs(p=>p.map((h,j)=>j===i?{...h,[f]:v}:h));
+  const addHL = (i)=>setHqs(p=>p.map((h,j)=>j===i?{...h,log:[...h.log,{id:uid(),turn,phase:"",evts:["","","","","",""],unit:"",detail:"",result:""}]}:h));
+  const uHL = (hi,li,f,v)=>setHqs(p=>p.map((h,i)=>i!==hi?h:{...h,log:h.log.map((l,j)=>j!==li?l:{...l,[f]:v})}));
+  const uHLE = (hi,li,ei,v)=>setHqs(p=>p.map((h,i)=>i!==hi?h:{...h,log:h.log.map((l,j)=>{if(j!==li)return l;const e=[...l.evts];e[ei]=v;return{...l,evts:e};})}));
+
+  /* --- COMMAND GRID: 10 turns × 6 cmds per HQ --- */
+  const mkCmdGrid = () => Array.from({length:10},()=>Array(6).fill(""));
+  const [cmdGrids, setCmdGrids] = useState(()=>HQ_NAMES.reduce((o,n)=>({...o,[n]:mkCmdGrid()}),{}));
+  const uCG = (hq,t,c,v)=>setCmdGrids(p=>{const g=p[hq].map(r=>[...r]);g[t][c]=v;return{...p,[hq]:g};});
+
+  /* --- CREATED UNITS (Fire Teams, Assault Teams, Litter Teams, etc.) --- */
+  const [createdUnits, setCreatedUnits] = useState([]);
+  const addCU = ()=>setCreatedUnits(p=>[...p,{id:uid(),name:"",parent:"",type:"Fire Team",steps:0,exp:"Line",vof:"None",loc:"",status:"Good Order",cover:"0 None",underVOF:"No",exposed:"No",notes:""}]);
+  const uCU = (i,f,v)=>setCreatedUnits(p=>p.map((u,j)=>j===i?{...u,[f]:v}:u));
+  const rmCU = (i)=>setCreatedUnits(p=>p.filter((_,j)=>j!==i));
+
+  /* --- NCM --- */
+  const [ncmP, setNcmP] = useState({sa:false,auto:false,gren:false,sniper:false,hvy:false,flame:false,demo:false,inc:false,air:false,mines:false});
+  const [ncmT, setNcmT] = useState({cc:0,burst:0,cover:0});
+  const [ncmM, setNcmM] = useState({xfire:false,conc:false,exp:false,pin:false,stack:false,grenM:false,demoM:false,smoke:0,vis:0});
+  const vofV = {sa:0,auto:-1,gren:-3,sniper:-3,hvy:-3,flame:-3,demo:-3,inc:-3,air:-4,mines:-3};
+  const bestVOF = Object.entries(ncmP).filter(([_,v])=>v).reduce((b,[k])=>Math.min(b,vofV[k]),99);
+  const tMod = ncmT.cc+ncmT.burst+ncmT.cover;
+  const cMod = (ncmM.xfire?-1:0)+(ncmM.conc?-1:0)+(ncmM.exp?-2:0)+(ncmM.pin?2:0)+(ncmM.stack?-1:0)+(ncmM.grenM?-1:0)+(ncmM.demoM?-2:0)+ncmM.smoke+ncmM.vis;
+  const NCM = (bestVOF<99?bestVOF:0)+tMod+cMod;
+
+  /* --- ENEMY --- */
+  const [enemies, setEnemies] = useState([]);
+  const addE = ()=>setEnemies(p=>[...p,{id:uid(),type:"",vof:"None",max:0,cur:0,loc:"",status:"",cover:"",spot:"No",ammo:"",notes:""}]);
+  const uE = (i,f,v)=>setEnemies(p=>p.map((e,j)=>j===i?{...e,[f]:v}:e));
+  const rmE = (i)=>setEnemies(p=>p.filter((_,j)=>j!==i));
+
+  /* --- WEAPONS --- */
+  const [wpns, setWpns] = useState(WEAPONS_LIST.map(w=>({name:w,type:"",start:0,used:0,assigned:"",notes:""})));
+  const uW = (i,f,v)=>setWpns(p=>p.map((w,j)=>{if(j!==i)return w;return{...w,[f]:v};}));
+  const [fms, setFms] = useState(FM_LIST.map(f=>({name:f,type:"",msns:0,used:0,draw:"",obs:""})));
+  const uFM = (i,f,v)=>setFms(p=>p.map((x,j)=>j===i?{...x,[f]:v}:x));
+  const [fmLog, setFmLog] = useState([]);
+  const addFML = ()=>setFmLog(p=>[...p,{id:uid(),turn,agency:"",type:"",target:"",obs:"",result:"",notes:""}]);
+  const uFML = (i,f,v)=>setFmLog(p=>p.map((x,j)=>j===i?{...x,[f]:v}:x));
+
+  /* --- COMMS --- */
+  const [radios, setRadios] = useState(RADIO_DEFS.map(r=>({...r,assigned:"",loc:"",status:"",notes:""})));
+  const uR = (i,f,v)=>setRadios(p=>p.map((r,j)=>j===i?{...r,[f]:v}:r));
+  const [assets, setAssets] = useState(ASSET_DEFS.map(a=>({asset:a,qty:1,assigned:"",loc:"",used:"No",notes:""})));
+  const uA = (i,f,v)=>setAssets(p=>p.map((a,j)=>j===i?{...a,[f]:v}:a));
+  const [pyros, setPyros] = useState([]);
+  const addPyro = ()=>setPyros(p=>[...p,{id:uid(),dev:"",color:"",action:"",notes:""}]);
+  const uP = (i,f,v)=>setPyros(p=>p.map((x,j)=>j===i?{...x,[f]:v}:x));
+
+  /* --- JOURNAL --- */
+  const [journal, setJournal] = useState([]);
+  const addJ = ()=>setJournal(p=>[...p,{id:uid(),turn,phase:"",event:"",unit:"",detail:"",result:"",notes:""}]);
+  const uJ = (i,f,v)=>setJournal(p=>p.map((x,j)=>j===i?{...x,[f]:v}:x));
+
+  /* --- MAP --- */
+  const [mapD, setMapD] = useState({vof:0,spot:0,joint:0,mines:"No",pending:"No"});
+  const [cards, setCards] = useState([]);
+  useEffect(()=>{
+    const arr=[];
+    for(let r=1;r<=6;r++)for(let c=1;c<=6;c++)
+      arr.push({id:`R${r}C${c}`,terrain:"",cc:0,pc:"",cleared:"",us:"",enemy:"",cover:"",notes:""});
+    setCards(arr);
+  },[mission]);
+  const uC = (i,f,v)=>setCards(p=>p.map((c,j)=>j===i?{...c,[f]:v}:c));
+
+  /* --- CAMPAIGN LOG --- */
+  const [mResults, setMR] = useState([]);
+  const addMR = ()=>setMR(p=>[...p,{id:uid(),mission,result:"",turns:0,frKIA:0,enKIA:0,exp:"",repl:0,notes:""}]);
+  const uMR = (i,f,v)=>setMR(p=>p.map((x,j)=>j===i?{...x,[f]:v}:x));
+  const [repls, setRepls] = useState([]);
+  const addRepl = ()=>setRepls(p=>[...p,{id:uid(),after:"",green:0,vet:0,total:0,unit:"",steps:0,exp:"Green",notes:""}]);
+  const uRepl = (i,f,v)=>setRepls(p=>p.map((x,j)=>j===i?{...x,[f]:v}:x));
+
+  /* --- TURN SEQUENCE --- */
+  const [checks, setChecks] = useState({});
+  const tog = k=>setChecks(p=>({...p,[k]:!p[k]}));
+  const flatP = PHASES.filter(p=>{
+    if(p.defOnly && m.type!=="Defensive") return false;
+    if(p.offOnly && m.type==="Defensive") return false;
+    return true;
+  });
+  const curP = flatP[phaseIdx];
+  const nextP = ()=>setPhaseIdx(p=>Math.min(p+1,flatP.length-1));
+  const prevP = ()=>setPhaseIdx(p=>Math.max(p-1,0));
+  const nextTurn = ()=>{setTurn(t=>t+1);setPhaseIdx(0);setChecks({});};
+
+  /* --- SAVE / LOAD SYSTEM --- */
+  const SAVE_KEY = "fof_autosave";
+  const getState = ()=>({
+    campaign,mission,turn,actLvl,overrides,tcs,units,hqs,cmdGrids,createdUnits,
+    ncmP,ncmT,ncmM,enemies,wpns,fms,fmLog,radios,assets,pyros,journal,mapD,cards,
+    mResults,repls,checks,phaseIdx,tab
+  });
+  const loadState = (s)=>{
+    try{
+      if(s.campaign)setCampaign(s.campaign);if(s.mission)setMission(s.mission);
+      if(s.turn!=null)setTurn(s.turn);if(s.actLvl)setActLvl(s.actLvl);
+      if(s.overrides)setOverrides(s.overrides);if(s.tcs)setTcs(s.tcs);
+      if(s.units)setUnits(s.units);if(s.hqs)setHqs(s.hqs);
+      if(s.cmdGrids)setCmdGrids(s.cmdGrids);if(s.createdUnits)setCreatedUnits(s.createdUnits);
+      if(s.ncmP)setNcmP(s.ncmP);if(s.ncmT)setNcmT(s.ncmT);if(s.ncmM)setNcmM(s.ncmM);
+      if(s.enemies)setEnemies(s.enemies);if(s.wpns)setWpns(s.wpns);
+      if(s.fms)setFms(s.fms);if(s.fmLog)setFmLog(s.fmLog);
+      if(s.radios)setRadios(s.radios);if(s.assets)setAssets(s.assets);
+      if(s.pyros)setPyros(s.pyros);if(s.journal)setJournal(s.journal);
+      if(s.mapD)setMapD(s.mapD);if(s.cards)setCards(s.cards);
+      if(s.mResults)setMR(s.mResults);if(s.repls)setRepls(s.repls);
+      if(s.checks)setChecks(s.checks);if(s.phaseIdx!=null)setPhaseIdx(s.phaseIdx);
+      if(s.tab)setTab(s.tab);
+    }catch(e){console.error("Load error:",e);}
+  };
+
+  /* auto-save every 5 seconds */
+  const stateRef = useRef();
+  stateRef.current = getState;
+  useEffect(()=>{
+    const iv = setInterval(()=>{
+      try{localStorage.setItem(SAVE_KEY,JSON.stringify(stateRef.current()));}catch(e){}
+    },300000);
+    return ()=>clearInterval(iv);
+  },[]);
+
+  /* load autosave on mount */
+  const didLoad = useRef(false);
+  useEffect(()=>{
+    if(didLoad.current)return;
+    didLoad.current=true;
+    try{
+      const raw=localStorage.getItem(SAVE_KEY);
+      if(raw){const s=JSON.parse(raw);loadState(s);}
+    }catch(e){console.error("Autosave load error:",e);}
+  },[]);
+
+  const flash = (msg)=>{setSaveMsg(msg);setTimeout(()=>setSaveMsg(""),2000);};
+
+  const saveSlot = (slot)=>{
+    try{
+      const key=`fof_slot_${slot}`;
+      const s=getState();
+      s._label=`${campaign} ${mission} T${turn}`;
+      s._date=new Date().toLocaleString();
+      localStorage.setItem(key,JSON.stringify(s));
+      flash(`Saved to Slot ${slot}`);
+    }catch(e){flash("Save failed");}
+  };
+  const loadSlot = (slot)=>{
+    try{
+      const raw=localStorage.getItem(`fof_slot_${slot}`);
+      if(!raw){flash(`Slot ${slot} empty`);return;}
+      loadState(JSON.parse(raw));flash(`Loaded Slot ${slot}`);
+    }catch(e){flash("Load failed");}
+  };
+  const getSlotInfo = (slot)=>{
+    try{
+      const raw=localStorage.getItem(`fof_slot_${slot}`);
+      if(!raw)return null;
+      const s=JSON.parse(raw);
+      return {label:s._label||"Unknown",date:s._date||"?"};
+    }catch(e){return null;}
+  };
+  const deleteSlot = (slot)=>{
+    localStorage.removeItem(`fof_slot_${slot}`);flash(`Slot ${slot} cleared`);
+  };
+
+  const handleImport = ()=>{
+    const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+    inp.onchange=e=>{
+      const f=e.target.files[0];if(!f)return;
+      const rdr=new FileReader();
+      rdr.onload=ev=>{
+        try{
+          const d=JSON.parse(ev.target.result);
+          /* support both export format and save format */
+          if(d.setup){
+            if(d.setup.campaign)setCampaign(d.setup.campaign);
+            if(d.setup.mission)setMission(d.setup.mission);
+            if(d.setup.turn!=null)setTurn(d.setup.turn);
+            if(d.setup.activity)setActLvl(d.setup.activity);
+            if(d.setup.tacticalControls)setTcs(d.setup.tacticalControls);
+          }
+          if(d.units)setUnits(d.units);if(d.createdUnits)setCreatedUnits(d.createdUnits);
+          if(d.hqs)setHqs(d.hqs);if(d.cmdGrids)setCmdGrids(d.cmdGrids);
+          if(d.enemies)setEnemies(d.enemies);
+          if(d.weapons)setWpns(d.weapons);if(d.wpns)setWpns(d.wpns);
+          if(d.fireMissions)setFms(d.fireMissions);if(d.fms)setFms(d.fms);
+          if(d.fmLog)setFmLog(d.fmLog);
+          if(d.radios)setRadios(d.radios);if(d.assets)setAssets(d.assets);
+          if(d.pyros)setPyros(d.pyros);if(d.journal)setJournal(d.journal);
+          if(d.map){setMapD({vof:d.map.vof||0,spot:d.map.spot||0,joint:d.map.joint||0,mines:d.map.mines||"No",pending:d.map.pending||"No"});if(d.map.cards)setCards(d.map.cards);}
+          if(d.campaign_log){if(d.campaign_log.missionResults)setMR(d.campaign_log.missionResults);if(d.campaign_log.replacements)setRepls(d.campaign_log.replacements);}
+          /* direct save format fields */
+          if(d.mapD)setMapD(d.mapD);if(d.cards)setCards(d.cards);
+          if(d.mResults)setMR(d.mResults);if(d.repls)setRepls(d.repls);
+          flash("Imported successfully");
+        }catch(err){flash("Import failed: "+err.message);}
+      };
+      rdr.readAsText(f);
+    };
+    inp.click();
+  };
+
+  /* --- EXPORT --- */
+  const handleExport = () => {
+    const data = JSON.stringify({
+      setup:{campaign,mission,turn,activity:actLvl,params:m,tacticalControls:tcs},
+      units,createdUnits,hqs,cmdGrids,enemies,weapons:wpns,fireMissions:fms,fmLog,
+      radios,assets,pyros,journal,map:{...mapD,cards},
+      campaign_log:{missionResults:mResults,replacements:repls},
+      ncm:{final:NCM,strongestVOF:bestVOF<99?bestVOF:0,terrainMod:tMod,combatMods:cMod},
+    },null,2);
+    const b=new Blob([data],{type:'application/json'});
+    const u=URL.createObjectURL(b);
+    const a=document.createElement('a');
+    a.href=u;a.download=`FoF_${campaign}_${mission.replace(/[:/]/g,"")}_T${turn}.json`;a.click();
+    URL.revokeObjectURL(u);
+  };
+
+  /* ═══════════════════════════════════════════
+     TAB: Turn Sequence
+     ═══════════════════════════════════════════ */
+  const renderTurn = () => <div>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+      <div style={{display:"flex",gap:12,alignItems:"center"}}>
+        <div style={{display:"flex",alignItems:"center",gap:4}}>
+          <button onClick={()=>{if(turn>1){setTurn(t=>t-1);setPhaseIdx(0);setChecks({});}}} disabled={turn<=1}
+            style={{...sBtn(false),padding:"3px 6px",fontSize:10,opacity:turn<=1?0.3:1}}>◀</button>
+          <span style={{...sLabel}}>Turn</span>
+          <Sel value={turn} onChange={v=>{setTurn(+v);setPhaseIdx(0);setChecks({});}} options={Array.from({length:m.turns||10},(_,i)=>i+1)} style={{minWidth:48,textAlign:"center"}}/>
+          <span style={{fontSize:10,color:C.textDim}}>/ {m.turns||10}</span>
+        </div>
+        <span style={{fontSize:11,color:C.accent}}>{actLvl}</span>
+        <span style={{...sLabel}}>Phase {phaseIdx+1}/{flatP.length}</span>
+      </div>
+      <div style={{display:"flex",gap:4}}>
+        <button onClick={prevP} disabled={phaseIdx===0} style={{...sBtn(false),opacity:phaseIdx===0?0.3:1}}>◀ Prev</button>
+        {phaseIdx<flatP.length-1
+          ? <button onClick={nextP} style={sBtn(true)}>Next ▶</button>
+          : <button onClick={nextTurn} style={{...sBtn(true),background:C.green,borderColor:C.green}}>Next Turn ▶▶</button>}
+      </div>
+    </div>
+    {/* Progress bar */}
+    <div style={{display:"flex",gap:2,marginBottom:12}}>
+      {flatP.map((p,i)=><button key={p.id} onClick={()=>setPhaseIdx(i)} title={p.t}
+        style={{flex:1,height:6,borderRadius:2,border:"none",cursor:"pointer",transition:"background 0.2s",
+          background:i===phaseIdx?C.accent:i<phaseIdx?C.accentDim:C.border}}/>)}
+    </div>
+    <div style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:8,padding:16}}>
+      <PhaseTreeC p={curP} checks={checks} tog={tog}/>
+    </div>
+    <div style={{marginTop:8,fontSize:11,color:C.textDim,fontStyle:"italic",padding:"6px 10px",background:`${C.panel}80`,borderRadius:4}}>
+      Update VOF/PDF/Activity any time map changes EXCEPT during 3.7.4
+    </div>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: Setup
+     ═══════════════════════════════════════════ */
+  const renderSetup = () => {
+    const newMission = ()=>{
+      if(!confirm("Start new mission? This resets units, commands, enemies, map, weapons, comms, and journal.\n\nCampaign log (results & replacements) will be preserved."))return;
+      setTurn(1);setPhaseIdx(0);setChecks({});setActLvl("No Contact");setOverrides({});
+      setTcs(TC_LABELS.map(c=>({c,loc:"",typ:"",notes:""})));
+      setUnits(UNIT_DEFS.map(d=>({id:uid(),name:d.n,group:d.g,max:0,cur:0,exp:d.e,vof:d.v,loc:"",status:"Good Order",cover:"0 None",underVOF:"No",exposed:"No",notes:""})));
+      setHqs([mkHQ("BN HQ",6,0),...HQ_NAMES.slice(1).map(n=>mkHQ(n))]);
+      setCmdGrids(HQ_NAMES.reduce((o,n)=>({...o,[n]:mkCmdGrid()}),{}));
+      setCreatedUnits([]);setEnemies([]);
+      setWpns(WEAPONS_LIST.map(w=>({name:w,type:"",start:0,used:0,assigned:"",notes:""})));
+      setFms(FM_LIST.map(f=>({name:f,type:"",msns:0,used:0,draw:"",obs:""})));
+      setFmLog([]);
+      setRadios(RADIO_DEFS.map(r=>({...r,assigned:"",loc:"",status:"",notes:""})));
+      setAssets(ASSET_DEFS.map(a=>({asset:a,qty:1,assigned:"",loc:"",used:"No",notes:""})));
+      setPyros([]);setJournal([]);
+      setMapD({vof:0,spot:0,joint:0,mines:"No",pending:"No"});
+      const arr=[];for(let r=1;r<=6;r++)for(let c=1;c<=6;c++)arr.push({id:`R${r}C${c}`,terrain:"",cc:0,pc:"",cleared:"",us:"",enemy:"",cover:"",notes:""});
+      setCards(arr);
+      setNcmP({sa:false,auto:false,gren:false,sniper:false,hvy:false,flame:false,demo:false,inc:false,air:false,mines:false});
+      setNcmT({cc:0,burst:0,cover:0});
+      setNcmM({xfire:false,conc:false,exp:false,pin:false,stack:false,grenM:false,demoM:false,smoke:0,vis:0});
+      flash("New mission started — campaign log preserved");
+    };
+    const resetAll = ()=>{
+      if(!confirm("FULL RESET — this erases EVERYTHING including campaign log.\n\nAre you sure?"))return;
+      newMission();setMR([]);setRepls([]);
+      flash("Full reset complete");
+    };
+    return <div>
+    <Section title="Mission Setup">
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><span style={sLabel}>Campaign</span>
+          <Sel value={campaign} onChange={v=>{setCampaign(v);setMission(CAMPAIGNS[v][0]);}} options={Object.keys(CAMPAIGNS)}/></div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><span style={sLabel}>Mission</span>
+          <Sel value={mission} onChange={setMission} options={CAMPAIGNS[campaign]}/></div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><span style={sLabel}>Turn</span>
+          <Inp type="number" value={turn} onChange={setTurn} style={{width:50}}/></div>
+        <div style={{display:"flex",alignItems:"center",gap:6}}><span style={sLabel}>Activity</span>
+          <Sel value={actLvl} onChange={setActLvl} options={ACTIVITY}/></div>
+      </div>
+      <div style={{display:"flex",gap:8,marginTop:12}}>
+        <button onClick={newMission} style={{...sBtn(false),fontSize:11,color:C.accent}}>⟳ New Mission (keep campaign log)</button>
+        <button onClick={resetAll} style={{...sBtn(false),fontSize:11,color:C.red}}>✕ Full Reset</button>
+      </div>
+    </Section>
+    <Section title="Auto-Filled Parameters" sub>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:4,fontSize:11}}>
+        {[["Type",m.type],["Duration",m.turns],["Visibility",m.vis],["Rows",m.rows],["Cols",m.cols],
+          ["Tactics",m.tactics],["Enemy Exp",m.eExp],["Enemy Type",m.eType],["US Gren",m.usG],["En Gren",m.enG]
+        ].map(([l,v])=><div key={l} style={{display:"flex",gap:6,alignItems:"center"}}>
+          <span style={{...sLabel,width:70}}>{l}</span><span style={{color:C.accent}}>{v}</span>
+        </div>)}
+      </div>
+    </Section>
+    <Section title="Tactical Controls" sub>
+      <Table heads={[{l:"Control",w:100},{l:"Location"},{l:"Type"},{l:"Notes"}]}>
+        {tcs.map((t,i)=><tr key={t.c}><td style={{...sTd,color:C.accent,fontWeight:600}}>{t.c}</td>
+          <td style={sTd}><Inp value={t.loc} onChange={v=>updateTC(i,"loc",v)}/></td>
+          <td style={sTd}><Inp value={t.typ} onChange={v=>updateTC(i,"typ",v)}/></td>
+          <td style={sTd}><Inp value={t.notes} onChange={v=>updateTC(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>
+    </Section>
+  </div>;};
+
+  /* ═══════════════════════════════════════════
+     TAB: Units
+     ═══════════════════════════════════════════ */
+  const renderUnits = () => {
+    const groups = [...new Set(UNIT_DEFS.map(d=>d.g))];
+    return <div>
+      <Section title="Friendly Unit Tracker">
+        {groups.map(g=>{
+          const idxs = units.map((u,i)=>u.group===g?i:null).filter(x=>x!==null);
+          return <Section key={g} title={g} sub>
+            <Table heads={[{l:"Unit",w:68},{l:"Max",w:44},{l:"Cur",w:44},{l:"Exp",w:76},{l:"VOF",w:70},{l:"Loc",w:64},{l:"Status",w:110},{l:"Cover",w:110},{l:"VOF?",w:52},{l:"Exp?",w:52},{l:"Notes"}]}>
+              {idxs.map(i=>{const u=units[i];return <tr key={u.id}>
+                <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:10}}>{u.name}</td>
+                <td style={sTd}><Inp type="number" value={u.max} onChange={v=>uU(i,"max",v)} style={{width:40,textAlign:"center"}}/></td>
+                <td style={sTd}><Inp type="number" value={u.cur} onChange={v=>uU(i,"cur",v)} style={{width:40,textAlign:"center"}}/></td>
+                <td style={sTd}><Sel value={u.exp} onChange={v=>uU(i,"exp",v)} options={EXP} style={{minWidth:72}}/></td>
+                <td style={sTd}><Sel value={u.vof} onChange={v=>uU(i,"vof",v)} options={VOF_OPTS} style={{minWidth:66}}/></td>
+                <td style={sTd}><Inp value={u.loc} onChange={v=>uU(i,"loc",v)} style={{width:58}}/></td>
+                <td style={sTd}><Sel value={u.status} onChange={v=>uU(i,"status",v)} options={STATUSES} style={{minWidth:105}}/></td>
+                <td style={sTd}><Sel value={u.cover} onChange={v=>uU(i,"cover",v)} options={COVER_OPTS} style={{minWidth:105}}/></td>
+                <td style={sTd}><Sel value={u.underVOF} onChange={v=>uU(i,"underVOF",v)} options={["No","Yes"]} style={{minWidth:48}}/></td>
+                <td style={sTd}><Sel value={u.exposed} onChange={v=>uU(i,"exposed",v)} options={["No","Yes"]} style={{minWidth:48}}/></td>
+                <td style={sTd}><Inp value={u.notes} onChange={v=>uU(i,"notes",v)}/></td>
+              </tr>;})}
+            </Table>
+          </Section>;
+        })}
+      </Section>
+      <Section title="Created Units (Fire Teams, Assault Teams, Litter Teams, etc.)">
+        <button onClick={addCU} style={{...sBtn(false),marginBottom:8}}>+ Create Unit</button>
+        {createdUnits.length>0 && <Table heads={[{l:"Name",w:80},{l:"Parent",w:70},{l:"Type",w:90},{l:"Steps",w:44},{l:"Exp",w:76},{l:"VOF",w:70},{l:"Loc",w:64},{l:"Status",w:110},{l:"Cover",w:110},{l:"VOF?",w:52},{l:"Exp?",w:52},{l:"Notes"},{l:"",w:28}]}>
+          {createdUnits.map((u,i)=><tr key={u.id}>
+            <td style={sTd}><Inp value={u.name} onChange={v=>uCU(i,"name",v)} placeholder="e.g. FT/1/1" style={{minWidth:74}}/></td>
+            <td style={sTd}><Inp value={u.parent} onChange={v=>uCU(i,"parent",v)} placeholder="1/1" style={{minWidth:64}}/></td>
+            <td style={sTd}><Sel value={u.type} onChange={v=>uCU(i,"type",v)} options={["Fire Team","Assault Team","Litter Team","Casualty","Custom"]} style={{minWidth:86}}/></td>
+            <td style={sTd}><Inp type="number" value={u.steps} onChange={v=>uCU(i,"steps",v)} style={{width:40,textAlign:"center"}}/></td>
+            <td style={sTd}><Sel value={u.exp} onChange={v=>uCU(i,"exp",v)} options={EXP} style={{minWidth:72}}/></td>
+            <td style={sTd}><Sel value={u.vof} onChange={v=>uCU(i,"vof",v)} options={VOF_OPTS} style={{minWidth:66}}/></td>
+            <td style={sTd}><Inp value={u.loc} onChange={v=>uCU(i,"loc",v)} style={{width:58}}/></td>
+            <td style={sTd}><Sel value={u.status} onChange={v=>uCU(i,"status",v)} options={STATUSES} style={{minWidth:105}}/></td>
+            <td style={sTd}><Sel value={u.cover} onChange={v=>uCU(i,"cover",v)} options={COVER_OPTS} style={{minWidth:105}}/></td>
+            <td style={sTd}><Sel value={u.underVOF} onChange={v=>uCU(i,"underVOF",v)} options={["No","Yes"]} style={{minWidth:48}}/></td>
+            <td style={sTd}><Sel value={u.exposed} onChange={v=>uCU(i,"exposed",v)} options={["No","Yes"]} style={{minWidth:48}}/></td>
+            <td style={sTd}><Inp value={u.notes} onChange={v=>uCU(i,"notes",v)}/></td>
+            <td style={sTd}><button onClick={()=>rmCU(i)} style={{background:"none",border:"none",color:C.red,cursor:"pointer",fontSize:13}}>✕</button></td>
+          </tr>)}
+        </Table>}
+      </Section>
+    </div>;
+  };
+
+  /* ═══════════════════════════════════════════
+     TAB: Command
+     ═══════════════════════════════════════════ */
+  const renderCommand = () => <div>
+    <Section title="Command Tracker">
+      <div style={{display:"flex",gap:12,fontSize:11,color:C.textDim,marginBottom:8}}>
+        <span>Turn: <b style={{color:C.accent}}>{turn}</b></span>
+        <span>Activity: <b style={{color:C.accent}}>{actLvl}</b></span>
+      </div>
+      {hqs.map((h,hi)=><div key={h.name} style={{background:C.panel,border:`1px solid ${C.border}`,borderRadius:6,padding:12,marginBottom:8}}>
+        <div style={{fontSize:12,fontWeight:700,color:C.accent,marginBottom:8}}>{h.name}</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6,fontSize:11,marginBottom:6}}>
+          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Exp</span><Sel value={h.exp} onChange={v=>uH(hi,"exp",v)} options={EXP}/></div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Act</span><Sel value={h.act} onChange={v=>uH(hi,"act",v)} options={["Yes","No"]}/></div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Pin</span><Sel value={h.pin} onChange={v=>uH(hi,"pin",v)} options={["Yes","No"]}/></div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Draw</span><Inp type="number" value={h.draw} onChange={v=>uH(hi,"draw",v)} style={{width:48}}/></div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>VOF</span><Sel value={h.vof} onChange={v=>uH(hi,"vof",v)} options={["None","S","A","H","G!","S!","D!","F!","Inc!","Air!"]} style={{minWidth:70}}/></div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Cov</span><Sel value={h.cov} onChange={v=>uH(hi,"cov",v)} options={["Yes","No"]} style={{minWidth:52}}/></div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,fontSize:11,background:C.inputBg,borderRadius:4,padding:10,marginBottom:6}}>
+          {[["Auto",h.autoMod,"autoMod"],["Cmds",h.cmds,"cmds"],["SavedP",h.savedP,"savedP"],["Total",h.total,"total"],
+            ["Spent",h.spent,"spent"],["Limit",h.limit,"limit"]].map(([l,v,k])=>
+            <div key={l} style={{display:"flex",alignItems:"center",gap:4}}>
+              <span style={{color:C.textDim,fontSize:10}}>{l}:</span>
+              <Inp type="number" value={v} onChange={v2=>uH(hi,k,v2)} style={{width:42,textAlign:"center"}}/>
+            </div>
+          )}
+          <div style={{display:"flex",alignItems:"center",gap:4}}>
+            <span style={{color:C.textDim,fontSize:10}}>SAVED:</span>
+            <span style={{color:C.accent,fontWeight:700,fontSize:13}}>{h.limit>0?Math.min(h.total-h.spent,h.limit):h.total-h.spent}</span>
+          </div>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+          <span style={{...sLabel,fontSize:9}}>Command Log</span>
+          <button onClick={()=>addHL(hi)} style={{...sBtn(false),padding:"2px 8px",fontSize:10}}>+ Entry</button>
+        </div>
+        {h.log.map((l,li)=><div key={l.id} style={{display:"grid",gridTemplateColumns:"36px 56px repeat(6,48px) 70px 1fr 70px",gap:3,marginBottom:3}}>
+          <Inp type="number" value={l.turn} onChange={v=>uHL(hi,li,"turn",v)} style={{width:34}}/>
+          <Inp value={l.phase} onChange={v=>uHL(hi,li,"phase",v)}/>
+          {l.evts.map((ev,ei)=><Inp key={ei} value={ev} onChange={v=>uHLE(hi,li,ei,v)} style={{width:46}}/>)}
+          <Inp value={l.unit} onChange={v=>uHL(hi,li,"unit",v)}/>
+          <Inp value={l.detail} onChange={v=>uHL(hi,li,"detail",v)}/>
+          <Inp value={l.result} onChange={v=>uHL(hi,li,"result",v)}/>
+        </div>)}
+      </div>)}
+    </Section>
+    <Section title="Command Allocation Grid">
+      <div style={{fontSize:11,color:C.textDim,marginBottom:8}}>10 turns × 6 commands per HQ. Type what each command was spent on.</div>
+      {HQ_NAMES.map(hq=><div key={hq} style={{marginBottom:12}}>
+        <div style={{fontSize:11,fontWeight:700,color:C.accent,marginBottom:4}}>{hq}</div>
+        <div style={{overflowX:"auto"}}>
+          <table style={{borderCollapse:"collapse",width:"100%"}}>
+            <thead><tr>
+              <th style={{...sTh,width:44}}>Turn</th>
+              {[1,2,3,4,5,6].map(c=><th key={c} style={{...sTh,minWidth:110}}>Cmd {c}</th>)}
+            </tr></thead>
+            <tbody>
+              {Array.from({length:10},(_,t)=><tr key={t}>
+                <td style={{...sTd,color:C.accent,fontWeight:700,textAlign:"center"}}>{t+1}</td>
+                {[0,1,2,3,4,5].map(c=><td key={c} style={sTd}>
+                  <Inp value={cmdGrids[hq]?.[t]?.[c]??""} onChange={v=>uCG(hq,t,c,v)} placeholder="" style={{minWidth:100}}/>
+                </td>)}
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      </div>)}
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: NCM Combat Calculator
+     ═══════════════════════════════════════════ */
+  const renderCombat = () => <div>
+    <Section title="NCM Calculator">
+      <Section title="Step 1: Strongest VOF (lowest value wins)" sub>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:2}}>
+          {[["sa","Small Arms S → 0"],["auto","Auto A → –1"],["hvy","Heavy H → –3"],["gren","Grenade G! → –3"],["sniper","Sniper S! → –3"],
+            ["flame","Flame F! → –3"],["demo","Demo D! → –3"],["mines","Mines! → –3"],["inc","Incoming! → –3"],["air","Air Strike! → –4"]
+          ].map(([k,l])=><label key={k} style={{display:"flex",alignItems:"center",gap:6,padding:"3px 8px",cursor:"pointer",fontSize:11,
+            borderRadius:3,background:ncmP[k]?`${C.accent}15`:"transparent"}}>
+            <input type="checkbox" checked={ncmP[k]} onChange={()=>setNcmP(p=>({...p,[k]:!p[k]}))} style={{accentColor:C.accent}}/>
+            <span style={{color:ncmP[k]?C.text:C.textDim}}>{l}</span>
+          </label>)}
+        </div>
+        <div style={{marginTop:6,padding:"6px 10px",background:C.inputBg,borderRadius:4,fontSize:12,color:C.accent}}>
+          Strongest VOF: <b>{bestVOF<99?bestVOF:"—"}</b>
+        </div>
+      </Section>
+      <Section title="Step 2: Terrain & Cover (enter values from card)" sub>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
+          {[["cc","Card C&C"],["burst","Burst Mod"],["cover","Cover Mod"]].map(([k,l])=>
+            <div key={k} style={{display:"flex",alignItems:"center",gap:4}}>
+              <span style={sLabel}>{l}</span><Inp type="number" value={ncmT[k]} onChange={v=>setNcmT(p=>({...p,[k]:v}))} style={{width:44}}/>
+            </div>
+          )}
+        </div>
+        <div style={{marginTop:6,fontSize:11,color:C.textDim,padding:"4px 10px",background:C.inputBg,borderRadius:4}}>
+          Terrain Total: <span style={{color:C.accent}}>{tMod}</span>
+        </div>
+      </Section>
+      <Section title="Step 3: Combat Modifiers" sub>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:2}}>
+          {[["xfire","Crossfire → –1"],["conc","Concentrated Fire → –1"],["exp","Exposed → –2"],["pin","Target Pinned → +2"],["stack","Stacking >3 → –1"],
+            ["grenM","Grenade Miss → –1"],["demoM","Demo Miss → –2"]
+          ].map(([k,l])=><label key={k} style={{display:"flex",alignItems:"center",gap:6,padding:"3px 8px",cursor:"pointer",fontSize:11,
+            borderRadius:3,background:ncmM[k]?`${C.accent}15`:"transparent"}}>
+            <input type="checkbox" checked={ncmM[k]} onChange={()=>setNcmM(p=>({...p,[k]:!p[k]}))} style={{accentColor:C.accent}}/>
+            <span style={{color:ncmM[k]?C.text:C.textDim}}>{l}</span>
+          </label>)}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,marginTop:6}}>
+          {[["smoke","Smoke/WP Mod"],["vis","Visibility Mod"]].map(([k,l])=>
+            <div key={k} style={{display:"flex",alignItems:"center",gap:4}}>
+              <span style={{...sLabel,width:100}}>{l}</span><Inp type="number" value={ncmM[k]} onChange={v=>setNcmM(p=>({...p,[k]:v}))} style={{width:44}}/>
+            </div>
+          )}
+        </div>
+        <div style={{marginTop:6,fontSize:11,color:C.textDim,padding:"4px 10px",background:C.inputBg,borderRadius:4}}>
+          Total Mods: <span style={{color:C.accent}}>{cMod}</span>
+        </div>
+      </Section>
+      <div style={{marginTop:12,textAlign:"center",padding:"12px 16px",background:`${C.accent}15`,border:`1px solid ${C.accent}40`,borderRadius:8,fontSize:18,fontWeight:700,color:C.textBright}}>
+        FINAL NCM → <span style={{color:C.accent}}>{NCM>=0?`+${NCM}`:NCM}</span>
+      </div>
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: Enemy
+     ═══════════════════════════════════════════ */
+  const renderEnemy = () => <div>
+    <Section title="Enemy Tracker">
+      <button onClick={addE} style={{...sBtn(false),marginBottom:8}}>+ Add Enemy</button>
+      {enemies.length>0 && <Table heads={[{l:"Type",w:100},{l:"VOF",w:90},{l:"Max",w:44},{l:"Cur",w:44},{l:"Loc",w:64},{l:"Status",w:100},{l:"Cover",w:90},{l:"Spot",w:56},{l:"Ammo",w:60},{l:"Notes"},{l:"",w:28}]}>
+        {enemies.map((e,i)=><tr key={e.id}>
+          <td style={sTd}><Inp value={e.type} onChange={v=>uE(i,"type",v)} style={{minWidth:90}}/></td>
+          <td style={sTd}><Sel value={e.vof} onChange={v=>uE(i,"vof",v)} options={VOF_OPTS} style={{minWidth:84}}/></td>
+          <td style={sTd}><Inp type="number" value={e.max} onChange={v=>uE(i,"max",v)} style={{width:40,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={e.cur} onChange={v=>uE(i,"cur",v)} style={{width:40,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp value={e.loc} onChange={v=>uE(i,"loc",v)} style={{minWidth:58}}/></td>
+          <td style={sTd}><Inp value={e.status} onChange={v=>uE(i,"status",v)} style={{minWidth:90}}/></td>
+          <td style={sTd}><Inp value={e.cover} onChange={v=>uE(i,"cover",v)} style={{minWidth:80}}/></td>
+          <td style={sTd}><Sel value={e.spot} onChange={v=>uE(i,"spot",v)} options={["No","Yes"]} style={{minWidth:52}}/></td>
+          <td style={sTd}><Inp value={e.ammo} onChange={v=>uE(i,"ammo",v)} style={{minWidth:52}}/></td>
+          <td style={sTd}><Inp value={e.notes} onChange={v=>uE(i,"notes",v)}/></td>
+          <td style={sTd}><button onClick={()=>rmE(i)} style={{background:"none",border:"none",color:C.red,cursor:"pointer",fontSize:13}}>✕</button></td>
+        </tr>)}
+      </Table>}
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: Weapons & Ammo
+     ═══════════════════════════════════════════ */
+  const renderWeapons = () => <div>
+    <Section title="Weapons">
+      <Table heads={[{l:"Weapon",w:80},{l:"Type",w:58},{l:"Start",w:44},{l:"Used",w:44},{l:"Left",w:44},{l:"Assigned"},{l:"Notes"}]}>
+        {wpns.map((w,i)=><tr key={w.name}>
+          <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{w.name}</td>
+          <td style={sTd}><Inp value={w.type} onChange={v=>uW(i,"type",v)} style={{width:54}}/></td>
+          <td style={sTd}><Inp type="number" value={w.start} onChange={v=>uW(i,"start",v)} style={{width:40,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={w.used} onChange={v=>uW(i,"used",v)} style={{width:40,textAlign:"center"}}/></td>
+          <td style={{...sTd,color:C.accent,textAlign:"center"}}>{w.start-w.used}</td>
+          <td style={sTd}><Inp value={w.assigned} onChange={v=>uW(i,"assigned",v)}/></td>
+          <td style={sTd}><Inp value={w.notes} onChange={v=>uW(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>
+    </Section>
+    <Section title="Fire Missions">
+      <Table heads={[{l:"Agency",w:105},{l:"Type",w:58},{l:"Msns",w:44},{l:"Used",w:44},{l:"Left",w:44},{l:"Draw#",w:52},{l:"Observer"}]}>
+        {fms.map((f,i)=><tr key={f.name}>
+          <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{f.name}</td>
+          <td style={sTd}><Inp value={f.type} onChange={v=>uFM(i,"type",v)} style={{width:54}}/></td>
+          <td style={sTd}><Inp type="number" value={f.msns} onChange={v=>uFM(i,"msns",v)} style={{width:40,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={f.used} onChange={v=>uFM(i,"used",v)} style={{width:40,textAlign:"center"}}/></td>
+          <td style={{...sTd,color:C.accent,textAlign:"center"}}>{f.msns-f.used}</td>
+          <td style={sTd}><Inp value={f.draw} onChange={v=>uFM(i,"draw",v)} style={{width:40}}/></td>
+          <td style={sTd}><Inp value={f.obs} onChange={v=>uFM(i,"obs",v)}/></td>
+        </tr>)}
+      </Table>
+    </Section>
+    <Section title="FM Log" sub>
+      <button onClick={addFML} style={{...sBtn(false),marginBottom:6}}>+ Add FM Log</button>
+      {fmLog.length>0 && <Table heads={[{l:"T",w:34},{l:"Agency",w:90},{l:"Type",w:70},{l:"Target",w:80},{l:"Observer",w:80},{l:"Result",w:80},{l:"Notes"}]}>
+        {fmLog.map((f,i)=><tr key={f.id}>
+          <td style={{...sTd,color:C.accent,fontWeight:600,textAlign:"center"}}>{f.turn}</td>
+          <td style={sTd}><Inp value={f.agency} onChange={v=>uFML(i,"agency",v)} style={{minWidth:80}}/></td>
+          <td style={sTd}><Inp value={f.type} onChange={v=>uFML(i,"type",v)} style={{minWidth:60}}/></td>
+          <td style={sTd}><Inp value={f.target} onChange={v=>uFML(i,"target",v)} style={{minWidth:70}}/></td>
+          <td style={sTd}><Inp value={f.obs} onChange={v=>uFML(i,"obs",v)} style={{minWidth:70}}/></td>
+          <td style={sTd}><Inp value={f.result} onChange={v=>uFML(i,"result",v)} style={{minWidth:70}}/></td>
+          <td style={sTd}><Inp value={f.notes} onChange={v=>uFML(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>}
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: Comms & Assets
+     ═══════════════════════════════════════════ */
+  const renderComms = () => <div>
+    <Section title="Radios & Phones">
+      <Table heads={[{l:"Device",w:70},{l:"Type",w:58},{l:"Net",w:58},{l:"Assigned"},{l:"Loc"},{l:"Status"},{l:"Notes"}]}>
+        {radios.map((r,i)=><tr key={i}>
+          <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{r.dev}</td>
+          <td style={{...sTd,color:C.textDim}}>{r.tp}</td>
+          <td style={{...sTd,color:C.textDim}}>{r.net}</td>
+          <td style={sTd}><Inp value={r.assigned} onChange={v=>uR(i,"assigned",v)}/></td>
+          <td style={sTd}><Inp value={r.loc} onChange={v=>uR(i,"loc",v)}/></td>
+          <td style={sTd}><Inp value={r.status} onChange={v=>uR(i,"status",v)}/></td>
+          <td style={sTd}><Inp value={r.notes} onChange={v=>uR(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>
+    </Section>
+    <Section title="Assets">
+      <Table heads={[{l:"Asset",w:80},{l:"Qty",w:36},{l:"Assigned"},{l:"Loc"},{l:"Used",w:52},{l:"Left",w:36},{l:"Notes"}]}>
+        {assets.map((a,i)=><tr key={i}>
+          <td style={{...sTd,color:C.accent,fontSize:10}}>{a.asset}</td>
+          <td style={{...sTd,textAlign:"center"}}>{a.qty}</td>
+          <td style={sTd}><Inp value={a.assigned} onChange={v=>uA(i,"assigned",v)}/></td>
+          <td style={sTd}><Inp value={a.loc} onChange={v=>uA(i,"loc",v)}/></td>
+          <td style={sTd}><Sel value={a.used} onChange={v=>uA(i,"used",v)} options={["No","Yes"]}/></td>
+          <td style={{...sTd,color:C.accent,textAlign:"center"}}>{a.used==="Yes"?0:a.qty}</td>
+          <td style={sTd}><Inp value={a.notes} onChange={v=>uA(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>
+    </Section>
+    <Section title="Pyro Signals" sub>
+      <button onClick={addPyro} style={{...sBtn(false),marginBottom:6}}>+ Add Signal</button>
+      {pyros.length>0 && <Table heads={[{l:"Device",w:100},{l:"Color",w:80},{l:"Action"},{l:"Notes"}]}>
+        {pyros.map((p,i)=><tr key={p.id}>
+          <td style={sTd}><Inp value={p.dev} onChange={v=>uP(i,"dev",v)} style={{minWidth:90}}/></td>
+          <td style={sTd}><Inp value={p.color} onChange={v=>uP(i,"color",v)} style={{minWidth:70}}/></td>
+          <td style={sTd}><Inp value={p.action} onChange={v=>uP(i,"action",v)}/></td>
+          <td style={sTd}><Inp value={p.notes} onChange={v=>uP(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>}
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: Battle Journal
+     ═══════════════════════════════════════════ */
+  const renderJournal = () => <div>
+    <Section title="Battle Journal">
+      <button onClick={addJ} style={{...sBtn(false),marginBottom:8}}>+ Add Entry</button>
+      {journal.length>0 && <Table heads={[{l:"T",w:34},{l:"Phase",w:60},{l:"Event"},{l:"Unit",w:64},{l:"Detail"},{l:"Result",w:70},{l:"Notes"}]}>
+        {journal.map((j,i)=><tr key={j.id}>
+          <td style={{...sTd,color:C.accent}}>{j.turn}</td>
+          <td style={sTd}><Inp value={j.phase} onChange={v=>uJ(i,"phase",v)}/></td>
+          <td style={sTd}><Inp value={j.event} onChange={v=>uJ(i,"event",v)}/></td>
+          <td style={sTd}><Inp value={j.unit} onChange={v=>uJ(i,"unit",v)}/></td>
+          <td style={sTd}><Inp value={j.detail} onChange={v=>uJ(i,"detail",v)}/></td>
+          <td style={sTd}><Inp value={j.result} onChange={v=>uJ(i,"result",v)}/></td>
+          <td style={sTd}><Inp value={j.notes} onChange={v=>uJ(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>}
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: Map & Contacts
+     ═══════════════════════════════════════════ */
+  const renderMap = () => <div>
+    <Section title="Map & Contacts">
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6,marginBottom:8}}>
+        {[["VOF/PDF",mapD.vof,"vof","number"],["Spotted",mapD.spot,"spot","number"],["Joint",mapD.joint,"joint","number"]].map(([l,v,k,t])=>
+          <div key={k} style={{display:"flex",alignItems:"center",gap:4}}>
+            <span style={sLabel}>{l}</span><Inp type={t} value={v} onChange={v2=>setMapD(p=>({...p,[k]:v2}))} style={{width:44}}/>
+          </div>
+        )}
+        <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Mines?</span><Sel value={mapD.mines} onChange={v=>setMapD(p=>({...p,mines:v}))} options={["No","Yes"]}/></div>
+        <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Pending?</span><Sel value={mapD.pending} onChange={v=>setMapD(p=>({...p,pending:v}))} options={["No","Yes"]}/></div>
+        <div style={{display:"flex",alignItems:"center",gap:4}}><span style={{...sLabel,color:C.accent,fontSize:11}}>ACTIVITY: {actLvl.toUpperCase()}</span></div>
+      </div>
+    </Section>
+    <Section title="Card Tracker (6×6)" sub>
+      <Table heads={[{l:"Card",w:52},{l:"Terrain",w:90},{l:"C&C",w:48},{l:"PC",w:52},{l:"Clr",w:52},{l:"US"},{l:"Enemy"},{l:"Cover",w:80},{l:"Notes"}]}>
+        {cards.map((c,i)=><tr key={c.id}>
+          <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{c.id}</td>
+          <td style={sTd}><Inp value={c.terrain} onChange={v=>uC(i,"terrain",v)} style={{minWidth:80}}/></td>
+          <td style={sTd}><Inp type="number" value={c.cc} onChange={v=>uC(i,"cc",v)} style={{width:44,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp value={c.pc} onChange={v=>uC(i,"pc",v)} style={{minWidth:44}}/></td>
+          <td style={sTd}><Inp value={c.cleared} onChange={v=>uC(i,"cleared",v)} style={{minWidth:44}}/></td>
+          <td style={sTd}><Inp value={c.us} onChange={v=>uC(i,"us",v)}/></td>
+          <td style={sTd}><Inp value={c.enemy} onChange={v=>uC(i,"enemy",v)}/></td>
+          <td style={sTd}><Inp value={c.cover} onChange={v=>uC(i,"cover",v)} style={{minWidth:70}}/></td>
+          <td style={sTd}><Inp value={c.notes} onChange={v=>uC(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB: Campaign Log
+     ═══════════════════════════════════════════ */
+  const renderCampaign = () => <div>
+    <Section title="Mission Results">
+      <button onClick={addMR} style={{...sBtn(false),marginBottom:6}}>+ Add Result</button>
+      {mResults.length>0 && <Table heads={[{l:"Mission",w:110},{l:"Result",w:100},{l:"Turns",w:50},{l:"FrKIA",w:52},{l:"EnKIA",w:52},{l:"Exp",w:80},{l:"Repl",w:50},{l:"Notes"}]}>
+        {mResults.map((r,i)=><tr key={r.id}>
+          <td style={{...sTd,color:C.accent}}>{r.mission}</td>
+          <td style={sTd}><Inp value={r.result} onChange={v=>uMR(i,"result",v)} style={{minWidth:90}}/></td>
+          <td style={sTd}><Inp type="number" value={r.turns} onChange={v=>uMR(i,"turns",v)} style={{width:44,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={r.frKIA} onChange={v=>uMR(i,"frKIA",v)} style={{width:46,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={r.enKIA} onChange={v=>uMR(i,"enKIA",v)} style={{width:46,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp value={r.exp} onChange={v=>uMR(i,"exp",v)} style={{minWidth:70}}/></td>
+          <td style={sTd}><Inp type="number" value={r.repl} onChange={v=>uMR(i,"repl",v)} style={{width:44,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp value={r.notes} onChange={v=>uMR(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>}
+    </Section>
+    <Section title="Replacements">
+      <button onClick={addRepl} style={{...sBtn(false),marginBottom:6}}>+ Add Replacement</button>
+      {repls.length>0 && <Table heads={[{l:"After",w:90},{l:"Green",w:50},{l:"VetRtn",w:54},{l:"Total",w:50},{l:"Unit",w:90},{l:"Steps",w:50},{l:"Exp",w:80},{l:"Notes"}]}>
+        {repls.map((r,i)=><tr key={r.id}>
+          <td style={sTd}><Inp value={r.after} onChange={v=>uRepl(i,"after",v)} style={{minWidth:80}}/></td>
+          <td style={sTd}><Inp type="number" value={r.green} onChange={v=>uRepl(i,"green",v)} style={{width:44,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={r.vet} onChange={v=>uRepl(i,"vet",v)} style={{width:48,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={r.total} onChange={v=>uRepl(i,"total",v)} style={{width:44,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp value={r.unit} onChange={v=>uRepl(i,"unit",v)} style={{minWidth:80}}/></td>
+          <td style={sTd}><Inp type="number" value={r.steps} onChange={v=>uRepl(i,"steps",v)} style={{width:44,textAlign:"center"}}/></td>
+          <td style={sTd}><Sel value={r.exp} onChange={v=>uRepl(i,"exp",v)} options={EXP} style={{minWidth:72}}/></td>
+          <td style={sTd}><Inp value={r.notes} onChange={v=>uRepl(i,"notes",v)}/></td>
+        </tr>)}
+      </Table>}
+    </Section>
+  </div>;
+
+  /* ═══════════════════════════════════════════
+     TAB ROUTER — render all, hide inactive (preserves focus)
+     ═══════════════════════════════════════════ */
+  const tabContent = {
+    Setup:renderSetup, Turn:renderTurn, Command:renderCommand, Units:renderUnits,
+    Combat:renderCombat, Enemy:renderEnemy, Weapons:renderWeapons, Comms:renderComms,
+    Map:renderMap, Journal:renderJournal, Campaign:renderCampaign,
+  };
+
+  /* ═══════════════════════════════════════════
+     MAIN LAYOUT
+     ═══════════════════════════════════════════ */
+  return (
+    <div style={{background:C.bg,color:C.text,minHeight:"100vh",fontFamily:"'JetBrains Mono','Fira Code','SF Mono',monospace",fontSize:12}}>
+      {/* HEADER */}
+      <div style={{background:C.panel,borderBottom:`1px solid ${C.border}`,padding:"10px 16px",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,zIndex:100}}>
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <span style={{fontSize:14,fontWeight:800,color:C.accent,letterSpacing:1}}>FIELDS OF FIRE</span>
+          <span style={{fontSize:10,color:C.textDim,borderLeft:`1px solid ${C.border}`,paddingLeft:10}}>{campaign} — {mission}</span>
+          <span style={{fontSize:10,color:C.accent}}>T{turn}</span>
+          <span style={{fontSize:10,color:actLvl==="No Contact"?C.green:actLvl==="Contact"?C.accent:C.red}}>{actLvl}</span>
+          {saveMsg && <span style={{fontSize:10,color:C.green,fontWeight:600,marginLeft:8}}>{saveMsg}</span>}
+        </div>
+        <div style={{display:"flex",gap:4,alignItems:"center"}}>
+          <button onClick={()=>setShowSaves(p=>!p)} style={{...sBtn(showSaves),fontSize:10}}>💾 Saves</button>
+          <button onClick={handleImport} style={{...sBtn(false),fontSize:10}}>⤒ Import</button>
+          <button onClick={handleExport} style={{...sBtn(true),fontSize:10}}>⤓ Export</button>
+        </div>
+      </div>
+      {/* SAVE SLOTS PANEL */}
+      {showSaves && <div style={{background:C.panel,borderBottom:`1px solid ${C.border}`,padding:"10px 16px"}}>
+        <div style={{fontSize:10,fontWeight:700,color:C.accent,textTransform:"uppercase",marginBottom:6}}>Save Slots (auto-saves every 5 min)</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
+          {[1,2,3,4,5,6].map(s=>{
+            const info=getSlotInfo(s);
+            return <div key={s} style={{background:C.inputBg,border:`1px solid ${C.border}`,borderRadius:4,padding:8}}>
+              <div style={{fontSize:11,fontWeight:600,color:C.textBright,marginBottom:4}}>Slot {s}</div>
+              {info?<>
+                <div style={{fontSize:10,color:C.textDim}}>{info.label}</div>
+                <div style={{fontSize:9,color:C.textDim}}>{info.date}</div>
+                <div style={{display:"flex",gap:4,marginTop:6}}>
+                  <button onClick={()=>loadSlot(s)} style={{...sBtn(false),padding:"2px 8px",fontSize:9}}>Load</button>
+                  <button onClick={()=>saveSlot(s)} style={{...sBtn(false),padding:"2px 8px",fontSize:9}}>Overwrite</button>
+                  <button onClick={()=>deleteSlot(s)} style={{...sBtn(false),padding:"2px 8px",fontSize:9,color:C.red}}>Delete</button>
+                </div>
+              </>:<>
+                <div style={{fontSize:10,color:C.textDim,fontStyle:"italic"}}>Empty</div>
+                <button onClick={()=>saveSlot(s)} style={{...sBtn(false),padding:"2px 8px",fontSize:9,marginTop:6}}>Save Here</button>
+              </>}
+            </div>;
+          })}
+        </div>
+      </div>}
+      {/* TAB BAR */}
+      <div style={{display:"flex",gap:1,padding:"6px 16px",background:C.panel,borderBottom:`1px solid ${C.border}`,overflowX:"auto",flexWrap:"nowrap"}}>
+        {TABS.map(t=><button key={t} onClick={()=>setTab(t)}
+          style={{...sBtn(tab===t),whiteSpace:"nowrap",padding:"4px 10px",fontSize:10,borderRadius:3,
+            borderBottom:tab===t?`2px solid ${C.accent}`:"2px solid transparent"}}>
+          {t}
+        </button>)}
+      </div>
+      {/* CONTENT — all tabs rendered, only active visible */}
+      <div style={{padding:16,maxWidth:1600,margin:"0 auto"}}>
+        {TABS.map(t=><div key={t} style={{display:t===tab?"block":"none"}}>
+          {tabContent[t]?.()}
+        </div>)}
+      </div>
+    </div>
+  );
+}
+
+
+ReactDOM.createRoot(document.getElementById('root')).render(<FoFTracker />);
+</script>
+</body>
+</html>
