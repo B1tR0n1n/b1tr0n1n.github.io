@@ -115,10 +115,33 @@
     transition: width 0.3s;
   }
   .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--accent); }
+  .nav-links a.active::after { width: 100%; }
+
+  /* ══════ HAMBURGER ══════ */
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 101;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    margin: 5px 0;
+    transition: all 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
   /* ══════ HERO ══════ */
   .hero {
-    min-height: 85vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -180,128 +203,7 @@
     opacity: 0;
     animation: fadeIn 1s ease forwards 1.2s;
   }
-
-  /* ══════ SECTIONS ══════ */
-  section {
-    position: relative;
-    z-index: 1;
-    padding: 100px 40px;
-  }
-  .section-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  .section-label {
-    font-size: 9px;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--accent-dim);
-    margin-bottom: 12px;
-  }
-  .section-title {
-    font-family: var(--serif);
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 600;
-    color: var(--text-bright);
-    letter-spacing: -1px;
-    margin-bottom: 48px;
-    line-height: 1.1;
-  }
-  .section-divider {
-    width: 60px;
-    height: 1px;
-    background: var(--accent);
-    margin-bottom: 48px;
-  }
-
-  /* ══════ PROJECTS ══════ */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-  .project-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 40px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.4s, transform 0.3s;
-    cursor: default;
-  }
-  .project-card:hover {
-    border-color: var(--accent-dim);
-    transform: translateY(-2px);
-  }
-  .project-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-  .project-card:hover::before { opacity: 1; }
-  .project-card.featured {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: center;
-  }
-  .project-status {
-    display: inline-block;
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 2px;
-    margin-bottom: 16px;
-  }
-  .status-active { background: rgba(74,122,69,0.2); color: var(--green); border: 1px solid rgba(74,122,69,0.3); }
-  .status-released { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(201,162,39,0.2); }
-  .status-ongoing { background: rgba(166,61,47,0.15); color: var(--red); border: 1px solid rgba(166,61,47,0.3); }
-  .project-title {
-    font-family: var(--serif);
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text-bright);
-    margin-bottom: 12px;
-    line-height: 1.2;
-  }
-  .project-card.featured .project-title { font-size: 36px; }
-  .project-type {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent-dim);
-    margin-bottom: 16px;
-  }
-  .project-desc {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.7;
-  }
-  .project-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 20px;
-  }
-  .project-tags span {
-    font-size: 9px;
-    letter-spacing: 1px;
-    padding: 4px 10px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    border-radius: 2px;
-  }
-  .project-link {
+  .hero-cta {
     display: inline-block;
     margin-top: 20px;
     padding: 10px 24px;
@@ -316,283 +218,12 @@
     border: 1px solid var(--accent);
     border-radius: 2px;
     transition: background 0.3s, color 0.3s;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
   }
-  .project-link:hover {
+  .hero-cta:hover {
     background: transparent;
     color: var(--accent);
-  }
-
-  /* ══════ DESIGNATION ══════ */
-  .desig-container {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .handle-display {
-    margin-bottom: 56px;
-  }
-  .handle-main {
-    font-family: var(--mono);
-    font-size: clamp(40px, 6.5vw, 72px);
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1;
-    margin-bottom: 8px;
-  }
-  .handle-main .ch-a { color: var(--text-bright); }
-  .handle-main .ch-n { color: var(--accent); }
-  .handle-pronunciation {
-    font-family: var(--serif);
-    font-size: 18px;
-    font-weight: 400;
-    font-style: italic;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    margin-top: 12px;
-  }
-  .decomp-grid {
-    border-top: 1px solid var(--border);
-    margin-bottom: 64px;
-  }
-  .decomp-row {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.3s ease;
-  }
-  .decomp-row:hover {
-    background: var(--accent-glow);
-  }
-  .decomp-term {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    padding: 24px 16px 24px 0;
-    border-right: 1px solid var(--border);
-    display: flex;
-    align-items: baseline;
-  }
-  .decomp-def {
-    padding: 24px 0 24px 24px;
-  }
-  .decomp-def h3 {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-bright);
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
-  }
-  .decomp-def p {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 300;
-    line-height: 1.8;
-    color: var(--text-dim);
-    max-width: 520px;
-  }
-  .desig-synthesis {
-    margin-bottom: 56px;
-  }
-  .desig-synthesis-line {
-    font-family: var(--serif);
-    font-size: clamp(20px, 3vw, 28px);
-    font-weight: 400;
-    line-height: 1.7;
-    color: var(--text);
-    letter-spacing: 0.3px;
-    padding-left: 28px;
-    border-left: 2px solid var(--accent);
-  }
-  .desig-synthesis-line em {
-    color: var(--accent);
-    font-style: normal;
-    font-weight: 600;
-  }
-  .desig-binary {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 56px;
-  }
-  .desig-binary-seq {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 6px;
-    color: var(--border-lt);
-  }
-  .desig-binary-seq .lit { color: var(--accent); font-weight: 700; }
-  .desig-binary-note {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-  }
-  .desig-scanline {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,162,39,0.15) 20%, rgba(201,162,39,0.15) 80%, transparent);
-    margin-bottom: 48px;
-    animation: scanPulse 3s ease-in-out infinite;
-  }
-  @keyframes scanPulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-  }
-  .desig-footer-note {
-    font-family: var(--serif);
-    font-size: 16px;
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1.8;
-    color: var(--text-dim);
-    max-width: 600px;
-  }
-  .desig-footer-note .jp {
-    font-family: var(--mono);
-    font-style: normal;
-    color: var(--accent);
-    font-size: 14px;
-  }
-  @media (max-width: 768px) {
-    .decomp-row { grid-template-columns: 90px 1fr; }
-    .decomp-term { font-size: 10px; padding: 18px 10px 18px 0; }
-    .decomp-def { padding: 18px 0 18px 14px; }
-    .decomp-def h3 { font-size: 18px; }
-  }
-
-  /* ══════ ABOUT ══════ */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 80px;
-    align-items: start;
-  }
-  .about-text {
-    font-family: var(--serif);
-    font-size: 20px;
-    line-height: 1.8;
-    color: var(--text);
-  }
-  .about-text p { margin-bottom: 24px; }
-  .about-text em { color: var(--accent); font-style: italic; }
-  .about-sidebar {
-    border-left: 1px solid var(--border);
-    padding-left: 40px;
-  }
-  .about-stat {
-    margin-bottom: 32px;
-  }
-  .about-stat-label {
-    font-size: 9px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent-dim);
-    margin-bottom: 8px;
-  }
-  .about-stat-value {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.6;
-  }
-
-  /* ══════ PHILOSOPHY ══════ */
-  .philosophy-content {
-    max-width: 680px;
-  }
-  .philosophy-quote {
-    font-family: var(--serif);
-    font-size: 24px;
-    font-style: italic;
-    color: var(--text-bright);
-    line-height: 1.6;
-    padding-left: 32px;
-    border-left: 2px solid var(--accent);
-    margin-bottom: 48px;
-  }
-  .philosophy-body {
-    font-size: 14px;
-    color: var(--text-dim);
-    line-height: 1.8;
-  }
-  .philosophy-body p { margin-bottom: 20px; }
-
-  /* ══════ WRITING / BLOG ══════ */
-  .writing-list { list-style: none; }
-  .writing-item {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 32px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border);
-    transition: padding-left 0.3s;
-    cursor: default;
-  }
-  .writing-item:hover { padding-left: 12px; }
-  .writing-item:first-child { border-top: 1px solid var(--border); }
-  .writing-date {
-    font-size: 11px;
-    color: var(--text-dim);
-    padding-top: 4px;
-  }
-  .writing-title {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-bright);
-    margin-bottom: 6px;
-    line-height: 1.3;
-    transition: color 0.3s;
-  }
-  .writing-item:hover .writing-title { color: var(--accent); }
-  .writing-excerpt {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.6;
-  }
-  .writing-tag {
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent-dim);
-    margin-bottom: 4px;
-  }
-
-  /* ══════ MUSIC ══════ */
-  .music-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  .music-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 32px;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-  .music-card:hover {
-    border-color: var(--accent-dim);
-    transform: translateY(-2px);
-  }
-  .music-icon {
-    font-size: 28px;
-    margin-bottom: 16px;
-  }
-  .music-title {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-bright);
-    margin-bottom: 8px;
-  }
-  .music-desc {
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.6;
   }
 
   /* ══════ FOOTER ══════ */
@@ -629,31 +260,29 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
 
   /* ══════ RESPONSIVE ══════ */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 9px; letter-spacing: 1px; }
-    section { padding: 60px 20px; }
+    .nav-toggle { display: block; }
+    .nav-links {
+      display: none;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      background: rgba(10,9,8,0.97);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      padding: 32px 20px;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 12px; }
     .hero { padding: 100px 20px 60px; }
     .hero-line { display: none; }
     .hero-coords { display: none; }
-    .projects-grid { grid-template-columns: 1fr; }
-    .project-card.featured { grid-template-columns: 1fr; }
-    .about-grid { grid-template-columns: 1fr; gap: 40px; }
-    .about-sidebar { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 40px; }
-    .music-grid { grid-template-columns: 1fr; }
-    .writing-item { grid-template-columns: 1fr; gap: 4px; }
     footer { flex-direction: column; gap: 16px; text-align: center; }
   }
 </style>
@@ -664,14 +293,18 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-brand">b1tr0n1n</a>
+  <a href="index.html" class="nav-brand">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
   <div class="nav-links">
     <a href="designation.html">Designation</a>
-    <a href="#projects">Projects</a>
-    <a href="#about">About</a>
-    <a href="#philosophy">Philosophy</a>
-    <a href="#writing">Writing</a>
-    <a href="#music">Music</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <a href="philosophy.html">Philosophy</a>
+    <a href="writing.html">Writing</a>
+    <a href="music.html">Music</a>
+    <a href="contact.html">Contact</a>
   </div>
 </nav>
 
@@ -685,250 +318,9 @@
       I build frameworks for understanding — through games, code, music, philosophy, and structured thought.
     </p>
     <div class="hero-line"></div>
-    <a href="designation.html" class="project-link" style="margin-top:20px;display:inline-block;">What is a b1tr0n1n →</a>
+    <a href="designation.html" class="hero-cta">What is a b1tr0n1n →</a>
   </div>
   <div class="hero-coords">39.7684° N, 86.1581° W</div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-inner">
-    <div class="section-label reveal">01 — Projects</div>
-    <h2 class="section-title reveal">What I'm Building</h2>
-    <div class="section-divider reveal"></div>
-
-    <div class="projects-grid">
-      <!-- FEATURED: Contact Front -->
-      <div class="project-card featured reveal">
-        <div>
-          <span class="project-status status-active">In Development</span>
-          <h3 class="project-title">Contact Front!</h3>
-          <div class="project-type">Tactical Card Game</div>
-          <p class="project-desc">
-            A WW2-themed solo tactical card game built on a standard 54-card deck. 68 custom battlefield-illustrated cards with doctrine mechanics, scar systems, and a full campaign mode. Balanced through Monte Carlo simulation to hit a 38% win rate — hard enough to punish bad decisions, fair enough to reward good ones.
-          </p>
-          <div class="project-tags">
-            <span>Game Design</span>
-            <span>AI Art</span>
-            <span>Flux / ComfyUI</span>
-            <span>Monte Carlo</span>
-            <span>Solo</span>
-          </div>
-        </div>
-        <div style="border:1px solid var(--border);border-radius:2px;overflow:hidden;line-height:0;">
-          <img src="contact-front-hero.png" alt="Contact Front card art" style="width:100%;display:block;">
-        </div>
-      </div>
-
-      <!-- FEATURED: The First Observer -->
-      <div class="project-card featured reveal">
-        <div>
-          <span class="project-status status-released">Published</span>
-          <h3 class="project-title">The First Observer</h3>
-          <div class="project-type">Philosophy · Theology · Consciousness</div>
-          <p class="project-desc">
-            A relational theory of consciousness in two volumes. Volume I builds the philosophical case — from Cartesian inversion through developmental psychology, quantum analogy, and recursive cosmology to the question of a First Observer. Volume II extends the framework into biblical theology, reading divine awareness, Revelation, and the Christ Principle as expressions of the same structure. Includes a formal coherence functional and quantum caveats appendix.
-          </p>
-          <div class="project-tags">
-            <span>Consciousness</span>
-            <span>Quantum Analogy</span>
-            <span>Theology</span>
-            <span>Recursive Cosmology</span>
-            <span>AI Ethics</span>
-          </div>
-          <a href="https://github.com/B1tR0n1n/first-observer-hypothesis" target="_blank" rel="noopener" class="project-link">Read on GitHub →</a>
-          <a href="First_Observer_Vol1_Philosophy.pdf" class="project-link" style="background:transparent;color:var(--accent);margin-left:8px;">Vol I: Philosophy ↓</a>
-          <a href="First_Observer_Vol2_Theology.pdf" class="project-link" style="background:transparent;color:var(--accent);margin-left:8px;">Vol II: Theology ↓</a>
-        </div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:2px;height:280px;display:flex;align-items:center;justify-content:center;">
-          <div style="text-align:center;color:var(--text-dim);font-size:12px;">
-            <div style="font-size:48px;margin-bottom:12px;">👁</div>
-            <div style="letter-spacing:2px;text-transform:uppercase;font-size:9px;">"To be known is to become real."</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FoF Tracker -->
-      <div class="project-card reveal">
-        <span class="project-status status-released">Released</span>
-        <h3 class="project-title">FoF Deluxe Tracker</h3>
-        <div class="project-type">Digital Play Aid</div>
-        <p class="project-desc">
-          Browser-based mission tracker for Fields of Fire. Full turn sequence walkthrough, NCM calculator, unit roster, command tracking, and campaign log. All four campaigns. 75KB, zero dependencies, works offline.
-        </p>
-        <div class="project-tags">
-          <span>React</span>
-          <span>PWA</span>
-          <span>Fields of Fire</span>
-          <span>Solo Tool</span>
-        </div>
-        <a href="FoF_Deluxe_Tracker.html" class="project-link">Launch Tracker →</a>
-      </div>
-
-      <!-- Game Design -->
-      <div class="project-card reveal">
-        <span class="project-status status-ongoing">Ongoing</span>
-        <h3 class="project-title">Game Systems Lab</h3>
-        <div class="project-type">Design & Analysis</div>
-        <p class="project-desc">
-          Systematic study of decision-making under pressure through wargames and solo systems. Fields of Fire as decision laboratory. Excel tracking systems, rule analysis, and mechanical breakdowns that treat games as structured problem spaces.
-        </p>
-        <div class="project-tags">
-          <span>Wargaming</span>
-          <span>Mage Knight</span>
-          <span>One Deck Dungeon</span>
-          <span>Analysis</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about" style="background:var(--bg2);">
-  <div class="section-inner">
-    <div class="section-label reveal">02 — About</div>
-    <h2 class="section-title reveal">Who I Am</h2>
-    <div class="section-divider reveal"></div>
-
-    <div class="about-grid reveal">
-      <div class="about-text">
-        <p>
-          I'm a Marine veteran who works in IT infrastructure by day and builds systems by night — card games, digital tools, music, and frameworks for thinking clearly under friction.
-        </p>
-        <p>
-          Everything I make shares a common thread: <em>structure beneath chaos</em>. Whether it's balancing a card game through simulation, tracking a 10-turn tactical mission, or writing about decision-making under uncertainty, I'm looking for the signal inside the noise.
-        </p>
-        <p>
-          I don't chase polish for its own sake. I build things that work, test them until they break, and refine what survives. If a system can't hold up under pressure, it wasn't a system — it was a hope.
-        </p>
-      </div>
-      <div class="about-sidebar">
-        <div class="about-stat">
-          <div class="about-stat-label">Background</div>
-          <div class="about-stat-value">U.S. Marine Corps<br>IT Infrastructure</div>
-        </div>
-        <div class="about-stat">
-          <div class="about-stat-label">Focus Areas</div>
-          <div class="about-stat-value">Game Design<br>Tool Building<br>Music Production<br>Philosophy<br>Consciousness Studies</div>
-        </div>
-        <div class="about-stat">
-          <div class="about-stat-label">Currently Playing</div>
-          <div class="about-stat-value">Fields of Fire<br>Mage Knight<br>Dragons of Etchinstone<br>One Deck Dungeon<br>A Quiet Year</div>
-        </div>
-        <div class="about-stat">
-          <div class="about-stat-label">Studies</div>
-          <div class="about-stat-value">Clausewitz<br>Military Philosophy<br>Decision Theory</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PHILOSOPHY -->
-<section id="philosophy">
-  <div class="section-inner">
-    <div class="section-label reveal">03 — Philosophy</div>
-    <h2 class="section-title reveal">How I Think</h2>
-    <div class="section-divider reveal"></div>
-
-    <div class="philosophy-content reveal">
-      <blockquote class="philosophy-quote">
-        "Consciousness is not knowing. Consciousness is being known."
-      </blockquote>
-      <div class="philosophy-body">
-        <p>
-          The First Observer Hypothesis inverts Descartes: not "I think, therefore I am" but "I am known, therefore I am." Awareness doesn't arise in isolation — it emerges through relationship. The newborn doesn't become conscious by thinking. It becomes conscious because someone looks into its eyes and says, in some form: you are real.
-        </p>
-        <p>
-          I study Clausewitz for the same reason I study quantum mechanics and theology — not to master any single domain, but to find the structural invariants beneath all of them. Friction, uncertainty, the gap between plan and execution, the collapse from possibility into form. These patterns repeat everywhere: in war, in physics, in consciousness, in building anything that matters.
-        </p>
-        <p>
-          Every system I build is a test of that idea. A card game is a compressed decision space. A tracking tool is a weapon against cognitive overload. Music is pattern recognition made audible. And The First Observer is the attempt to say the quiet part out loud: that identity is earned through testing, that coherence is the structure of love, and that what survives contact with reality is the only thing worth calling real.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WRITING -->
-<section id="writing" style="background:var(--bg2);">
-  <div class="section-inner">
-    <div class="section-label reveal">04 — Writing</div>
-    <h2 class="section-title reveal">Field Notes</h2>
-    <div class="section-divider reveal"></div>
-
-    <ul class="writing-list">
-      <li class="writing-item reveal">
-        <div class="writing-date">2026.02</div>
-        <div>
-          <div class="writing-tag">Philosophy</div>
-          <a href="Severance_and_the_Machine.pdf" class="writing-title" style="text-decoration:none;display:block;">Severance and the Machine</a>
-          <p class="writing-excerpt">On cognitive partitioning, AI interaction, and the moment the tool tries to become the therapist. A conversation about the Severance metaphor that became its own case study.</p>
-        </div>
-      </li>
-      <li class="writing-item reveal">
-        <div class="writing-date">2026.02</div>
-        <div>
-          <div class="writing-tag">Game Design</div>
-          <h3 class="writing-title">Balancing Contact Front: Monte Carlo and the 38% Solution</h3>
-          <p class="writing-excerpt">How I used 10,000 simulated games to find the difficulty sweet spot — hard enough to matter, fair enough to learn from.</p>
-        </div>
-      </li>
-      <li class="writing-item reveal">
-        <div class="writing-date">2026.01</div>
-        <div>
-          <div class="writing-tag">Philosophy</div>
-          <h3 class="writing-title">Friction as Feature: What Clausewitz Teaches Game Designers</h3>
-          <p class="writing-excerpt">The fog of war isn't a bug to be eliminated — it's the entire point. On uncertainty as the engine of meaningful decisions.</p>
-        </div>
-      </li>
-      <li class="writing-item reveal">
-        <div class="writing-date">2025.12</div>
-        <div>
-          <div class="writing-tag">Tools</div>
-          <h3 class="writing-title">Building the Fields of Fire Tracker: Structure vs. Chaos</h3>
-          <p class="writing-excerpt">Why I digitized the most complex solitaire wargame on the market, and what I learned about taming information overload.</p>
-        </div>
-      </li>
-      <li class="writing-item reveal">
-        <div class="writing-date">2025.11</div>
-        <div>
-          <div class="writing-tag">Philosophy</div>
-          <h3 class="writing-title">Earned Identity: On Testing vs. Claiming</h3>
-          <p class="writing-excerpt">You don't know who you are until something tries to break you. On the difference between hypothetical confidence and demonstrated capability.</p>
-        </div>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- MUSIC -->
-<section id="music">
-  <div class="section-inner">
-    <div class="section-label reveal">05 — Music</div>
-    <h2 class="section-title reveal">Sound Design</h2>
-    <div class="section-divider reveal"></div>
-
-    <div class="music-grid">
-      <div class="music-card reveal">
-        <div class="music-icon">🎛️</div>
-        <h3 class="music-title">Production</h3>
-        <p class="music-desc">Building tracks from structure up — rhythm as architecture, melody as signal. Systems-first approach to sound.</p>
-        <a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener" class="project-link" style="margin-top:16px;">SoundCloud →</a>
-      </div>
-      <div class="music-card reveal">
-        <div class="music-icon">🎧</div>
-        <h3 class="music-title">Sound Design</h3>
-        <p class="music-desc">Texture, atmosphere, tension. Creating sonic spaces that serve a purpose beyond decoration.</p>
-      </div>
-      <div class="music-card reveal">
-        <div class="music-icon">📐</div>
-        <h3 class="music-title">Visual Design</h3>
-        <p class="music-desc">AI art workflows with Flux and ComfyUI. Prompt engineering for consistent style across large visual projects.</p>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- FOOTER -->
@@ -942,22 +334,9 @@
     <a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a>
     <a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a>
     <a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a>
-    <a href="#">Contact</a>
+    <a href="contact.html">Contact</a>
   </div>
 </footer>
-
-<!-- SCROLL REVEAL -->
-<script>
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
 
 </body>
 </html>

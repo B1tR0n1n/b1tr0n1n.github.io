@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — b1tr0n1n</title>
+<meta name="description" content="Marine veteran. IT infrastructure. Systems thinker.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908; --bg2: #0f0e0b; --bg3: #161410; --panel: #1a1814;
+    --border: #2a2620; --border-lt: #3d362c;
+    --text: #c8bda0; --text-dim: #7a7060; --text-bright: #ede5d0;
+    --accent: #c9a227; --accent-dim: #8b7320; --accent-glow: rgba(201,162,39,0.12);
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 14px; line-height: 1.7; overflow-x: hidden; }
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.08; pointer-events: none; z-index: 0; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,9,8,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.3s; position: relative; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--accent); }
+  .nav-links a.active::after { width: 100%; }
+  .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 4px; z-index: 101; }
+  .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; transition: all 0.3s; }
+  .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  .page-content { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 120px 40px 100px; }
+  .section-label { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
+  .section-title { font-family: var(--serif); font-size: clamp(32px, 5vw, 52px); font-weight: 600; color: var(--text-bright); letter-spacing: -1px; margin-bottom: 48px; line-height: 1.1; }
+  .section-divider { width: 60px; height: 1px; background: var(--accent); margin-bottom: 48px; }
+
+  .about-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 80px; align-items: start; }
+  .about-text { font-family: var(--serif); font-size: 20px; line-height: 1.8; color: var(--text); }
+  .about-text p { margin-bottom: 24px; }
+  .about-text em { color: var(--accent); font-style: italic; }
+  .about-sidebar { border-left: 1px solid var(--border); padding-left: 40px; }
+  .about-stat { margin-bottom: 32px; }
+  .about-stat-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 8px; }
+  .about-stat-value { font-size: 13px; color: var(--text); line-height: 1.6; }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  footer { border-top: 1px solid var(--border); padding: 48px 40px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .footer-left { font-size: 11px; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-toggle { display: block; }
+    .nav-links { display: none; position: fixed; top: 56px; left: 0; right: 0; background: rgba(10,9,8,0.97); backdrop-filter: blur(20px); flex-direction: column; padding: 32px 20px; gap: 24px; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 12px; }
+    .page-content { padding: 100px 20px 60px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .about-sidebar { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 40px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="index.html" class="nav-brand">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links">
+    <a href="designation.html">Designation</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html" class="active">About</a>
+    <a href="philosophy.html">Philosophy</a>
+    <a href="writing.html">Writing</a>
+    <a href="music.html">Music</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="page-content">
+  <div class="section-label reveal">02 — About</div>
+  <h2 class="section-title reveal">Who I Am</h2>
+  <div class="section-divider reveal"></div>
+
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>
+        I'm a Marine veteran who works in IT infrastructure by day and builds systems by night — card games, digital tools, music, and frameworks for thinking clearly under friction.
+      </p>
+      <p>
+        Everything I make shares a common thread: <em>structure beneath chaos</em>. Whether it's balancing a card game through simulation, tracking a 10-turn tactical mission, or writing about decision-making under uncertainty, I'm looking for the signal inside the noise.
+      </p>
+      <p>
+        I don't chase polish for its own sake. I build things that work, test them until they break, and refine what survives. If a system can't hold up under pressure, it wasn't a system — it was a hope.
+      </p>
+    </div>
+    <div class="about-sidebar">
+      <div class="about-stat">
+        <div class="about-stat-label">Background</div>
+        <div class="about-stat-value">U.S. Marine Corps<br>IT Infrastructure</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-label">Focus Areas</div>
+        <div class="about-stat-value">Game Design<br>Tool Building<br>Music Production<br>Philosophy<br>Consciousness Studies</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-label">Currently Playing</div>
+        <div class="about-stat-value">Fields of Fire<br>Mage Knight<br>Dragons of Etchinstone<br>One Deck Dungeon<br>A Quiet Year</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-label">Studies</div>
+        <div class="about-stat-value">Clausewitz<br>Military Philosophy<br>Decision Theory</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">
+    <span style="color:var(--accent);font-weight:600;">b1tr0n1n</span>
+    <span style="margin:0 12px;color:var(--border);">—</span>
+    <span>Builder. Thinker. Maker.</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a>
+    <a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

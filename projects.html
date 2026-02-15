@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — b1tr0n1n</title>
+<meta name="description" content="Game design, tools, and systems by b1tr0n1n.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --panel: #1a1814;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --red: #a63d2f;
+    --green: #4a7a45;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 14px; line-height: 1.7; overflow-x: hidden; }
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.08; pointer-events: none; z-index: 0; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,9,8,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.3s; position: relative; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--accent); }
+  .nav-links a.active::after { width: 100%; }
+  .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 4px; z-index: 101; }
+  .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; transition: all 0.3s; }
+  .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ══════ PAGE ══════ */
+  .page-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 120px 40px 100px;
+  }
+  .section-label { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
+  .section-title { font-family: var(--serif); font-size: clamp(32px, 5vw, 52px); font-weight: 600; color: var(--text-bright); letter-spacing: -1px; margin-bottom: 48px; line-height: 1.1; }
+  .section-divider { width: 60px; height: 1px; background: var(--accent); margin-bottom: 48px; }
+
+  /* ══════ PROJECTS ══════ */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s, transform 0.3s;
+    cursor: default;
+  }
+  .project-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .project-status {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  .status-active { background: rgba(74,122,69,0.2); color: var(--green); border: 1px solid rgba(74,122,69,0.3); }
+  .status-released { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(201,162,39,0.2); }
+  .status-ongoing { background: rgba(166,61,47,0.15); color: var(--red); border: 1px solid rgba(166,61,47,0.3); }
+  .project-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .project-card.featured .project-title { font-size: 36px; }
+  .project-type {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 16px;
+  }
+  .project-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .project-tags span {
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 2px;
+  }
+  .project-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--bg);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .project-link:hover {
+    background: transparent;
+    color: var(--accent);
+  }
+  .project-link-ghost {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    transition: background 0.3s, color 0.3s;
+    margin-left: 8px;
+  }
+  .project-link-ghost:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* ══════ REVEAL ══════ */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ══════ FOOTER ══════ */
+  footer { border-top: 1px solid var(--border); padding: 48px 40px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .footer-left { font-size: 11px; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-toggle { display: block; }
+    .nav-links { display: none; position: fixed; top: 56px; left: 0; right: 0; background: rgba(10,9,8,0.97); backdrop-filter: blur(20px); flex-direction: column; padding: 32px 20px; gap: 24px; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 12px; }
+    .page-content { padding: 100px 20px 60px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="index.html" class="nav-brand">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links">
+    <a href="designation.html">Designation</a>
+    <a href="projects.html" class="active">Projects</a>
+    <a href="about.html">About</a>
+    <a href="philosophy.html">Philosophy</a>
+    <a href="writing.html">Writing</a>
+    <a href="music.html">Music</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="page-content">
+  <div class="section-label reveal">01 — Projects</div>
+  <h2 class="section-title reveal">What I'm Building</h2>
+  <div class="section-divider reveal"></div>
+
+  <div class="projects-grid">
+    <!-- FEATURED: Contact Front -->
+    <div class="project-card featured reveal">
+      <div>
+        <span class="project-status status-active">In Development</span>
+        <h3 class="project-title">Contact Front!</h3>
+        <div class="project-type">Tactical Card Game</div>
+        <p class="project-desc">
+          A WW2-themed solo tactical card game built on a standard 54-card deck. 68 custom battlefield-illustrated cards with doctrine mechanics, scar systems, and a full campaign mode. Balanced through Monte Carlo simulation to hit a 38% win rate — hard enough to punish bad decisions, fair enough to reward good ones.
+        </p>
+        <div class="project-tags">
+          <span>Game Design</span>
+          <span>AI Art</span>
+          <span>Flux / ComfyUI</span>
+          <span>Monte Carlo</span>
+          <span>Solo</span>
+        </div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:2px;overflow:hidden;line-height:0;">
+        <img src="contact-front-hero.png" alt="Contact Front card art" style="width:100%;display:block;">
+      </div>
+    </div>
+
+    <!-- FEATURED: The First Observer -->
+    <div class="project-card featured reveal">
+      <div>
+        <span class="project-status status-released">Published</span>
+        <h3 class="project-title">The First Observer</h3>
+        <div class="project-type">Philosophy · Theology · Consciousness</div>
+        <p class="project-desc">
+          A relational theory of consciousness in two volumes. Volume I builds the philosophical case — from Cartesian inversion through developmental psychology, quantum analogy, and recursive cosmology to the question of a First Observer. Volume II extends the framework into biblical theology, reading divine awareness, Revelation, and the Christ Principle as expressions of the same structure. Includes a formal coherence functional and quantum caveats appendix.
+        </p>
+        <div class="project-tags">
+          <span>Consciousness</span>
+          <span>Quantum Analogy</span>
+          <span>Theology</span>
+          <span>Recursive Cosmology</span>
+          <span>AI Ethics</span>
+        </div>
+        <a href="https://github.com/B1tR0n1n/first-observer-hypothesis" target="_blank" rel="noopener" class="project-link">Read on GitHub →</a>
+        <a href="First_Observer_Vol1_Philosophy.pdf" class="project-link-ghost">Vol I ↓</a>
+        <a href="First_Observer_Vol2_Theology.pdf" class="project-link-ghost">Vol II ↓</a>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:2px;height:280px;display:flex;align-items:center;justify-content:center;">
+        <div style="text-align:center;color:var(--text-dim);font-size:12px;">
+          <div style="font-size:48px;margin-bottom:12px;">👁</div>
+          <div style="letter-spacing:2px;text-transform:uppercase;font-size:9px;">"To be known is to become real."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FoF Tracker -->
+    <div class="project-card reveal">
+      <span class="project-status status-released">Released</span>
+      <h3 class="project-title">FoF Deluxe Tracker</h3>
+      <div class="project-type">Digital Play Aid</div>
+      <p class="project-desc">
+        Browser-based mission tracker for Fields of Fire. Full turn sequence walkthrough, NCM calculator, unit roster, command tracking, and campaign log. All four campaigns. 75KB, zero dependencies, works offline.
+      </p>
+      <div class="project-tags">
+        <span>React</span>
+        <span>PWA</span>
+        <span>Fields of Fire</span>
+        <span>Solo Tool</span>
+      </div>
+      <a href="FoF_Deluxe_Tracker.html" class="project-link">Launch Tracker →</a>
+    </div>
+
+    <!-- Game Design -->
+    <div class="project-card reveal">
+      <span class="project-status status-ongoing">Ongoing</span>
+      <h3 class="project-title">Game Systems Lab</h3>
+      <div class="project-type">Design & Analysis</div>
+      <p class="project-desc">
+        Systematic study of decision-making under pressure through wargames and solo systems. Fields of Fire as decision laboratory. Excel tracking systems, rule analysis, and mechanical breakdowns that treat games as structured problem spaces.
+      </p>
+      <div class="project-tags">
+        <span>Wargaming</span>
+        <span>Mage Knight</span>
+        <span>One Deck Dungeon</span>
+        <span>Analysis</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">
+    <span style="color:var(--accent);font-weight:600;">b1tr0n1n</span>
+    <span style="margin:0 12px;color:var(--border);">—</span>
+    <span>Builder. Thinker. Maker.</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a>
+    <a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
