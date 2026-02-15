@@ -322,6 +322,148 @@
     color: var(--accent);
   }
 
+  /* ══════ DESIGNATION ══════ */
+  .desig-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .handle-display {
+    margin-bottom: 56px;
+  }
+  .handle-main {
+    font-family: var(--mono);
+    font-size: clamp(40px, 6.5vw, 72px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .handle-main .ch-a { color: var(--text-bright); }
+  .handle-main .ch-n { color: var(--accent); }
+  .handle-pronunciation {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 12px;
+  }
+  .decomp-grid {
+    border-top: 1px solid var(--border);
+    margin-bottom: 64px;
+  }
+  .decomp-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s ease;
+  }
+  .decomp-row:hover {
+    background: var(--accent-glow);
+  }
+  .decomp-term {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 24px 16px 24px 0;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+  }
+  .decomp-def {
+    padding: 24px 0 24px 24px;
+  }
+  .decomp-def h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  .decomp-def p {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 520px;
+  }
+  .desig-synthesis {
+    margin-bottom: 56px;
+  }
+  .desig-synthesis-line {
+    font-family: var(--serif);
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text);
+    letter-spacing: 0.3px;
+    padding-left: 28px;
+    border-left: 2px solid var(--accent);
+  }
+  .desig-synthesis-line em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+  .desig-binary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+  .desig-binary-seq {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--border-lt);
+  }
+  .desig-binary-seq .lit { color: var(--accent); font-weight: 700; }
+  .desig-binary-note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+  .desig-scanline {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,162,39,0.15) 20%, rgba(201,162,39,0.15) 80%, transparent);
+    margin-bottom: 48px;
+    animation: scanPulse 3s ease-in-out infinite;
+  }
+  @keyframes scanPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+  .desig-footer-note {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 600px;
+  }
+  .desig-footer-note .jp {
+    font-family: var(--mono);
+    font-style: normal;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .decomp-row { grid-template-columns: 90px 1fr; }
+    .decomp-term { font-size: 10px; padding: 18px 10px 18px 0; }
+    .decomp-def { padding: 18px 0 18px 14px; }
+    .decomp-def h3 { font-size: 18px; }
+  }
+
   /* ══════ ABOUT ══════ */
   .about-grid {
     display: grid;
@@ -524,6 +666,7 @@
 <nav>
   <a href="#" class="nav-brand">b1tr0n1n</a>
   <div class="nav-links">
+    <a href="#designation">Designation</a>
     <a href="#projects">Projects</a>
     <a href="#about">About</a>
     <a href="#philosophy">Philosophy</a>
@@ -544,6 +687,67 @@
     <div class="hero-line"></div>
   </div>
   <div class="hero-coords">39.7684° N, 86.1581° W</div>
+</section>
+
+<!-- DESIGNATION -->
+<section id="designation" style="background:var(--bg2);">
+  <div class="section-inner desig-container">
+    <div class="section-label reveal">00 — Designation</div>
+    <h2 class="section-title reveal">What Is a b1tr0n1n</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="handle-display reveal">
+      <div class="handle-main">
+        <span class="ch-a">b</span><span class="ch-n">1</span><span class="ch-a">tr</span><span class="ch-n">0</span><span class="ch-a">n</span><span class="ch-n">1</span><span class="ch-a">n</span>
+      </div>
+      <div class="handle-pronunciation">/ bit · rō · nin /</div>
+    </div>
+
+    <div class="decomp-grid reveal">
+      <div class="decomp-row">
+        <div class="decomp-term">bit</div>
+        <div class="decomp-def">
+          <h3>The Irreducible Unit</h3>
+          <p>A zero or a one. Not data — the quantum of decision. Every complex system reduces to this: a single choice made under constraint.</p>
+        </div>
+      </div>
+      <div class="decomp-row">
+        <div class="decomp-term">tron</div>
+        <div class="decomp-def">
+          <h3>The Instrument</h3>
+          <p>From Greek τρόν — a suffix denoting instrument or device. Not a passive container of information, but a mechanism that acts on it. Agency through structure.</p>
+        </div>
+      </div>
+      <div class="decomp-row">
+        <div class="decomp-term">rōnin</div>
+        <div class="decomp-def">
+          <h3>The Unmastered</h3>
+          <p>浪人 — a warrior without a lord. Not a deserter. A discipline carrier whose allegiance is to competence and code, not credential or institution.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="desig-synthesis reveal">
+      <div class="desig-synthesis-line">
+        A <em>decision-instrument</em> without a master,<br>
+        operating at the bit level,<br>
+        still bound by the code.
+      </div>
+    </div>
+
+    <div class="desig-binary reveal">
+      <span class="desig-binary-seq">
+        b<span class="lit">1</span>tr<span class="lit">0</span>n<span class="lit">1</span>n
+      </span>
+      <span class="desig-binary-note">1 — 0 — 1 &nbsp;/&nbsp; a signal that reads the same in both directions</span>
+    </div>
+
+    <div class="desig-scanline reveal"></div>
+
+    <div class="desig-footer-note reveal">
+      <p><span class="jp">浪人</span> — literally <em>wave person.</em> Someone adrift on waves. Sound is waveform. Signal is waveform. The name carries what it means.</p>
+    </div>
+  </div>
 </section>
 
 <!-- PROJECTS -->
