@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Music — b1tr0n1n</title>
-<meta name="description" content="Sound design, production, and visual design by b1tr0n1n.">
+<meta name="description" content="Music production by b1tr0n1n. Listen on SoundCloud.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 <style>
@@ -16,19 +16,27 @@
   .nav-brand{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;text-decoration:none}
   .nav-links{display:flex;gap:32px}.nav-links a{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s;position:relative}.nav-links a:hover{color:var(--accent)}.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s}.nav-links a:hover::after{width:100%}.nav-links a.active{color:var(--accent)}.nav-links a.active::after{width:100%}
   .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;z-index:101}.nav-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:all 0.3s}.nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.nav-toggle.open span:nth-child(2){opacity:0}.nav-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-  .page-content{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:120px 40px 100px}
+
+  .page-content{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:120px 40px 100px}
   .section-label{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:12px}
   .section-title{font-family:var(--serif);font-size:clamp(32px,5vw,52px);font-weight:600;color:var(--text-bright);letter-spacing:-1px;margin-bottom:48px;line-height:1.1}
   .section-divider{width:60px;height:1px;background:var(--accent);margin-bottom:48px}
-  .music-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-  .music-card{background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:32px;transition:border-color 0.3s,transform 0.3s}.music-card:hover{border-color:var(--accent-dim);transform:translateY(-2px)}
-  .music-icon{font-size:28px;margin-bottom:16px}
-  .music-title{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
-  .music-desc{font-size:12px;color:var(--text-dim);line-height:1.6}
-  .project-link{display:inline-block;margin-top:16px;padding:10px 24px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-decoration:none;color:var(--bg);background:var(--accent);border:1px solid var(--accent);border-radius:2px;transition:background 0.3s,color 0.3s}.project-link:hover{background:transparent;color:var(--accent)}
+
+  .music-intro{font-family:var(--serif);font-size:20px;line-height:1.8;color:var(--text);max-width:640px;margin-bottom:48px}
+  .music-intro em{color:var(--accent);font-style:italic}
+
+  .player-container{background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:24px;margin-bottom:32px}
+  .player-container iframe{border:none;border-radius:2px}
+
+  .music-meta{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
+  .meta-block{}
+  .meta-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:8px}
+  .meta-value{font-size:13px;color:var(--text);line-height:1.7}
+  .meta-value a{color:var(--accent);text-decoration:none;transition:color 0.3s}.meta-value a:hover{color:var(--text-bright)}
+
   .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}.reveal.visible{opacity:1;transform:translateY(0)}
   footer{border-top:1px solid var(--border);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.footer-left{font-size:11px;color:var(--text-dim)}.footer-links{display:flex;gap:24px}.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--accent)}
-  @media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:block}.nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}.page-content{padding:100px 20px 60px}.music-grid{grid-template-columns:1fr}footer{flex-direction:column;gap:16px;text-align:center}}
+  @media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:block}.nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}.page-content{padding:100px 20px 60px}.music-meta{grid-template-columns:1fr}footer{flex-direction:column;gap:16px;text-align:center}}
 </style>
 </head>
 <body>
@@ -43,24 +51,26 @@
 
 <div class="page-content">
   <div class="section-label reveal">05 — Music</div>
-  <h2 class="section-title reveal">Sound Design</h2>
+  <h2 class="section-title reveal">Production</h2>
   <div class="section-divider reveal"></div>
-  <div class="music-grid">
-    <div class="music-card reveal">
-      <div class="music-icon">🎛️</div>
-      <h3 class="music-title">Production</h3>
-      <p class="music-desc">Building tracks from structure up — rhythm as architecture, melody as signal. Systems-first approach to sound.</p>
-      <a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener" class="project-link">SoundCloud →</a>
+
+  <div class="music-intro reveal">
+    <p>Music is structure made audible. Rhythm as architecture, melody as signal, texture as atmosphere. I produce the same way I build everything else — <em>systems first</em>, then feel.</p>
+  </div>
+
+  <div class="player-container reveal">
+    <iframe width="100%" height="450" scrolling="no" frameborder="no" allow="autoplay"
+      src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/d3liverymanpro&color=%23c9a227&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&show_artwork=true&visual=false"></iframe>
+  </div>
+
+  <div class="music-meta reveal">
+    <div class="meta-block">
+      <div class="meta-label">Listen</div>
+      <div class="meta-value"><a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud → b1tr0n1n</a></div>
     </div>
-    <div class="music-card reveal">
-      <div class="music-icon">🎧</div>
-      <h3 class="music-title">Sound Design</h3>
-      <p class="music-desc">Texture, atmosphere, tension. Creating sonic spaces that serve a purpose beyond decoration.</p>
-    </div>
-    <div class="music-card reveal">
-      <div class="music-icon">📐</div>
-      <h3 class="music-title">Visual Design</h3>
-      <p class="music-desc">AI art workflows with Flux and ComfyUI. Prompt engineering for consistent style across large visual projects.</p>
+    <div class="meta-block">
+      <div class="meta-label">Approach</div>
+      <div class="meta-value">Pattern recognition made audible. Building from structure up — rhythm, then harmonic framework, then texture and atmosphere.</div>
     </div>
   </div>
 </div>
