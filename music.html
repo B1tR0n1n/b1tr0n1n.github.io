@@ -36,7 +36,7 @@
   .meta-value{font-size:13px;color:var(--text);line-height:1.7}
   .meta-value a{color:var(--accent);text-decoration:none;transition:color 0.3s}.meta-value a:hover{color:var(--text-bright)}
 
-  .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+  .reveal{opacity:1;transform:none;transition:opacity 0.6s ease,transform 0.6s ease}.js-loaded .reveal{opacity:0;transform:translateY(30px)}.js-loaded .reveal.visible{opacity:1;transform:translateY(0)}.reveal.no-js{opacity:1;transform:none}
   footer{border-top:1px solid var(--border);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.footer-left{font-size:11px;color:var(--text-dim)}.footer-links{display:flex;gap:24px}.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--accent)}
   @media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:block}.nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}.page-content{padding:100px 20px 60px}.music-meta{grid-template-columns:1fr}footer{flex-direction:column;gap:16px;text-align:center}}
 </style>
@@ -83,7 +83,7 @@
 </footer>
 
 <script>
-const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.body.classList.add("js-loaded");const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
