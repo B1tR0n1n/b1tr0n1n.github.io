@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 21 Precepts — b1tr0n1n</title>
+<meta name="description" content="The Way of Structural Clarity — 21 principles for seeing purpose in the pattern.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0908;--bg2:#0f0e0b;--bg3:#161410;--panel:#1a1814;--border:#2a2620;--border-lt:#3d362c;--text:#c8bda0;--text-dim:#7a7060;--text-bright:#ede5d0;--accent:#c9a227;--accent-dim:#8b7320;--accent-glow:rgba(201,162,39,0.12);--mono:'JetBrains Mono','Fira Code',monospace;--serif:'Cormorant Garamond','Georgia',serif; }
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.7;overflow-x:hidden}::selection{background:var(--accent);color:var(--bg)}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-lt);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.08;pointer-events:none;z-index:0}
+  nav{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(10,9,8,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 40px;z-index:1000;gap:32px}
+  .nav-brand{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);text-decoration:none;letter-spacing:2px}
+  .nav-links{display:flex;gap:24px;margin-left:auto}
+  .nav-links a{font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.3s}
+  .nav-links a:hover,.nav-links a.active{color:var(--accent)}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;flex-direction:column;gap:4px}
+  .nav-toggle span{display:block;width:20px;height:1.5px;background:var(--text);transition:all 0.3s}
+
+  .page-content{max-width:720px;margin:0 auto;padding:120px 40px 80px;position:relative;z-index:1}
+
+  .article-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  .article-title{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--text-bright);line-height:1.2;margin-bottom:8px}
+  .article-subtitle{font-family:var(--serif);font-size:16px;font-style:italic;color:var(--text-dim);margin-bottom:24px}
+  .article-meta{font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:16px}
+  .article-meta a{color:var(--accent);text-decoration:none;transition:color 0.3s}
+  .article-meta a:hover{color:var(--text-bright)}
+  .article-divider{width:60px;height:1px;background:var(--accent);margin:32px 0}
+
+  .article-body p{margin-bottom:20px;line-height:1.8;font-size:14px}
+  .article-body em{color:var(--accent);font-style:normal}
+
+  .precepts-list{list-style:none;padding:0;margin:32px 0}
+  .precept{display:grid;grid-template-columns:36px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);transition:border-color 0.3s}
+  .precept:hover{border-color:var(--accent-dim)}
+  .precept:last-child{border-bottom:none}
+  .precept-num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);padding-top:2px}
+  .precept-text{font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.7}
+
+  .back-link{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:1.5px;text-transform:uppercase;margin-top:48px;transition:color 0.3s}
+  .back-link:hover{color:var(--accent)}
+
+  footer{padding:40px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text-dim);position:relative;z-index:1}
+  footer a{color:var(--text-dim);text-decoration:none;transition:color 0.3s}
+  footer a:hover{color:var(--accent)}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  @media (max-width: 768px) {
+    nav{padding:0 20px}
+    .nav-toggle{display:flex}
+    .nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}
+    .nav-links.open{display:flex}
+    .nav-links a{font-size:12px}
+    .page-content{padding:100px 20px 60px}
+    .article-title{font-size:28px}
+    footer{flex-direction:column;gap:16px;text-align:center}
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="index.html" class="nav-brand">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="designation.html">Designation</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html">About</a>
+    <a href="philosophy.html">Philosophy</a>
+    <a href="writing.html" class="active">Writing</a>
+    <a href="music.html">Music</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="page-content">
+  <div class="article-tag reveal">Philosophy</div>
+  <h1 class="article-title reveal">The 21 Precepts</h1>
+  <div class="article-subtitle reveal">The Way of Structural Clarity</div>
+  <div class="article-meta reveal">
+    <span>2026.02</span>
+    <span>·</span>
+    <a href="21_precepts.pdf" download>Download PDF ↓</a>
+  </div>
+  <div class="article-divider reveal"></div>
+
+  <div class="article-body reveal">
+    <p>
+      Miyamoto Musashi wrote the Dokkōdō — twenty-one precepts — a week before he died in Reigandō cave. No students to impress. No enemies to defeat. Just a man distilling sixty years of combat, isolation, and observation into final instructions to himself. Everything else burned away.
+    </p>
+    <p>
+      These are not Musashi's precepts. They are mine — written not at the end of a life, but in the middle of one, where the harder work happens. Where purpose doesn't announce itself but has to be recognized in the pattern of what you already do.
+    </p>
+    <p>
+      They are a mirror. A daily recalibration. A refusal to drift.
+    </p>
+  </div>
+
+  <ol class="precepts-list reveal">
+    <li class="precept">
+      <span class="precept-num">01</span>
+      <span class="precept-text">The system is the purpose. Stop searching for what you are already doing.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">02</span>
+      <span class="precept-text">Build only what reveals the truth beneath the surface.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">03</span>
+      <span class="precept-text">Do not mistake the medium for the discipline. The domain changes. The operation does not.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">04</span>
+      <span class="precept-text">Precision is not perfection. Refine relentlessly, but ship what works.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">05</span>
+      <span class="precept-text">Strip every system to its essential logic before you rebuild it.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">06</span>
+      <span class="precept-text">You owe no one an explanation for the shape of your Way.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">07</span>
+      <span class="precept-text">Earned identity cannot be taken. Assigned identity was never yours.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">08</span>
+      <span class="precept-text">Do not confuse recognition with validation. One is a signal. The other is a dependency.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">09</span>
+      <span class="precept-text">Friction is the operating environment. Build for it, not against it.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">10</span>
+      <span class="precept-text">What you build teaches more than what you say. Let the work speak first.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">11</span>
+      <span class="precept-text">Do not collect tools beyond what you will deploy. Depth defeats breadth.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">12</span>
+      <span class="precept-text">Test every assumption. Convention is inherited behavior that may not survive contact with your reality.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">13</span>
+      <span class="precept-text">If it does not hold under pressure, it was never true. Stress-test everything, including your own beliefs.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">14</span>
+      <span class="precept-text">Do not soften your work to make it comfortable. Clarity serves; comfort flatters.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">15</span>
+      <span class="precept-text">The gap between your values and your actions is the only failure that matters.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">16</span>
+      <span class="precept-text">Isolation is not exile. Solitude is where the signal is cleanest.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">17</span>
+      <span class="precept-text">You do not need permission to begin. You do not need approval to continue.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">18</span>
+      <span class="precept-text">Every structure you make visible is a gift to the next mind that encounters it.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">19</span>
+      <span class="precept-text">Do not depend on momentum. Discipline operates in the absence of inspiration.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">20</span>
+      <span class="precept-text">Honor what is greater than you without surrendering your responsibility to act.</span>
+    </li>
+    <li class="precept">
+      <span class="precept-num">21</span>
+      <span class="precept-text">Never stray from the Way. Not when it is hard. Not when it is invisible to others. Not ever.</span>
+    </li>
+  </ol>
+
+  <a href="writing.html" class="back-link reveal">← Back to Field Notes</a>
+</div>
+
+<footer>
+  <span>© 2026 b1tr0n1n</span>
+  <div>
+    <a href="https://github.com/B1tR0n1n" target="_blank">GitHub</a> ·
+    <a href="https://boardgamegeek.com/user/b1tr0n1n" target="_blank">BGG</a> ·
+    <a href="https://soundcloud.com/d3liverymanpro" target="_blank">SoundCloud</a>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
