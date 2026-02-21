@@ -91,37 +91,216 @@ const CAMPAIGNS = {
 };
 
 const MD = {
-  "M1:Trévières":{type:"Offensive",turns:10,vis:"Daylight +0",rows:3,cols:4,tactics:"Delib Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
-  "M2:Cerisy":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"Fallschirmjäger",usG:"–4",enG:"–4"},
-  "M3:StGeorges":{type:"Patrol",turns:10,vis:"Moon +2-5",rows:4,cols:5,tactics:"Delib Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
-  "M4:Hill192":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:5,tactics:"Delib Def",eExp:"Veteran",eType:"Grenadier",usG:"–4",enG:"–4"},
-  "M5:StGermain":{type:"Patrol",turns:10,vis:"Moon +2-5",rows:4,cols:6,tactics:"Delib Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
-  "M6:Vire":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4"},
-  "M7:Tinchebray":{type:"Offensive",turns:10,vis:"Daylight +0",rows:6,cols:4,tactics:"Delay Def",eExp:"Green",eType:"Grenadier",usG:"–4",enG:"–4"},
-  "M1:Hill983Aug":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M2:Hill773":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M3:Hill983Sep":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M4:Hill894":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Hasty Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M5:Hill1024Atk":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M6:Hill1024Def":{type:"Defensive",turns:10,vis:"Moon +2-5",rows:4,cols:4,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M7:Hill867":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Hasty Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M8:Hill1040":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M1:Cloverleaf":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M2:NaktongLine":{type:"Defensive",turns:10,vis:"Day/Moon",rows:5,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M3:NKPA-I":{type:"Defensive",turns:10,vis:"Moon",rows:3,cols:5,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M4:NKPA-II":{type:"Defensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M5:TFBradley":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M6:Hill201":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M7:Breakout":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3"},
-  "M1:AlaMoana-I":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"VC",usG:"–4",enG:"–3"},
-  "M2:AlaMoana-II":{type:"Defensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Assault",eExp:"Line",eType:"VC",usG:"–4",enG:"–3"},
-  "M3:HoBoWoods":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Hasty Def",eExp:"Line",eType:"VC/NVA",usG:"–4",enG:"–3"},
-  "M4:Horseshoe":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:4,tactics:"Delib Def",eExp:"Veteran",eType:"VC/NVA",usG:"–4",enG:"–3"},
-  "M5:Yellowstone":{type:"Defensive",turns:10,vis:"Moon",rows:5,cols:5,tactics:"Assault",eExp:"Line",eType:"NVA",usG:"–4",enG:"–3"},
-  "M6:WarZoneC":{type:"Patrol",turns:10,vis:"Daylight +0",rows:4,cols:5,tactics:"Hasty Def",eExp:"Line",eType:"VC/NVA",usG:"–4",enG:"–3"},
-  "M7A:ToanThangA":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Assault",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3"},
-  "M7B:ToanThangB":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Assault",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3"},
-  "M8:MoleCity":{type:"Defensive",turns:10,vis:"Moon",rows:5,cols:5,tactics:"Assault",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3"},
+  "M1:Trévières":{type:"Offensive",turns:10,vis:"Daylight +0",rows:3,cols:4,tactics:"Delib Def",eExp:"Line",eType:"Grenadier",usG:"–4",enG:"–4",
+    attach:["ArtyFO"],bnFM:false,
+    unitAmmo:{"MtrSec":4,"1/Mtr":4,"2/Mtr":4,"3/Mtr":4,".50cal":4,"1/LMG":4,"2/LMG":4,"1/AT":3,"2/AT":3,"3/AT":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:2,md:1,cd:1,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:2,md:1,cd:1,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"}},
+  "M2:Cerisy":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"Fallschirmjäger",usG:"–4",enG:"–4",
+    attach:["ArtyFO","MtrFO"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/Mtr":4,"2/Mtr":4,"3/Mtr":4,".50cal":4,"1/LMG":4,"2/LMG":4,"1/AT":3,"2/AT":3,"3/AT":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},
+        {ag:"Bn Mortar Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mortar Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1},
+        {ag:"Rgt Cannon Co (105mm)",t:"HE",mod:"–4",ad:3,md:3,cd:2,m:3},{ag:"Rgt Cannon Co (105mm)",t:"WP",mod:"–4",ad:3,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"}},
+  "M3:StGeorges":{type:"Patrol",turns:10,vis:"Moon +2-5",rows:4,cols:5,tactics:"Delib Def",eExp:"Veteran",eType:"Fallschirmjäger",usG:"–4",enG:"–4",
+    attach:["ArtyFO","MtrFO","HMG1","HMG2"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/Mtr":4,"2/Mtr":4,"3/Mtr":4,".50cal":4,"1/LMG":4,"2/LMG":4,"1/AT":3,"2/AT":3,"3/AT":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"Illum",mod:"N/A",ad:3,md:2,cd:2,m:6},
+        {ag:"Bn Mortar Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mortar Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1},{ag:"Bn Mortar Plt (81mm)",t:"Illum",mod:"N/A",ad:2,md:3,cd:2,m:4},
+        {ag:"Rgt Cannon Co (105mm)",t:"HE",mod:"–4",ad:3,md:3,cd:2,m:3},{ag:"Rgt Cannon Co (105mm)",t:"WP",mod:"–4",ad:3,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"}},
+  "M4:Hill192":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:5,tactics:"Delib Def",eExp:"Veteran",eType:"Fallschirmjäger",usG:"–4",enG:"–4",
+    attach:["ArtyFO","MtrFO","HMG1","HMG2"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/Mtr":4,"2/Mtr":4,"3/Mtr":4,".50cal":4,"1/LMG":4,"2/LMG":4,"1/AT":3,"2/AT":3,"3/AT":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"TOT",mod:"–7",ad:3,md:2,cd:1,m:1},
+        {ag:"Bn Mortar Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mortar Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1},
+        {ag:"Rgt Cannon Co (105mm)",t:"HE",mod:"–4",ad:3,md:3,cd:2,m:3},{ag:"Rgt Cannon Co (105mm)",t:"WP",mod:"–4",ad:3,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"}},
+  "M5:StGermain":{type:"Patrol",turns:10,vis:"Moon +2-5",rows:4,cols:6,tactics:"Delib Def",eExp:"Veteran",eType:"Fallschirmjäger",usG:"–4",enG:"–4",
+    attach:["ArtyFO","MtrFO","HMG1","HMG2"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/Mtr":4,"2/Mtr":4,"3/Mtr":4,".50cal":4,"1/LMG":4,"2/LMG":4,"1/AT":3,"2/AT":3,"3/AT":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"Illum",mod:"N/A",ad:3,md:2,cd:2,m:6},
+        {ag:"Bn Mortar Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mortar Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1},{ag:"Bn Mortar Plt (81mm)",t:"Illum",mod:"N/A",ad:2,md:3,cd:2,m:4},
+        {ag:"Rgt Cannon Co (105mm)",t:"HE",mod:"–4",ad:3,md:3,cd:2,m:3},{ag:"Rgt Cannon Co (105mm)",t:"WP",mod:"–4",ad:3,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"}},
+  "M6:Vire":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Line",eType:"Fallschirmjäger",usG:"–4",enG:"–4",
+    attach:["ArtyFO","MtrFO","HMG1","HMG2","Engineers","Tank"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/Mtr":4,"2/Mtr":4,"3/Mtr":4,".50cal":4,"1/LMG":4,"2/LMG":4,"1/AT":3,"2/AT":3,"3/AT":3,"Tank":5},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"TOT",mod:"–7",ad:3,md:2,cd:1,m:1},
+        {ag:"Bn Mortar Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mortar Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1},
+        {ag:"Rgt Cannon Co (105mm)",t:"HE",mod:"–4",ad:3,md:3,cd:2,m:3},{ag:"Rgt Cannon Co (105mm)",t:"WP",mod:"–4",ad:3,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"}},
+  "M7:Tinchebray":{type:"Offensive",turns:10,vis:"Daylight +0",rows:6,cols:4,tactics:"Delay Def",eExp:"Green",eType:"Fallschirmjäger",usG:"–4",enG:"–4",
+    attach:["ArtyFO","MtrFO","HMG1","HMG2","Engineers","Tank"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/Mtr":4,"2/Mtr":4,"3/Mtr":4,".50cal":4,"1/LMG":4,"2/LMG":4,"1/AT":3,"2/AT":3,"3/AT":3,"Tank":5},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"TOT",mod:"–7",ad:3,md:2,cd:1,m:1},
+        {ag:"Bn Mortar Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mortar Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1},
+        {ag:"Rgt Cannon Co (105mm)",t:"HE",mod:"–4",ad:3,md:3,cd:2,m:3},{ag:"Rgt Cannon Co (105mm)",t:"WP",mod:"–4",ad:3,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"}},
+  /* --- Heartbreak Ridge (Korea, Sep–Oct 1951) --- */
+  /* TO&E: CO HQ=Green, XO=Veteran, 1SGT=Veteran, MtrSec=Line, .50cal=Line, 1/57RCL=Vet, 2/57RCL=Line, 3/57RCL=Green */
+  /* 1PLT=Line, 2PLT=Green, 3PLT=Green. All missions: ArtyFO + MtrFO + 75mm RCL Teams */
+  "M1:Hill983Aug":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:2},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  "M2:Hill773":{type:"Offensive",turns:10,vis:"Daylight, Fog +2",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:2},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  "M3:Hill983Sep":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","FAC"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,fd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,fd:3,pd:2,m:2},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,fd:3,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,fd:2,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,fd:2,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,fd:2,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,fd:2,pd:2,m:2},
+        {ag:"Air Strike",t:"Napalm",mod:"–8",ad:2,md:0,cd:2,fd:3,pd:0,m:3}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  "M4:Hill894":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:3,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","Tank"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3,"Tank":5},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:2},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  "M5:Hill1024Atk":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Hasty Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:2},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  "M6:Hill1024Def":{type:"Defensive",turns:12,vis:"Night +4",rows:4,cols:4,tactics:"Assault",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:2},
+        {ag:"Div Arty 105mm",t:"Illum",mod:"N/A",ad:4,md:3,cd:3,pd:2,m:5},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"Illum",mod:"N/A",ad:3,md:4,cd:3,pd:2,m:6}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  "M7:Hill867":{type:"Offensive",turns:10,vis:"Daylight, Rain +2",rows:4,cols:3,tactics:"Hasty Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","Tank"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3,"Tank":5},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:2},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  "M8:Hill1040":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delay Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL"],bnFM:true,
+    unitAmmo:{"MtrSec":4,".50cal":5,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":5,"2/W/1":3,"1/W/2":5,"2/W/2":3,"1/W/3":5,"2/W/3":3},
+    fm:[{ag:"Div Arty 105mm",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:5},{ag:"Div Arty 105mm",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:2},
+        {ag:"Div Arty 155mm",t:"HE",mod:"–6",ad:3,md:2,cd:1,pd:0,m:2},
+        {ag:"Rgt Mtr Co 4.2\"",t:"HE",mod:"–4",ad:3,md:4,cd:3,pd:2,m:3},{ag:"Rgt Mtr Co 4.2\"",t:"WP",mod:"–4",ad:3,md:4,cd:3,pd:2,m:2},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Veteran","1ST SGT (Staff)":"Veteran"}},
+  /* --- Naktong River (Korea, Aug–Sep 1950) --- */
+  /* TO&E: CO HQ=Line, XO=Line, 1SGT=Veteran, PLTs=Green. All missions: ArtyFO, MtrFO, 75mm RCL */
+  "M1:Cloverleaf":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Hasty Def",eExp:"Veteran",eType:"NKPA 4th Div",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","HMG Plt"],bnFM:false,
+    unitAmmo:{"MtrSec":4,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":4,"2/W/1":3,"1/W/2":4,"2/W/2":3,"1/W/3":4,"2/W/3":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:4,md:3,cd:3,pd:2,m:3},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:4,md:3,cd:3,pd:2,m:1},{ag:"15th FA Bn (105mm)",t:"Illum",mod:"N/A",ad:4,md:3,cd:3,pd:2,m:1},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:3,md:4,cd:3,pd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:3,md:4,cd:3,pd:2,m:1},{ag:"Bn Mtr Plt (81mm)",t:"Illum",mod:"N/A",ad:3,md:4,cd:3,pd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Line","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M2:NaktongLine":{type:"Patrol",turns:8,vis:"Moon +2",rows:4,cols:8,tactics:"Hasty Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","HMG Teams"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":4,"2/W/1":3,"1/W/2":4,"2/W/2":3,"1/W/3":4,"2/W/3":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:2},{ag:"15th FA Bn (105mm)",t:"Illum",mod:"N/A",ad:3,md:2,cd:2,m:4},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:2},{ag:"Bn Mtr Plt (81mm)",t:"Illum",mod:"N/A",ad:2,md:3,cd:2,m:4}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Line","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M3:NKPA-I":{type:"Defensive",turns:12,vis:"Moon +2",rows:4,cols:8,tactics:"Off Overrun",eExp:"Line",eType:"NKPA 9th Div",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","HMG Teams"],bnFM:false,
+    unitAmmo:{"MtrSec":4,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":4,"2/W/1":3,"1/W/2":4,"2/W/2":3,"1/W/3":4,"2/W/3":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"Illum",mod:"N/A",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"FPF",mod:"–6",ad:0,md:0,cd:0,m:0},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mtr Plt (81mm)",t:"Illum",mod:"N/A",ad:2,md:3,cd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"FPF",mod:"–4",ad:0,md:0,cd:0,m:0}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Line","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M4:NKPA-II":{type:"Defensive",turns:10,vis:"Daylight +0",rows:4,cols:6,tactics:"Off Overrun",eExp:"Line",eType:"NKPA 9th Div",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","HMG Teams"],bnFM:false,
+    unitAmmo:{"MtrSec":4,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":4,"2/W/1":3,"1/W/2":4,"2/W/2":3,"1/W/3":4,"2/W/3":3},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:3},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"FPF",mod:"–6",ad:3,md:2,cd:2,m:1},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:3},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Line","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M5:TFBradley":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Hasty Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","HMG Teams","Tank Plt"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":4,"2/W/1":3,"1/W/2":4,"2/W/2":3,"1/W/3":4,"2/W/3":3,"Tank":5},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",ad:3,md:2,cd:2,m:4},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",ad:3,md:2,cd:2,m:1},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",ad:2,md:3,cd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",ad:2,md:3,cd:2,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Line","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M6:Hill201":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:4,tactics:"Delib Def",eExp:"Line",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","FAC","HMG Teams","Tank Plt","Engineers"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":4,"2/W/1":3,"1/W/2":4,"2/W/2":3,"1/W/3":4,"2/W/3":3,"Tank":5},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",fd:0,ad:3,md:2,cd:2,m:5},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",fd:0,ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"TOT",mod:"–7",fd:0,ad:3,md:2,cd:1,m:1},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",fd:0,ad:2,md:3,cd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",fd:0,ad:2,md:3,cd:2,m:1},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,md:1,cd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Line","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M7:Breakout":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Delay Def",eExp:"Green",eType:"NKPA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","75RCL","FAC","HMG Teams","Tank Plt"],bnFM:true,
+    unitAmmo:{"MtrSec":4,"1/57RCL":3,"2/57RCL":3,"3/57RCL":3,"1/W/1":4,"2/W/1":3,"1/W/2":4,"2/W/2":3,"1/W/3":4,"2/W/3":3,"Tank":5},
+    fm:[{ag:"15th FA Bn (105mm)",t:"HE",mod:"–5",fd:0,ad:3,md:2,cd:2,m:5},{ag:"15th FA Bn (105mm)",t:"WP",mod:"–4",fd:0,ad:3,md:2,cd:2,m:1},{ag:"15th FA Bn (105mm)",t:"TOT",mod:"–7",fd:0,ad:3,md:2,cd:1,m:1},
+        {ag:"Bn Mtr Plt (81mm)",t:"HE",mod:"–3",fd:0,ad:2,md:3,cd:2,m:4},{ag:"Bn Mtr Plt (81mm)",t:"WP",mod:"–3",fd:0,ad:2,md:3,cd:2,m:1},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,md:1,cd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Line","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  /* --- Vietnam (1966-1968) --- */
+  /* TO&E: CO HQ=Green, XO=Line, 1SGT=Veteran, 1PLT=Line, 2PLT=Green, 3PLT=Green. All missions: ArtyFO */
+  "M1:AlaMoana-I":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Delay Def",eExp:"Veteran",eType:"VC",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","FAC"],bnFM:false,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:2,ad:3,md:2,cd:2,pd:1,m:5},{ag:"7/11 Arty (105mm)",t:"WP",mod:"–4",fd:2,ad:3,md:2,cd:2,pd:1,m:2},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:2,ad:3,md:2,cd:2,pd:1,m:2},
+        {ag:"4/9 Mtr Plt (4.2\")",t:"HE",mod:"–5",fd:2,ad:2,md:3,cd:2,pd:1,m:3},{ag:"4/9 Mtr Plt (4.2\")",t:"WP",mod:"–4",fd:2,ad:2,md:3,cd:2,pd:1,m:2},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,md:2,cd:2,pd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M2:AlaMoana-II":{type:"Defensive",turns:10,vis:"Moon +2",rows:5,cols:5,tactics:"Off Overrun",eExp:"Line",eType:"VC",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","FAC"],bnFM:true,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:2,ad:3,md:2,cd:2,pd:1,m:6},{ag:"7/11 Arty (105mm)",t:"Illum",mod:"N/A",fd:2,ad:3,md:2,cd:2,pd:1,m:6},{ag:"7/11 Arty (105mm)",t:"FPF",mod:"–6",fd:0,ad:0,md:0,cd:0,pd:0,m:0},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:2,ad:3,md:2,cd:2,pd:1,m:2},
+        {ag:"4/9 Mtr Plt (4.2\")",t:"HE",mod:"–5",fd:2,ad:2,md:3,cd:2,pd:1,m:4},{ag:"4/9 Mtr Plt (4.2\")",t:"Illum",mod:"N/A",fd:2,ad:2,md:3,cd:2,pd:1,m:6},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,md:2,cd:2,pd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M3:HoBoWoods":{type:"Patrol",turns:10,vis:"Daylight +0",rows:6,cols:3,tactics:"Delay Def",eExp:"Line",eType:"VC/NVA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO"],bnFM:true,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:0,ad:3,md:2,pd:1,m:5},{ag:"7/11 Arty (105mm)",t:"WP",mod:"–4",fd:0,ad:3,md:2,pd:1,m:2},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:0,ad:3,md:2,pd:1,m:2},
+        {ag:"4/9 Mtr Plt (4.2\")",t:"HE",mod:"–5",fd:0,ad:2,md:3,pd:1,m:3},{ag:"4/9 Mtr Plt (4.2\")",t:"WP",mod:"–4",fd:0,ad:2,md:3,pd:1,m:2},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,md:2,pd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M4:Horseshoe":{type:"Offensive",turns:10,vis:"Daylight +0",rows:4,cols:5,tactics:"Delay Def",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3",attach:["ArtyFO","Sniper","FAC"],bnFM:false,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:0,ad:3,cd:2,pd:1,m:5},{ag:"7/11 Arty (105mm)",t:"WP",mod:"–4",fd:0,ad:3,cd:2,pd:1,m:2},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:0,ad:3,cd:2,pd:1,m:2},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,cd:2,pd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M5:Yellowstone":{type:"Defensive",turns:10,vis:"Moon +2",rows:4,cols:6,tactics:"Off Assault",eExp:"Line",eType:"NVA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO","FAC","Engineers"],bnFM:false,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:2,ad:3,md:2,cd:2,pd:1,m:6},{ag:"7/11 Arty (105mm)",t:"Illum",mod:"N/A",fd:2,ad:3,md:2,cd:2,pd:1,m:6},{ag:"7/11 Arty (105mm)",t:"FPF",mod:"–6",fd:0,ad:0,md:0,cd:0,pd:0,m:0},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:2,ad:3,md:2,cd:2,pd:1,m:2},
+        {ag:"4/9 Mtr Plt (4.2\")",t:"HE",mod:"–5",fd:2,ad:2,md:3,cd:2,pd:1,m:4},{ag:"4/9 Mtr Plt (4.2\")",t:"Illum",mod:"N/A",fd:2,ad:2,md:3,cd:2,pd:1,m:6},{ag:"4/9 Mtr Plt (4.2\")",t:"FPF",mod:"–6",fd:0,ad:0,md:0,cd:0,pd:0,m:0},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,md:2,cd:2,pd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M6:WarZoneC":{type:"Patrol",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Hasty Def",eExp:"Line",eType:"VC/NVA",usG:"–4",enG:"–3",attach:["ArtyFO","MtrFO"],bnFM:true,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:0,ad:3,md:2,pd:1,m:5},{ag:"7/11 Arty (105mm)",t:"WP",mod:"–4",fd:0,ad:3,md:2,pd:1,m:2},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:0,ad:3,md:2,pd:1,m:2},
+        {ag:"4/9 Mtr Plt (4.2\")",t:"HE",mod:"–5",fd:0,ad:2,md:3,pd:1,m:3},{ag:"4/9 Mtr Plt (4.2\")",t:"WP",mod:"–4",fd:0,ad:2,md:3,pd:1,m:2},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,md:2,pd:1,m:2}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M7A:ToanThangA":{type:"Offensive",turns:10,vis:"Daylight +0",rows:5,cols:5,tactics:"Hasty Def",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3",attach:["ArtyFO","FAC","Tank Plt"],bnFM:true,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6,"Tank":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:0,ad:3,cd:2,pd:1,m:6},{ag:"7/11 Arty (105mm)",t:"WP",mod:"–4",fd:0,ad:3,cd:2,pd:1,m:4},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:0,ad:3,cd:2,pd:1,m:6},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,cd:2,pd:1,m:4}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M7B:ToanThangB":{type:"Offensive",turns:10,vis:"Daylight +0/Twi +1",rows:5,cols:5,tactics:"Delay Def",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3",attach:["ArtyFO","FAC","Tank Plt"],bnFM:true,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6,"Tank":6},
+    fm:[{ag:"7/11 Arty (105mm)",t:"HE",mod:"–5",fd:0,ad:3,cd:2,pd:1,m:4},{ag:"7/11 Arty (105mm)",t:"WP",mod:"–4",fd:0,ad:3,cd:2,pd:1,m:1},
+        {ag:"3/13 Arty (155mm/8\")",t:"HE",mod:"–6",fd:0,ad:3,cd:2,pd:1,m:2},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,cd:2,pd:1,m:1}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
+  "M8:MoleCity":{type:"Defensive",turns:10,vis:"Night +3/Twi +1",rows:4,cols:8,tactics:"Off Assault",eExp:"Veteran",eType:"NVA",usG:"–4",enG:"–3",attach:["ArtyFO","FAC","AC-47"],bnFM:true,
+    unitAmmo:{"60mmTM":4,"81mmSec":4,"1/W/1st":6,"2/W/1st":6,"1/W/2nd":6,"2/W/2nd":6,"1/W/3rd":6,"2/W/3rd":6},
+    fm:[{ag:"7/11 Arty & ARVN 105mm",t:"HE",mod:"–5",fd:0,ad:3,cd:2,pd:1,m:6},{ag:"7/11 Arty & ARVN 105mm",t:"FPF",mod:"–5",fd:0,ad:3,cd:3,pd:2,m:99},{ag:"7/11 Arty & ARVN 105mm",t:"Illum",mod:"–",fd:0,ad:3,cd:2,pd:1,m:4},
+        {ag:"3/13 FA Bn (155mm/8\")",t:"HE",mod:"–6",fd:0,ad:3,cd:2,pd:1,m:6},
+        {ag:"Combined 81mm Mtrs",t:"HE",mod:"–4",fd:0,ad:3,cd:3,pd:2,m:6},{ag:"Combined 81mm Mtrs",t:"Illum",mod:"–",fd:0,ad:3,cd:3,pd:2,m:4},
+        {ag:"Air Strike",t:"CAS",mod:"–7",fd:3,ad:2,cd:2,pd:1,m:3}],
+    hqExp:{"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Line","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Line","1ST SGT (Staff)":"Veteran"}},
 };
 
 /* ---------- Dropdown option lists ---------- */
@@ -162,7 +341,7 @@ const UNIT_DEFS = [
   {n:"4PLT HQ",e:"Line",v:"None",g:"4TH PLT"},{n:"1/4",e:"Line",v:"S",g:"4TH PLT"},{n:"2/4",e:"Line",v:"S",g:"4TH PLT"},
   {n:"57RCL1",e:"Line",v:"G!",g:"ATTACH"},{n:"57RCL2",e:"Line",v:"G!",g:"ATTACH"},{n:"57RCL3",e:"Line",v:"G!",g:"ATTACH"},
   {n:"75RCL1",e:"Line",v:"G!",g:"ATTACH"},{n:"75RCL2",e:"Line",v:"G!",g:"ATTACH"},
-  {n:"Engineers",e:"Line",v:"S",g:"ATTACH"},{n:"Tank",e:"Line",v:"H",g:"ATTACH"},
+  {n:"Tank",e:"Line",v:"H",g:"ATTACH"},{n:"Engineers",e:"Line",v:"S",g:"ATTACH"},
   {n:"ArtyFO",e:"Line",v:"None",g:"ATTACH"},{n:"MtrFO",e:"Line",v:"None",g:"ATTACH"},{n:"FAC",e:"Line",v:"None",g:"ATTACH"},
   {n:"Attach1",e:"Line",v:"None",g:"ATTACH"},{n:"Attach2",e:"Line",v:"None",g:"ATTACH"},
 ];
@@ -319,7 +498,7 @@ function PhaseTreeC({p,depth=0,checks,tog}){
 
 function FoFTracker() {
   /* --- NAV --- */
-  const TABS = ["Setup","Turn","Command","Units","Combat","Enemy","Weapons","Comms","Map","Journal","Campaign"];
+  const TABS = ["Setup","Turn","Command","Units","Combat","Enemy","Fire Missions","Assets","Map","Journal","Campaign"];
   const [tab, setTab] = useState("Setup");
   const [phaseIdx, setPhaseIdx] = useState(0);
   const [saveMsg, setSaveMsg] = useState("");
@@ -336,11 +515,14 @@ function FoFTracker() {
   const updateTC = (i,f,v)=>setTcs(p=>p.map((t,j)=>j===i?{...t,[f]:v}:t));
 
   /* --- UNITS --- */
-  const [units, setUnits] = useState(()=>UNIT_DEFS.map(d=>({id:uid(),name:d.n,group:d.g,max:0,cur:0,exp:d.e,vof:d.v,loc:"",status:"Good Order",cover:"0 None",underVOF:"No",exposed:"No",notes:""})));
+  const [units, setUnits] = useState(()=>UNIT_DEFS.map(d=>({id:uid(),name:d.n,group:d.g,max:0,cur:0,exp:d.e,vof:d.v,loc:"",status:"Good Order",cover:"0 None",underVOF:"No",exposed:"No",assigned:"",notes:""})));
   const uU = (i,f,v)=>setUnits(p=>p.map((u,j)=>j===i?{...u,[f]:v}:u));
 
   /* --- COMMAND --- */
-  const mkHQ = (n,ca=1,lim=6) => ({name:n,exp:"Line",act:"Yes",pin:"No",draw:0,vof:"None",cov:"No",autoMod:1,cmds:ca,savedP:0,total:ca,spent:0,saved:ca,limit:lim,log:[]});
+  const mkHQ = (n,ca=1,lim=6) => {
+    const hqExpMap = {"BN HQ":"Line","CO HQ":"Green","1ST PLT HQ":"Green","2ND PLT HQ":"Green","3RD PLT HQ":"Green","CO XO (Staff)":"Green","1ST SGT (Staff)":"Veteran"};
+    return {name:n,exp:hqExpMap[n]||"Line",act:"Yes",pin:"No",draw:0,vof:"None",cov:"No",autoMod:0,cmds:ca,savedP:0,total:ca,spent:0,saved:ca,limit:lim,log:[]};
+  };
   const [hqs, setHqs] = useState([mkHQ("BN HQ",6,0),...HQ_NAMES.slice(1).map(n=>mkHQ(n))]);
   const uH = (i,f,v)=>setHqs(p=>p.map((h,j)=>j===i?{...h,[f]:v}:h));
   const addHL = (i)=>setHqs(p=>p.map((h,j)=>j===i?{...h,log:[...h.log,{id:uid(),turn,phase:"",evts:["","","","","",""],unit:"",detail:"",result:""}]}:h));
@@ -377,7 +559,7 @@ function FoFTracker() {
   /* --- WEAPONS --- */
   const [wpns, setWpns] = useState(WEAPONS_LIST.map(w=>({name:w,type:"",start:0,used:0,assigned:"",notes:""})));
   const uW = (i,f,v)=>setWpns(p=>p.map((w,j)=>{if(j!==i)return w;return{...w,[f]:v};}));
-  const [fms, setFms] = useState(FM_LIST.map(f=>({name:f,type:"",msns:0,used:0,draw:"",obs:""})));
+  const [fms, setFms] = useState(FM_LIST.map(f=>({name:f,type:"",msns:0,used:0,ad:0,md:0,cd:0,obs:"",mod:""})));
   const uFM = (i,f,v)=>setFms(p=>p.map((x,j)=>j===i?{...x,[f]:v}:x));
   const [fmLog, setFmLog] = useState([]);
   const addFML = ()=>setFmLog(p=>[...p,{id:uid(),turn,agency:"",type:"",target:"",obs:"",result:"",notes:""}]);
@@ -603,14 +785,26 @@ function FoFTracker() {
   const renderSetup = () => {
     const newMission = ()=>{
       if(!confirm("Start new mission? This resets units, commands, enemies, map, weapons, comms, and journal.\n\nCampaign log (results & replacements) will be preserved."))return;
+      const m = MD[mission]||{};
       setTurn(1);setPhaseIdx(0);setChecks({});setActLvl("No Contact");setOverrides({});
       setTcs(TC_LABELS.map(c=>({c,loc:"",typ:"",notes:""})));
-      setUnits(UNIT_DEFS.map(d=>({id:uid(),name:d.n,group:d.g,max:0,cur:0,exp:d.e,vof:d.v,loc:"",status:"Good Order",cover:"0 None",underVOF:"No",exposed:"No",notes:""})));
-      setHqs([mkHQ("BN HQ",6,0),...HQ_NAMES.slice(1).map(n=>mkHQ(n))]);
+      /* Units — auto-fill ammo from mission data */
+      const ua = m.unitAmmo||{};
+      setUnits(UNIT_DEFS.map(d=>({id:uid(),name:d.n,group:d.g,max:ua[d.n]||0,cur:0,exp:d.e,vof:d.v,loc:"",status:"Good Order",cover:"0 None",underVOF:"No",exposed:"No",assigned:"",notes:""})));
+      /* HQs — auto-fill experience from mission data */
+      const he = m.hqExp||{};
+      const newHqs = [mkHQ("BN HQ",6,0),...HQ_NAMES.slice(1).map(n=>mkHQ(n))];
+      newHqs.forEach(h=>{ if(he[h.name]) h.exp = he[h.name]; });
+      setHqs(newHqs);
       setCmdGrids(HQ_NAMES.reduce((o,n)=>({...o,[n]:mkCmdGrid()}),{}));
       setCreatedUnits([]);setEnemies([]);
       setWpns(WEAPONS_LIST.map(w=>({name:w,type:"",start:0,used:0,assigned:"",notes:""})));
-      setFms(FM_LIST.map(f=>({name:f,type:"",msns:0,used:0,draw:"",obs:""})));
+      /* Fire Missions — auto-populate from mission data */
+      if(m.fm && m.fm.length>0){
+        setFms(m.fm.map(f=>({name:f.ag+" "+f.t,type:f.t,msns:f.m,used:0,ad:f.ad,md:f.md,cd:f.cd,fd:f.fd,pd:f.pd,obs:"",mod:f.mod})));
+      } else {
+        setFms(FM_LIST.map(f=>({name:f,type:"",msns:0,used:0,ad:0,md:0,cd:0,fd:undefined,pd:undefined,obs:"",mod:""})));
+      }
       setFmLog([]);
       setRadios(RADIO_DEFS.map(r=>({...r,assigned:"",loc:"",status:"",notes:""})));
       setAssets(ASSET_DEFS.map(a=>({asset:a,qty:1,assigned:"",loc:"",used:"No",notes:""})));
@@ -629,6 +823,10 @@ function FoFTracker() {
       flash("Full reset complete");
     };
     return <div>
+    <div style={{display:"flex",gap:10,marginBottom:14}}>
+      <button onClick={newMission} style={{...sBtn(false),fontSize:13,padding:"10px 18px",color:C.accent,fontWeight:700}}>⟳ New Mission (Campaign)</button>
+      <button onClick={resetAll} style={{...sBtn(false),fontSize:13,padding:"10px 18px",color:C.red,fontWeight:700}}>✕ New Mission (Stand-Alone)</button>
+    </div>
     <Section title="Mission Setup">
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
         <div style={{display:"flex",alignItems:"center",gap:6}}><span style={sLabel}>Campaign</span>
@@ -640,25 +838,21 @@ function FoFTracker() {
         <div style={{display:"flex",alignItems:"center",gap:6}}><span style={sLabel}>Activity</span>
           <Sel value={actLvl} onChange={setActLvl} options={ACTIVITY}/></div>
       </div>
-      <div style={{display:"flex",gap:8,marginTop:12}}>
-        <button onClick={newMission} style={{...sBtn(false),fontSize:11,color:C.accent}}>⟳ New Mission (keep campaign log)</button>
-        <button onClick={resetAll} style={{...sBtn(false),fontSize:11,color:C.red}}>✕ Full Reset</button>
-      </div>
     </Section>
     <Section title="Auto-Filled Parameters" sub>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:4,fontSize:11}}>
-        {[["Type",m.type],["Duration",m.turns],["Visibility",m.vis],["Rows",m.rows],["Cols",m.cols],
-          ["Tactics",m.tactics],["Enemy Exp",m.eExp],["Enemy Type",m.eType],["US Gren",m.usG],["En Gren",m.enG]
+        {[["Type",m.type],["Duration",m.turns+" Turns"],["Visibility",m.vis],["Map",m.rows+"×"+m.cols],
+          ["Tactics",m.tactics],["Enemy Exp",m.eExp],["Enemy Type",m.eType],["US Gren",m.usG],["En Gren",m.enG],
+          ["Bn FM",m.bnFM?"Available":"Not Available"],["Attachments",(m.attach||[]).join(", ")||"None"]
         ].map(([l,v])=><div key={l} style={{display:"flex",gap:6,alignItems:"center"}}>
-          <span style={{...sLabel,width:70}}>{l}</span><span style={{color:C.accent}}>{v}</span>
+          <span style={{...sLabel,width:80}}>{l}</span><span style={{color:C.accent}}>{v}</span>
         </div>)}
       </div>
     </Section>
     <Section title="Tactical Controls" sub>
-      <Table heads={[{l:"Control",w:100},{l:"Location"},{l:"Type"},{l:"Notes"}]}>
+      <Table heads={[{l:"Control",w:100},{l:"Location"},{l:"Notes"}]}>
         {tcs.map((t,i)=><tr key={t.c}><td style={{...sTd,color:C.accent,fontWeight:600}}>{t.c}</td>
           <td style={sTd}><Inp value={t.loc} onChange={v=>updateTC(i,"loc",v)}/></td>
-          <td style={sTd}><Inp value={t.typ} onChange={v=>updateTC(i,"typ",v)}/></td>
           <td style={sTd}><Inp value={t.notes} onChange={v=>updateTC(i,"notes",v)}/></td>
         </tr>)}
       </Table>
@@ -670,16 +864,36 @@ function FoFTracker() {
      ═══════════════════════════════════════════ */
   const renderUnits = () => {
     const groups = [...new Set(UNIT_DEFS.map(d=>d.g))];
+    const assignableGroups = ["WPN PLT","ATTACH"];
+    /* Units that track ammo: only heavy/support weapons with discrete ammo counts */
+    const ammoUnits = new Set(["MtrSec","1/Mtr","2/Mtr","3/Mtr",".50cal","1/LMG","2/LMG","1/AT","2/AT","3/AT",
+      "57RCL1","57RCL2","57RCL3","75RCL1","75RCL2","Tank"]);
+    const groupHasAmmo = (g) => {
+      return units.filter(u=>u.group===g).some(u=>ammoUnits.has(u.name));
+    };
     return <div>
       <Section title="Friendly Unit Tracker">
         {groups.map(g=>{
           const idxs = units.map((u,i)=>u.group===g?i:null).filter(x=>x!==null);
+          const showAssign = assignableGroups.includes(g);
+          const showAmmo = groupHasAmmo(g);
+          const heads = [
+            {l:"Unit",w:68},
+            ...(showAmmo?[{l:"Ammo",w:50},{l:"Left",w:44}]:[]),
+            {l:"Exp",w:76},{l:"VOF",w:70},{l:"Loc",w:64},
+            {l:"Status",w:110},{l:"Cover",w:110},{l:"VOF?",w:52},{l:"Exp?",w:52},
+            ...(showAssign?[{l:"Assigned To",w:90}]:[]),
+            {l:"Notes"}
+          ];
           return <Section key={g} title={g} sub>
-            <Table heads={[{l:"Unit",w:68},{l:"Max",w:44},{l:"Cur",w:44},{l:"Exp",w:76},{l:"VOF",w:70},{l:"Loc",w:64},{l:"Status",w:110},{l:"Cover",w:110},{l:"VOF?",w:52},{l:"Exp?",w:52},{l:"Notes"}]}>
-              {idxs.map(i=>{const u=units[i];return <tr key={u.id}>
+            <Table heads={heads}>
+              {idxs.map(i=>{const u=units[i]; const hasAmmo=ammoUnits.has(u.name); return <tr key={u.id}>
                 <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:10}}>{u.name}</td>
-                <td style={sTd}><Inp type="number" value={u.max} onChange={v=>uU(i,"max",v)} style={{width:40,textAlign:"center"}}/></td>
-                <td style={sTd}><Inp type="number" value={u.cur} onChange={v=>uU(i,"cur",v)} style={{width:40,textAlign:"center"}}/></td>
+                {showAmmo && (hasAmmo
+                  ? <><td style={sTd}><Inp type="number" value={u.max} onChange={v=>uU(i,"max",v)} style={{width:44,textAlign:"center"}}/></td>
+                     <td style={{...sTd,color:C.accent,textAlign:"center"}}>{u.max-u.cur}</td></>
+                  : <><td style={{...sTd,textAlign:"center",color:C.textDim}}>—</td><td style={{...sTd,textAlign:"center",color:C.textDim}}>—</td></>
+                )}
                 <td style={sTd}><Sel value={u.exp} onChange={v=>uU(i,"exp",v)} options={EXP} style={{minWidth:72}}/></td>
                 <td style={sTd}><Sel value={u.vof} onChange={v=>uU(i,"vof",v)} options={VOF_OPTS} style={{minWidth:66}}/></td>
                 <td style={sTd}><Inp value={u.loc} onChange={v=>uU(i,"loc",v)} style={{width:58}}/></td>
@@ -687,6 +901,7 @@ function FoFTracker() {
                 <td style={sTd}><Sel value={u.cover} onChange={v=>uU(i,"cover",v)} options={COVER_OPTS} style={{minWidth:105}}/></td>
                 <td style={sTd}><Sel value={u.underVOF} onChange={v=>uU(i,"underVOF",v)} options={["No","Yes"]} style={{minWidth:48}}/></td>
                 <td style={sTd}><Sel value={u.exposed} onChange={v=>uU(i,"exposed",v)} options={["No","Yes"]} style={{minWidth:48}}/></td>
+                {showAssign && <td style={sTd}><Inp value={u.assigned||""} onChange={v=>uU(i,"assigned",v)} style={{minWidth:80}} placeholder="e.g. 1ST PLT"/></td>}
                 <td style={sTd}><Inp value={u.notes} onChange={v=>uU(i,"notes",v)}/></td>
               </tr>;})}
             </Table>
@@ -731,56 +946,48 @@ function FoFTracker() {
           <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Exp</span><Sel value={h.exp} onChange={v=>uH(hi,"exp",v)} options={EXP}/></div>
           <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Act</span><Sel value={h.act} onChange={v=>uH(hi,"act",v)} options={["Yes","No"]}/></div>
           <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Pin</span><Sel value={h.pin} onChange={v=>uH(hi,"pin",v)} options={["Yes","No"]}/></div>
-          <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Draw</span><Inp type="number" value={h.draw} onChange={v=>uH(hi,"draw",v)} style={{width:48}}/></div>
           <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>VOF</span><Sel value={h.vof} onChange={v=>uH(hi,"vof",v)} options={["None","S","A","H","G!","S!","D!","F!","Inc!","Air!"]} style={{minWidth:70}}/></div>
           <div style={{display:"flex",alignItems:"center",gap:4}}><span style={sLabel}>Cov</span><Sel value={h.cov} onChange={v=>uH(hi,"cov",v)} options={["Yes","No"]} style={{minWidth:52}}/></div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,fontSize:11,background:C.inputBg,borderRadius:4,padding:10,marginBottom:6}}>
-          {[["Auto",h.autoMod,"autoMod"],["Cmds",h.cmds,"cmds"],["SavedP",h.savedP,"savedP"],["Total",h.total,"total"],
-            ["Spent",h.spent,"spent"],["Limit",h.limit,"limit"]].map(([l,v,k])=>
-            <div key={l} style={{display:"flex",alignItems:"center",gap:4}}>
-              <span style={{color:C.textDim,fontSize:10}}>{l}:</span>
-              <Inp type="number" value={v} onChange={v2=>uH(hi,k,v2)} style={{width:42,textAlign:"center"}}/>
-            </div>
-          )}
           <div style={{display:"flex",alignItems:"center",gap:4}}>
-            <span style={{color:C.textDim,fontSize:10}}>SAVED:</span>
-            <span style={{color:C.accent,fontWeight:700,fontSize:13}}>{h.limit>0?Math.min(h.total-h.spent,h.limit):h.total-h.spent}</span>
+            <span style={{color:C.textDim,fontSize:10}}>Draw:</span>
+            <Inp type="number" value={h.draw} onChange={v=>uH(hi,"draw",v)} style={{width:42,textAlign:"center"}}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}>
+            <span style={{color:C.textDim,fontSize:10}}>Exp Mod:</span>
+            <span style={{color:C.accent,fontWeight:700,fontSize:13}}>{h.exp==="Green"?-1:h.exp==="Veteran"?1:0}</span>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}>
+            <span style={{color:C.textDim,fontSize:10}}>Other +/−:</span>
+            <Inp type="number" value={h.autoMod} onChange={v=>uH(hi,"autoMod",v)} style={{width:42,textAlign:"center"}}/>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:4}}>
+            <span style={{color:C.textDim,fontSize:10}}>Total:</span>
+            <span style={{color:C.accent,fontWeight:700,fontSize:13}}>{h.draw+(h.exp==="Green"?-1:h.exp==="Veteran"?1:0)+(h.autoMod||0)}</span>
           </div>
         </div>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-          <span style={{...sLabel,fontSize:9}}>Command Log</span>
-          <button onClick={()=>addHL(hi)} style={{...sBtn(false),padding:"2px 8px",fontSize:10}}>+ Entry</button>
-        </div>
-        {h.log.map((l,li)=><div key={l.id} style={{display:"grid",gridTemplateColumns:"36px 56px repeat(6,48px) 70px 1fr 70px",gap:3,marginBottom:3}}>
-          <Inp type="number" value={l.turn} onChange={v=>uHL(hi,li,"turn",v)} style={{width:34}}/>
-          <Inp value={l.phase} onChange={v=>uHL(hi,li,"phase",v)}/>
-          {l.evts.map((ev,ei)=><Inp key={ei} value={ev} onChange={v=>uHLE(hi,li,ei,v)} style={{width:46}}/>)}
-          <Inp value={l.unit} onChange={v=>uHL(hi,li,"unit",v)}/>
-          <Inp value={l.detail} onChange={v=>uHL(hi,li,"detail",v)}/>
-          <Inp value={l.result} onChange={v=>uHL(hi,li,"result",v)}/>
-        </div>)}
-      </div>)}
-    </Section>
-    <Section title="Command Allocation Grid">
-      <div style={{fontSize:11,color:C.textDim,marginBottom:8}}>10 turns × 6 commands per HQ. Type what each command was spent on.</div>
-      {HQ_NAMES.map(hq=><div key={hq} style={{marginBottom:12}}>
-        <div style={{fontSize:11,fontWeight:700,color:C.accent,marginBottom:4}}>{hq}</div>
-        <div style={{overflowX:"auto"}}>
-          <table style={{borderCollapse:"collapse",width:"100%"}}>
-            <thead><tr>
-              <th style={{...sTh,width:44}}>Turn</th>
-              {[1,2,3,4,5,6].map(c=><th key={c} style={{...sTh,minWidth:110}}>Cmd {c}</th>)}
-            </tr></thead>
-            <tbody>
-              {Array.from({length:10},(_,t)=><tr key={t}>
-                <td style={{...sTd,color:C.accent,fontWeight:700,textAlign:"center"}}>{t+1}</td>
-                {[0,1,2,3,4,5].map(c=><td key={c} style={sTd}>
-                  <Inp value={cmdGrids[hq]?.[t]?.[c]??""} onChange={v=>uCG(hq,t,c,v)} placeholder="" style={{minWidth:100}}/>
-                </td>)}
-              </tr>)}
-            </tbody>
-          </table>
+        {/* Commands Used - inline under this HQ */}
+        <div style={{marginTop:6,marginBottom:4}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+            <span style={{...sLabel,fontSize:9}}>Commands Used</span>
+          </div>
+          <div style={{overflowX:"auto"}}>
+            <table style={{borderCollapse:"collapse",width:"100%"}}>
+              <thead><tr>
+                <th style={{...sTh,width:44}}>Turn</th>
+                {[1,2,3,4,5,6].map(c=><th key={c} style={{...sTh,minWidth:110}}>Cmd {c}</th>)}
+              </tr></thead>
+              <tbody>
+                {Array.from({length:m.turns||10},(_,t)=><tr key={t}>
+                  <td style={{...sTd,color:C.accent,fontWeight:700,textAlign:"center"}}>{t+1}</td>
+                  {[0,1,2,3,4,5].map(c=><td key={c} style={sTd}>
+                    <Inp value={cmdGrids[h.name]?.[t]?.[c]??""} onChange={v=>uCG(h.name,t,c,v)} placeholder="" style={{minWidth:100}}/>
+                  </td>)}
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>)}
     </Section>
@@ -869,31 +1076,30 @@ function FoFTracker() {
   </div>;
 
   /* ═══════════════════════════════════════════
-     TAB: Weapons & Ammo
+     TAB: Fire Missions
      ═══════════════════════════════════════════ */
-  const renderWeapons = () => <div>
-    <Section title="Weapons">
-      <Table heads={[{l:"Weapon",w:80},{l:"Type",w:58},{l:"Start",w:44},{l:"Used",w:44},{l:"Left",w:44},{l:"Assigned"},{l:"Notes"}]}>
-        {wpns.map((w,i)=><tr key={w.name}>
-          <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{w.name}</td>
-          <td style={sTd}><Inp value={w.type} onChange={v=>uW(i,"type",v)} style={{width:54}}/></td>
-          <td style={sTd}><Inp type="number" value={w.start} onChange={v=>uW(i,"start",v)} style={{width:40,textAlign:"center"}}/></td>
-          <td style={sTd}><Inp type="number" value={w.used} onChange={v=>uW(i,"used",v)} style={{width:40,textAlign:"center"}}/></td>
-          <td style={{...sTd,color:C.accent,textAlign:"center"}}>{w.start-w.used}</td>
-          <td style={sTd}><Inp value={w.assigned} onChange={v=>uW(i,"assigned",v)}/></td>
-          <td style={sTd}><Inp value={w.notes} onChange={v=>uW(i,"notes",v)}/></td>
-        </tr>)}
-      </Table>
-    </Section>
+  const renderFireMissions = () => {
+    const hasFAC = fms.some(f=>f.fd!==undefined && f.fd!==null);
+    const hasPLT = fms.some(f=>f.pd!==undefined && f.pd!==null);
+    const heads = [{l:"Agency / Ammo",w:160},{l:"Mod",w:44}];
+    if(hasFAC) heads.push({l:"FAC",w:42});
+    heads.push({l:"Arty",w:42},{l:"Mtr",w:42},{l:"CO",w:42});
+    if(hasPLT) heads.push({l:"PLT",w:42});
+    heads.push({l:"Msns",w:42},{l:"Used",w:42},{l:"Left",w:42},{l:"Notes"});
+    return <div>
     <Section title="Fire Missions">
-      <Table heads={[{l:"Agency",w:105},{l:"Type",w:58},{l:"Msns",w:44},{l:"Used",w:44},{l:"Left",w:44},{l:"Draw#",w:52},{l:"Observer"}]}>
-        {fms.map((f,i)=><tr key={f.name}>
+      <Table heads={heads}>
+        {fms.map((f,i)=><tr key={i}>
           <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{f.name}</td>
-          <td style={sTd}><Inp value={f.type} onChange={v=>uFM(i,"type",v)} style={{width:54}}/></td>
+          <td style={{...sTd,textAlign:"center",fontSize:11}}>{f.mod||""}</td>
+          {hasFAC && <td style={sTd}><Inp type="number" value={f.fd||0} onChange={v=>uFM(i,"fd",v)} style={{width:36,textAlign:"center"}}/></td>}
+          <td style={sTd}><Inp type="number" value={f.ad||0} onChange={v=>uFM(i,"ad",v)} style={{width:36,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={f.md||0} onChange={v=>uFM(i,"md",v)} style={{width:36,textAlign:"center"}}/></td>
+          <td style={sTd}><Inp type="number" value={f.cd||0} onChange={v=>uFM(i,"cd",v)} style={{width:36,textAlign:"center"}}/></td>
+          {hasPLT && <td style={sTd}><Inp type="number" value={f.pd||0} onChange={v=>uFM(i,"pd",v)} style={{width:36,textAlign:"center"}}/></td>}
           <td style={sTd}><Inp type="number" value={f.msns} onChange={v=>uFM(i,"msns",v)} style={{width:40,textAlign:"center"}}/></td>
           <td style={sTd}><Inp type="number" value={f.used} onChange={v=>uFM(i,"used",v)} style={{width:40,textAlign:"center"}}/></td>
           <td style={{...sTd,color:C.accent,textAlign:"center"}}>{f.msns-f.used}</td>
-          <td style={sTd}><Inp value={f.draw} onChange={v=>uFM(i,"draw",v)} style={{width:40}}/></td>
           <td style={sTd}><Inp value={f.obs} onChange={v=>uFM(i,"obs",v)}/></td>
         </tr>)}
       </Table>
@@ -913,20 +1119,18 @@ function FoFTracker() {
       </Table>}
     </Section>
   </div>;
+  };
 
   /* ═══════════════════════════════════════════
-     TAB: Comms & Assets
+     TAB: Assets
      ═══════════════════════════════════════════ */
-  const renderComms = () => <div>
+  const renderAssets = () => <div>
     <Section title="Radios & Phones">
-      <Table heads={[{l:"Device",w:70},{l:"Type",w:58},{l:"Net",w:58},{l:"Assigned"},{l:"Loc"},{l:"Status"},{l:"Notes"}]}>
+      <Table heads={[{l:"Type",w:70},{l:"Net",w:70},{l:"Assignment"},{l:"Notes"}]}>
         {radios.map((r,i)=><tr key={i}>
-          <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{r.dev}</td>
-          <td style={{...sTd,color:C.textDim}}>{r.tp}</td>
+          <td style={{...sTd,color:C.accent,fontWeight:600,fontSize:11}}>{r.tp}</td>
           <td style={{...sTd,color:C.textDim}}>{r.net}</td>
           <td style={sTd}><Inp value={r.assigned} onChange={v=>uR(i,"assigned",v)}/></td>
-          <td style={sTd}><Inp value={r.loc} onChange={v=>uR(i,"loc",v)}/></td>
-          <td style={sTd}><Inp value={r.status} onChange={v=>uR(i,"status",v)}/></td>
           <td style={sTd}><Inp value={r.notes} onChange={v=>uR(i,"notes",v)}/></td>
         </tr>)}
       </Table>
@@ -1051,7 +1255,7 @@ function FoFTracker() {
      ═══════════════════════════════════════════ */
   const tabContent = {
     Setup:renderSetup, Turn:renderTurn, Command:renderCommand, Units:renderUnits,
-    Combat:renderCombat, Enemy:renderEnemy, Weapons:renderWeapons, Comms:renderComms,
+    Combat:renderCombat, Enemy:renderEnemy, "Fire Missions":renderFireMissions, Assets:renderAssets,
     Map:renderMap, Journal:renderJournal, Campaign:renderCampaign,
   };
 
