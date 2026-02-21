@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Etymology Problem — b1tr0n1n</title>
+<meta name="description" content="A critical analysis of 'True Satanism' — on the logical contradiction of claiming a term while rejecting its origin">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0908;--bg2:#0f0e0b;--bg3:#161410;--panel:#1a1814;--border:#2a2620;--border-lt:#3d362c;--text:#c8bda0;--text-dim:#7a7060;--text-bright:#ede5d0;--accent:#c9a227;--accent-dim:#8b7320;--accent-glow:rgba(201,162,39,0.12);--mono:'JetBrains Mono','Fira Code',monospace;--serif:'Cormorant Garamond','Georgia',serif; }
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.7;overflow-x:hidden}::selection{background:var(--accent);color:var(--bg)}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-lt);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.08;pointer-events:none;z-index: 0}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,9,8,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .nav-brand{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;text-decoration:none}
+  .nav-links{display:flex;gap:32px}.nav-links a{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s;position:relative}.nav-links a:hover{color:var(--accent)}.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s}.nav-links a:hover::after{width:100%}.nav-links a.active{color:var(--accent)}.nav-links a.active::after{width:100%}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;z-index:101}.nav-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:all 0.3s}.nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.nav-toggle.open span:nth-child(2){opacity:0}.nav-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+  .article-content{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:120px 40px 100px}
+  .article-tag{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:12px}
+  .article-title{font-family:var(--serif);font-size:clamp(28px,4.5vw,42px);font-weight:700;color:var(--text-bright);letter-spacing:-0.5px;margin-bottom:12px;line-height:1.15}
+  .article-subtitle{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:24px}
+  .article-meta{font-size:11px;color:var(--text-dim);margin-bottom:8px;display:flex;align-items:center;gap:16px}
+  .article-meta a{color:var(--accent);text-decoration:none;font-weight:600;transition:color 0.3s}.article-meta a:hover{color:var(--text-bright)}
+  .article-divider{width:60px;height:1px;background:var(--accent);margin-bottom:48px}
+  .article-body h2{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text-bright);margin:40px 0 16px;letter-spacing:0.3px}
+  .article-body h3{font-family:var(--serif);font-size:18px;font-weight:600;font-style:italic;color:var(--accent);margin:28px 0 12px}
+  .article-body p{font-family:var(--serif);font-size:17px;line-height:1.85;color:var(--text);margin-bottom:20px}
+  .article-body blockquote{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--text-bright);line-height:1.7;padding-left:28px;border-left:2px solid var(--accent);margin:32px 0}
+  .article-body ul{list-style:none;margin:0 0 24px 0;padding:0}
+  .article-body ul li{font-family:var(--serif);font-size:17px;line-height:1.85;color:var(--text);padding-left:24px;margin-bottom:8px;position:relative}
+  .article-body ul li::before{content:'•';color:var(--accent);position:absolute;left:0;font-weight:700}
+  .article-body .section-rule{width:100%;height:1px;background:var(--border);margin:48px 0}
+  .article-body .findings{margin:16px 0 24px;padding-left:4px}
+  .article-body .findings li{margin-bottom:12px}
+  .article-body .hebrew{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;display:inline;unicode-bidi:bidi-override}
+  .article-body .sources{margin-top:12px}
+  .article-body .sources li{font-family:var(--serif);font-size:14px;line-height:1.7;color:var(--text-dim);padding-left:24px;margin-bottom:6px}
+  .article-body .sources li::before{content:'';color:var(--accent-dim)}
+  .article-back{display:inline-block;margin-top:48px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);text-decoration:none;transition:color 0.3s}.article-back:hover{color:var(--text-bright)}
+  .epigraph{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--text-bright);text-align:center;margin:0 0 4px}.epigraph-attr{font-family:var(--mono);font-size:10px;color:var(--text-dim);text-align:center;margin-bottom:48px}
+
+  footer{border-top:1px solid var(--border);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.footer-left{font-size:11px;color:var(--text-dim)}.footer-links{display:flex;gap:24px}.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--accent)}
+  @media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:block}.nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}.article-content{padding:100px 20px 60px}footer{flex-direction:column;gap:16px;text-align:center}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="index.html" class="nav-brand"><img src="torii_gate.png" alt="b1tr0n1n" style="height:28px;vertical-align:middle;margin-right:10px;">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');"><span></span><span></span><span></span></button>
+  <div class="nav-links">
+    <a href="index.html">Home</a><a href="designation.html">Designation</a><a href="projects.html">Projects</a><a href="about.html">About</a><a href="philosophy.html">Philosophy</a><a href="writing.html" class="active">Writing</a><a href="music.html">Music</a><a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="article-content">
+  <div class="article-tag">Critical Analysis</div>
+  <h1 class="article-title">The Etymology Problem</h1>
+  <div class="article-subtitle">A Critical Analysis of &ldquo;True Satanism&rdquo;</div>
+  <div class="article-meta">
+    <span>Keith Burns // b1tr0n1n</span>
+    <span style="color:var(--border);">|</span>
+    <a href="The_Etymology_Problem.pdf" download>Download PDF &darr;</a>
+  </div>
+  <div class="article-divider"></div>
+
+  <div class="article-body">
+
+    <p class="epigraph">&ldquo;Extraordinary claims require extraordinary evidence.&rdquo;</p>
+    <p class="epigraph-attr">&mdash; Carl Sagan</p>
+
+    <p style="font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:48px;text-align:center;"><em>This analysis examines the historical and logical claims of a specific ideology. It does not advocate for any religious or occult position.</em></p>
+
+<h2>Abstract</h2>
+
+<p>The ideology known as &ldquo;True Satanism&rdquo; presents itself as an ancient, esoteric spiritual system focused on self-empowerment and adversarial deification. This analysis examines the ideology&rsquo;s core claims against the historical record, its internal logical coherence, and its relationship to the broader landscape of Satanic and occult traditions. The central finding is that &ldquo;True Satanism&rdquo; contains a fundamental self-refutation: it simultaneously claims the term &ldquo;Satan&rdquo; while rejecting the Judeo-Christian framework from which that term exclusively originates. Its assertions of ancient, pre-Abrahamic origins are unsupported by historical or archaeological evidence. The ideology is more accurately classified as a novel syncretic movement combining elements of Left-Hand Path occultism, theosophy, chaos magic, and New Age spirituality&mdash;not as a continuation of any ancient tradition.</p>
+
+<div class="section-rule"></div>
+
+<h2>Part I: Logical Analysis of Core Claims</h2>
+
+<p>The following analysis evaluates the foundational claims of the &ldquo;True Satanism&rdquo; ideology as presented across its founder&rsquo;s published materials, social media, website, and related media.</p>
+
+<h3>I. The Claim to Antiquity and Authenticity</h3>
+
+<p>The ideology asserts that &ldquo;True Satanism&rdquo; is an ancient, esoteric system focused on self-empowerment and adversarial deification. From a logical perspective, the qualifier &ldquo;True&rdquo; in any religious context is inherently subjective and cannot be empirically demonstrated&mdash;only believed. In this respect, the ideology&rsquo;s claim to truth is functionally equivalent to any other religious claim where belief serves as the sole basis for evidence. The designation &ldquo;True&rdquo; does not elevate the ideology above competing interpretations; it is an assertion of legitimacy, not a demonstration of it.</p>
+
+<h3>II. The Self-Refutation of Rejecting Judeo-Christian Origins</h3>
+
+<p>The ideology rejects modern Satanic organizations&mdash;the Church of Satan and the Satanic Temple&mdash;as inauthentic, and specifically criticizes their connections to the Christian concept of Satan. This criticism introduces a fatal logical contradiction.</p>
+
+<p>The word &ldquo;Satan&rdquo; originated in Semitic Hebrew (<span class="hebrew">שָׂטָן</span>), a fact the ideology itself acknowledges on its own webpage. The term cannot be conceptually understood apart from its Judeo-Christian context. It did not exist before the Hebrew language, and the practice of anything resembling Satanism in any form postdates the linguistic origin by centuries. The Hebrew word predates the Koine Greek transliteration by approximately 600&ndash;700 years, and the Greek form represents only a later stage in the concept&rsquo;s development.</p>
+
+<p>By rejecting the Judeo-Christian connection to the concept of Satan, the ideology simultaneously undermines its own claim to the term &ldquo;Satanism.&rdquo; If the Christian framework is rejected, the etymological and conceptual foundation of the word is rejected with it. The ideology cannot logically retain the designation while disavowing the tradition that created it.</p>
+
+<p>By this logic, the modern Satanic organizations that &ldquo;True Satanism&rdquo; criticizes actually possess a stronger claim to the term, precisely because they maintain the acknowledged connection to the Judeo-Christian concept.</p>
+
+<h3>III. The Pantheistic Reinterpretation</h3>
+
+<p>The ideology argues for a pantheistic view of Satanism, linking it to pagan concepts and nature worship. This interpretation stands outside the primary, mainstream understanding of Satanism with respect to its historicity.</p>
+
+<p>The claim that Satanism was historically pantheistic, pagan, or linked to nature worship has little to no factual support or historical evidence. The origination of the word in the Hebrew language is sufficient to establish this. No pre-Judeo-Christian culture used the term &ldquo;Satan&rdquo; or practiced anything identifiable as &ldquo;Satanism&rdquo; in the sense the ideology describes.</p>
+
+<p>What the ideology describes is, in effect, a wholly different and novel system that requires a new designation. Its content has no demonstrable continuity with the historical concept of Satanism and explicitly denies the connection to Judeo-Christianity that defines that concept.</p>
+
+<h3>IV. The Religious Character of the Ideology</h3>
+
+<p>The ideology presents Satanism as a spiritual path involving rituals, necromancy, and communication with spirits. Though it requires a new designation, &ldquo;True Satanism&rdquo; is, by the collective understanding of the term, a religion. It satisfies the standard criteria that define religious systems across cultures and scholarship:</p>
+
+<ul>
+  <li>Belief in the supernatural, gods, spirits, or divine forces&mdash;including the belief that a person can be deified</li>
+  <li>Distinctions between sacred and profane, holy and unholy, cursed and blessed</li>
+  <li>Ritual acts and the use of sacred elements or items</li>
+  <li>A moral code, or the deliberate absence of one</li>
+  <li>Prayer or communication with supernatural entities through other means</li>
+  <li>Social grouping and shared belief systems</li>
+  <li>Worldview and subjective explanations of the metaphysical</li>
+  <li>Transcendence, enlightenment, or salvation as aspirational goals</li>
+  <li>Mystery as a structural element</li>
+  <li>Symbols and iconography representing concepts or figures</li>
+</ul>
+
+<p>The ideology meets each of these criteria. It is functionally and structurally a religion, regardless of its self-designation.</p>
+
+<h3>V. The Gatekeeping Claim and the Ad Hominem Fallacy</h3>
+
+<p>The ideology asserts that Satanism is only for dedicated practitioners and not &ldquo;trend-hopping fools.&rdquo; While the principle that any practice rewards dedication is universally true, the characterization of critics or outsiders as &ldquo;trend-hopping fools&rdquo; constitutes an <em>ad hominem</em> fallacy. In the context of philosophical or religious debate, this kind of personal attack does not discredit the opponent&rsquo;s position&mdash;it discredits the argument of the party bearing the burden of proof. In this case, that burden rests with the ideology&rsquo;s founder.</p>
+
+<div class="section-rule"></div>
+
+<h2>Part II: The Absence of Historical Evidence</h2>
+
+<p>The concept of Satanism emerged within the context of Christianity. As documented in the Oxford academic literature, the idea of Satan as an arch-representative of evil developed primarily from the early Middle Ages onward within Christian theology, with no coherent concept of Satan or Satanism existing prior to this period.</p>
+
+<p>While many ancient cultures maintained concepts of evil spirits or adversarial deities, these were not equivalent to the Judeo-Christian Satan. As contemporary scholarship notes, &ldquo;cultures and religions around the globe have long imagined Devil-like figures,&rdquo; but &ldquo;the roots of Satanism are embedded in the character of Satan in Judeo-Christian theology.&rdquo;</p>
+
+<p>The ideology&rsquo;s foundational claim&mdash;that &ldquo;True Satanism is of ancient origin&rdquo;&mdash;is not supported by historical evidence. Satanism as a religious or philosophical system is a relatively modern phenomenon, largely emerging with Anton LaVey&rsquo;s Church of Satan in 1966, the very tradition the ideology rejects.</p>
+
+<p>While accusations of &ldquo;devil worship&rdquo; recur throughout Christian history, these were largely unfounded and deployed as propaganda against ideological opponents. Actual self-identified Satanism only emerged in the modern era.</p>
+
+<p>Elements that influenced later concepts of Satan can be traced to ancient religions&mdash;notably Zoroastrianism&rsquo;s dualism, dating to approximately 1500 BCE. However, the Hebrew concept of &ldquo;Satan&rdquo; as an adversary predates Zoroastrian influence on Jewish theology. The idea of Satan as a separate evil entity opposing God likely developed after exposure to Zoroastrian ideas during and after the Babylonian exile, but these ideas were not &ldquo;Satanism&rdquo; as the ideology describes it.</p>
+
+<p>To date any form of Satanism to an ancient pre-Judeo-Christian era&mdash;and arguably before the Middle Ages&mdash;cannot be supported factually. The claim of ancient origin holds only insofar as that origin is the Abrahamic religion of Judaism. Beyond this, the claim has been verified as nonfactual, casting deeper skepticism on the ideology&rsquo;s remaining assertions.</p>
+
+<div class="section-rule"></div>
+
+<h2>Part III: Baphomet &mdash; The Inaccuracy of Key Historical Claims</h2>
+
+<h3>Etymology</h3>
+
+<p>The ideology claims Baphomet is &ldquo;an etymological admixture of the Greek root for immersion (&beta;&alpha;&pi;, Bap) followed by its succeeding suffix, &Alpha;&mu;&mu;&omega;&nu; (Ammon, Amun, Amet, Omet).&rdquo; This etymology is speculative and unsupported by mainstream scholarship. Most trained scholars identify Baphomet as likely a corruption of &ldquo;Mahomet&rdquo; (Muhammad), reflecting medieval European attitudes toward Islam rather than any connection to Greek or Egyptian religion.</p>
+
+<h3>The Egyptian Connection</h3>
+
+<p>The ideology links Baphomet to &ldquo;the celestial horned Egyptian cult deity.&rdquo; While some <em>later</em> occultists created this connection, there is no evidence of a direct historical link between ancient Egyptian deities and the <em>medieval</em> concept of Baphomet. The connection is a retroactive construction by 19th-century and later esotericists.</p>
+
+<h3>The Templar Accusation</h3>
+
+<p>The ideology implies the Knights Templar worshipped Baphomet. While the Templars were <em>accused</em> of this, most trained historians view these accusations as politically motivated fabrications orchestrated by Philip IV of France and Pope Clement V to justify the order&rsquo;s dissolution and the seizure of its assets.</p>
+
+<h3>Pan, Satan, and Baphomet</h3>
+
+<p>The ideology draws parallels between the Greek god Pan, Satan, and Baphomet. While later occultists created these connections, they are not based on historical evidence from the medieval period when Baphomet first appeared in texts. These associations are products of modern occult syncretism, not ancient tradition.</p>
+
+<h3>Gnostic Usage</h3>
+
+<p>The ideology claims Gnostics used &ldquo;Devil,&rdquo; &ldquo;Satan,&rdquo; and &ldquo;Lucifer&rdquo; interchangeably. This is an oversimplification of complex Gnostic beliefs, which varied widely between groups. Gnosticism was not a monolithic tradition but a diverse family of early Christian-adjacent sects with radically different cosmologies and terminologies.</p>
+
+<h3>The Critical Omission</h3>
+
+<p>The ideology does not mention that the popular goat-headed image of Baphomet was created by &Eacute;liphas L&eacute;vi in the 19th century&mdash;long after the medieval period. This omission is significant because the image is the ideology&rsquo;s most recognizable symbol, and its modern origin directly undermines claims of ancient provenance. A historically accurate account would center the medieval origins of the term, the politically motivated accusations against the Templars, and the subsequent evolution of the concept through later occult traditions.</p>
+
+<div class="section-rule"></div>
+
+<h2>Conclusion</h2>
+
+<p>The ideology states: &ldquo;The actual Satan has nothing to do with Christianity and their polluted doctrines of theism.&rdquo; This claim is verifiably false and, given the ideology&rsquo;s own acknowledgment of the Hebrew origin of the word, arguably self-contradictory. It serves as the foundation upon which the entire system is constructed, and it does not hold.</p>
+
+<p>Based on the historical evidence examined in this analysis, the &ldquo;actual Satan&rdquo; cannot be found outside the Judeo-Christian tradition given the documented and supported proof of where the concept originated.</p>
+
+<p>The analytical findings are as follows:</p>
+
+<ul class="findings">
+  <li><strong>Historical claims:</strong> The ideology makes numerous unsupported assertions about ancient origins and practices. No historical evidence supports a cohesive, ancient &ldquo;True Satanism&rdquo; as described.</li>
+  <li><strong>Internal coherence:</strong> The presentation, though eloquent, is frequently convoluted, mixing various occult concepts without clear logical connections between them.</li>
+  <li><strong>Factual accuracy:</strong> Many statements are either factually incorrect or highly speculative. The claim that all animistic cultures practiced &ldquo;Pantheistic Satanism,&rdquo; for example, has no evidentiary basis.</li>
+  <li><strong>Treatment of modern Satanism:</strong> The ideology&rsquo;s criticisms of LaVey and other modern Satanic groups are based on a subjective and narrow definition of Satanism that is not widely accepted. If this narrowness is intentional, it further necessitates a designation other than &ldquo;Satanism.&rdquo;</li>
+  <li><strong>Terminological accuracy:</strong> The ideology misuses or reinterprets terms from various religious and occult traditions without proper context or explanation.</li>
+</ul>
+
+<p>&ldquo;True Satanism&rdquo; is a fringe, novel, and subjective interpretation that combines elements of Left-Hand Path occultism, theosophy, chaos magic, New Age spirituality, and personal belief. It does not align with academic, historical, or mainstream religious understandings of Satanism or, more broadly, occult traditions. It is, in substance, a completely new ideology. Its claims about ancient origins, etymologies, and historical practices are largely unsupported by evidence and should be approached with significant skepticism.</p>
+
+<p>From a logical perspective, a single unsupported, nonfactual, or false foundational claim&mdash;whether conscious or unconscious&mdash;casts considerable doubt upon the entirety of the ideology as a whole.</p>
+
+<div class="section-rule"></div>
+
+<h2>Sources</h2>
+
+<ul class="sources">
+  <li>Betz, H.D. (1975). <em>Plutarch&rsquo;s Theological Writings and Early Christian Literature.</em> Leiden: Brill.</li>
+  <li>Bunson, M. (2012). &ldquo;Epicureanism.&rdquo; In <em>Encyclopedia of Ancient Rome</em> (3rd ed.). Facts on File.</li>
+  <li>Casey, R.P. (1935). &ldquo;The Study of Gnosticism.&rdquo; <em>The Journal of Theological Studies,</em> os-XXXVI(141), 45&ndash;60.</li>
+  <li>Di Berardino, A. (Ed.). (2014). &ldquo;Nous.&rdquo; In <em>Encyclopedia of Ancient Christianity</em> (1st ed.). InterVarsity Press.</li>
+  <li>Editors of Encyclopaedia Britannica. (2024). &ldquo;Baphomet.&rdquo; In <em>Encyclop&aelig;dia Britannica.</em></li>
+  <li>Faxneld, P. (2013). &ldquo;The Baphomet.&rdquo; DiVA portal.</li>
+  <li>Grimal, P. (1995). <em>The Dictionary of Classical Mythology.</em> Oxford: Blackwell.</li>
+  <li>La Carmina. (2022). <em>The Little Book of Satanism.</em> New York: Ulysses Press.</li>
+  <li>Layton, B. (1987). <em>The Gnostic Scriptures: A New Translation with Annotations.</em> Doubleday &amp; Co.</li>
+  <li>Lundhaug, H., &amp; Jenott, L. (2015). <em>The Monastic Origins of the Nag Hammadi Codices.</em> Mohr Siebeck.</li>
+  <li>Moore, E. (n.d.). &ldquo;Gnosticism.&rdquo; <em>Internet Encyclopedia of Philosophy.</em></li>
+  <li>Picton, M. (2000). <em>The Book of Magical Herbs.</em> London: Capall Bann Publishing.</li>
+  <li>Plato. (1988). <em>Republic.</em> Madrid: Gredos.</li>
+  <li>Plato. (2017). <em>The Dialogues of Plato.</em> Barcelona: Austral.</li>
+  <li>Robinson, J.M. (Ed.). (1988). <em>The Nag Hammadi Library in English</em> (3rd ed.). Harper &amp; Row.</li>
+  <li>Smith, J.Z. (n.d.). [Work on demons and impurity].</li>
+  <li>Strube, J. (2016). &ldquo;The &lsquo;Baphomet&rsquo; of Eliphas L&eacute;vi: Its Meaning and Historical Context.&rdquo; <em>Correspondences,</em> 4, 37&ndash;79.</li>
+  <li>Wiebe, G.D. (2021). &ldquo;Pagan Demonolatry.&rdquo; In <em>Fallen Angels in the Theology of St Augustine.</em> Oxford: Oxford University Press.</li>
+  <li>Wildberg, C. (2016). &ldquo;Neoplatonism.&rdquo; <em>Stanford Encyclopedia of Philosophy.</em> Stanford University.</li>
+  <li>Williams, M.A. (1996). <em>Rethinking &ldquo;Gnosticism&rdquo;: An Argument for Dismantling a Dubious Category.</em> Princeton University Press.</li>
+  <li>Zaidman, L. &amp; Pantel, P. (2000). <em>Religion in the Ancient Greek City.</em> Cambridge: Cambridge University Press.</li>
+</ul>
+
+  </div>
+  <a href="writing.html" class="article-back">&larr; Back to Field Notes</a>
+</div>
+
+<footer>
+  <div class="footer-left"><span style="color:var(--accent);font-weight:600;">b1tr0n1n</span><span style="margin:0 12px;color:var(--border);">&mdash;</span><span>Builder. Thinker. Maker.</span></div>
+  <div class="footer-links"><a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a><a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a><a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a><a href="contact.html">Contact</a></div>
+</footer>
+</body>
+</html>
