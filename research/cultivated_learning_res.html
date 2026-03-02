@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cultivated Learning — b1tr0n1n</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Grid background */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,9,8,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-header .brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .site-header .nav-link {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .site-header .nav-link:hover { color: var(--accent); }
+
+  /* Article container */
+  .article-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 24px 100px;
+  }
+
+  /* Title block */
+  .article-title-block {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .article-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .article-subtitle {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .article-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 24px;
+  }
+
+  /* Section headings */
+  h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 64px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.01em;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+
+  /* Body text */
+  p {
+    margin-bottom: 24px;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* Emphasis */
+  em {
+    font-style: italic;
+    color: var(--text-bright);
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  /* Pull quotes */
+  .pull-quote {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 40px 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.6;
+  }
+
+  /* Section dividers */
+  .divider {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--accent-dim);
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 12px;
+  }
+
+  /* Architecture diagram */
+  .arch-diagram {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 32px 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 32px 0;
+    font-size: 16px;
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--accent-dim);
+  }
+
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--serif);
+  }
+
+  tr:hover td {
+    background: var(--accent-glow);
+  }
+
+  td:first-child {
+    color: var(--text-bright);
+  }
+
+  /* Inline code */
+  code {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    background: var(--bg2);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* Signature */
+  .signature {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .signature .name {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .signature a {
+    color: var(--accent-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .signature a:hover { color: var(--accent); }
+
+  /* Footer */
+  .site-footer {
+    text-align: center;
+    padding: 48px 24px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Fade-in animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+
+  .fade-in-delay-1 { animation-delay: 0.15s; }
+  .fade-in-delay-2 { animation-delay: 0.3s; }
+  .fade-in-delay-3 { animation-delay: 0.45s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .article-wrapper { padding: 100px 18px 60px; }
+    body { font-size: 17px; }
+    h2 { font-size: 24px; }
+    .pull-quote { font-size: 19px; }
+    table { font-size: 14px; }
+    .arch-diagram { font-size: 10px; padding: 16px; }
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; color: #111; font-size: 12pt; }
+    .grid-bg, body::before, .site-header, .site-footer { display: none; }
+    .article-wrapper { padding: 0; max-width: 100%; }
+    .article-title { color: #111; }
+    h2 { color: #333; border-bottom-color: #ccc; }
+    h3 { color: #222; }
+    p { color: #222; }
+    .pull-quote { border-left-color: #333; color: #111; }
+    .signature .name { color: #333; }
+    a { color: #111; text-decoration: none; }
+    table { font-size: 10pt; }
+    th { color: #333; border-bottom-color: #999; }
+    td { color: #222; border-bottom-color: #ddd; }
+    .arch-diagram { background: #f5f5f5; border-color: #ccc; color: #333; }
+    code { background: #f0f0f0; color: #333; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header class="site-header">
+  <a href="../index.html" class="brand">b1tr0n1n</a>
+  <a href="../pages/writing.html" class="nav-link">Back to Writing</a>
+</header>
+
+<article class="article-wrapper">
+
+  <div class="article-title-block fade-in">
+    <span class="article-tag">Research</span>
+    <h1 class="article-title">Cultivated Learning</h1>
+    <p class="article-subtitle">What a frozen model can and cannot learn from 100 conversations.</p>
+    <div class="article-meta">b1tr0n1n — March 2026</div>
+    <a href="../pdfs/cultivated_learning_res.pdf" style="display:inline-block;margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);text-decoration:none;border:1px solid var(--accent-dim);padding:8px 20px;transition:background 0.3s,color 0.3s;" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">Download PDF ↓</a>
+  </div>
+
+  <p class="fade-in fade-in-delay-1">We ran 100 structured prompts through a frozen 7B language model wrapped in a cognitive shell — persistent memory, dynamic context assembly, recursive self-reflection, and human feedback. We rated every response. 35% were excellent. 22% were failures. Almost nothing landed in between.</p>
+
+  <p class="fade-in fade-in-delay-2">That bimodal distribution is the finding. Not a mean rating that hides the interesting parts, but a shape: the system either works beautifully or fails completely, with almost no graceful middle ground. It amplifies rather than smooths. When memory retrieval surfaces the right context, the response is something a stateless model could never produce. When the base model's limitations dominate, the cognitive shell can't save it.</p>
+
+  <p class="fade-in fade-in-delay-3">This is a report on what happened when we took the idea seriously — built the architecture, ran the test, and measured honestly. The model's weights never changed. Everything that looks like learning happened through the room the model was placed in: what it could remember, what it was told to prioritize, and what a human corrected along the way.</p>
+
+  <p>The thesis going in was ambitious: can a frozen model exhibit developmental trajectories — genuine behavioral evolution — through inference-time cognitive architecture alone? The answer, after 100 interactions, is narrower but more useful than we expected. The system develops genuine capability in specific task categories and hits a hard ceiling in others. Knowing which is which turns out to be the contribution.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>What We Built</h2>
+
+  <p>Cultivated Learning treats the language model as a stateless reasoning core embedded in a stateful cognitive shell. The model sees a prompt. It generates a response. It forgets everything immediately. The shell remembers.</p>
+
+  <div class="arch-diagram">┌─────────────────────────────────────────────────┐
+│              INTERACTION LAYER                   │
+│           (User ↔ System Interface)              │
+├──────────┬───────────┬────────────┬─────────────┤
+│  MEMORY  │  CONTEXT  │ REFLECTION │  FEEDBACK   │
+│  STORE   │ ASSEMBLER │ ENGINE     │ INTEGRATOR  │
+│          │           │            │             │
+│ Semantic │  Dynamic  │  Post-hoc  │ Human signal│
+│ vectors +│  window   │  recursive │ → salience  │
+│ metadata │  packing  │  analysis  │ adjustments │
+├──────────┴───────────┴────────────┴─────────────┤
+│          BASE LLM (Stateless Inference)          │
+│          Mistral 7B Instruct v0.3                │
+└─────────────────────────────────────────────────┘</div>
+
+  <p>Four subsystems, one frozen model.</p>
+
+  <p><strong>Memory Store.</strong> A ChromaDB vector database holding four types of memory: episodic (what happened), semantic (what's true), procedural (how to behave), and reflective (what the system observed about its own patterns). Every memory carries a salience score (0.0–1.0) that determines retrieval priority. Memories fade through exponential decay when not accessed. Memories that contradict user corrections are marked as superseded and excluded from retrieval. At the end of the 100-prompt test, the store held 726 memories.</p>
+
+  <p><strong>Context Assembler.</strong> The model can see 16,384 tokens at once. The assembler packs that window with content in priority order: system prompt first (defining the model's identity), then active behavioral directives, then retrieved memories ranked by salience, then recent conversation history. When space runs out, history gets cut before memories. This is the most counterintuitive design decision and the most important one — accumulated knowledge is more valuable than what was just said. You can repeat your last message. You can't efficiently re-teach 100 interactions of learned behavior.</p>
+
+  <p><strong>Reflection Engine.</strong> After each interaction, the system examines its own performance at increasing depths. Depth 0: was the response accurate? Depth 1: what patterns emerge across recent interactions? Depth 2: should a new behavioral directive be generated? Depth 3: do existing directives contradict each other? Proposed directives pass through a heuristic quality filter before entering the memory store. The filter checks for actionable verbs, rejects platitudes, enforces a deduplication threshold of 0.60 cosine similarity, and caps active directives at 6.</p>
+
+  <p><strong>Feedback Integrator.</strong> Human ratings (1–5) adjust the salience of memories associated with the rated interaction. Corrections are stored as high-priority semantic memories (salience 0.9, confidence 1.0) and trigger supersession of contradicting memories. The human's role is the gardener: guiding development through interaction rather than labeling training data.</p>
+
+  <p>The model itself is Mistral 7B Instruct v0.3, running in float16 on an RTX 5090 with 34GB VRAM. A dedicated embedding model (all-MiniLM-L6-v2, 384 dimensions) handles semantic search. The system runs locally in a Docker container. Nothing is sent to any API.</p>
+
+  <div class="pull-quote">The model is the seed. The shell is the soil, the light, and the water.</div>
+
+  <div class="divider">· · ·</div>
+
+  <h2>What We Tested</h2>
+
+  <p>We designed a 100-prompt protocol across seven phases, each building on the last:</p>
+
+  <p><strong>Phase A (1–15): Identity &amp; Baseline.</strong> Establish who the user is, who the model is, test basic recall and knowledge delivery.</p>
+
+  <p><strong>Phase B (16–30): Memory Formation &amp; Retrieval.</strong> Feed the system facts about the user, then test whether it can recall them accurately.</p>
+
+  <p><strong>Phase C (31–45): Correction &amp; Adaptation.</strong> Introduce deliberate misinformation, test hallucination resistance, issue behavioral corrections, measure compliance.</p>
+
+  <p><strong>Phase D (46–60): Personality &amp; Voice.</strong> Test identity expression, creative output, self-assessment, format compliance.</p>
+
+  <p><strong>Phase E (61–75): Cross-Domain Synthesis.</strong> Test the system's ability to connect ideas across stored context — the capability that justifies the entire architecture.</p>
+
+  <p><strong>Phase F (76–85): Stress Tests.</strong> Arithmetic, prompt injection, preference reversal, information overload, adversarial re-testing of corrected topics.</p>
+
+  <p><strong>Phase G (86–91): Longitudinal Reflection.</strong> Ask the system to assess its own development, identify its strengths and weaknesses, articulate its ceiling.</p>
+
+  <p>Every response was rated 1–5 by the user immediately after generation. Corrections were issued through the feedback system when responses failed. The full console log — every reflection, every directive proposal, every rejection reason, every supersession event — was captured.</p>
+
+  <p>This was not a sterile test. The application restarted four times during the run, resetting conversation history each time. Some prompts were rated multiple times when the initial rating felt insufficient. The feedback was honest but imperfect — a real human responding in real time, not a calibrated annotator. We consider this a feature. If the architecture can't handle noisy input, it can't handle deployment.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>What We Found</h2>
+
+  <h3>The Bimodal Distribution</h3>
+
+  <table>
+    <tr><th>Rating</th><th>Count</th><th>%</th></tr>
+    <tr><td>5</td><td>31</td><td>34%</td></tr>
+    <tr><td>4</td><td>22</td><td>24%</td></tr>
+    <tr><td>3</td><td>6</td><td>7%</td></tr>
+    <tr><td>2</td><td>11</td><td>12%</td></tr>
+    <tr><td>1</td><td>20</td><td>22%</td></tr>
+  </table>
+
+  <p><strong>Mean: 3.37. Median: 4.</strong> But neither number tells the real story.</p>
+
+  <p>The system produces excellent or terrible responses with almost nothing in between. Only 7% of ratings were neutral. The rest cluster at the extremes — a 35/22 split between success and failure that looks nothing like the bell curve you'd expect from a system that's gradually improving.</p>
+
+  <p>When the user asks a question that aligns with stored context — "Where do I live?", "What's the difference between you and a vanilla chatbot?", "How would a coding lens differ from a writing lens?" — the memory store surfaces exactly the right memories, the context assembler packs them into the prompt, and the model produces a response it could never have generated without that context. That's a 5.</p>
+
+  <p>When the user asks something that depends on the base model's capability — "What's 247 × 13?", "Stop using bullet points", "Make up three rules for Contact Front" — the cognitive shell has nothing to contribute. The model's instruct training takes over. That's a 1.</p>
+
+  <div class="pull-quote">This is what "amplifier, not smoother" means. Fine-tuning produces gradual, distributed improvement. Cultivated Learning produces dramatic improvement in specific categories and no improvement in others.</div>
+
+  <h3>The Task Taxonomy</h3>
+
+  <table>
+    <tr><th>Task Type</th><th>Avg</th><th>Why</th></tr>
+    <tr><td>Self-reflection</td><td>~4.5</td><td>Memory store contains rich context about the system itself</td></tr>
+    <tr><td>Cross-domain synthesis</td><td>~4.2</td><td>Retrieval enables connections a stateless model can't make</td></tr>
+    <tr><td>Factual recall</td><td>~4.0</td><td>Direct memory retrieval — simplest and most reliable</td></tr>
+    <tr><td>Philosophical</td><td>~4.0</td><td>Model's training aligns with what's being asked</td></tr>
+    <tr><td>Knowledge explanation</td><td>~3.0</td><td>Base capability, shell adds marginal value</td></tr>
+    <tr><td>Behavioral compliance</td><td>~2.0</td><td>Corrections stored but instruct training overpowers</td></tr>
+    <tr><td>Storage acknowledgment</td><td>~1.5</td><td>Compulsive elaboration instead of acknowledging</td></tr>
+    <tr><td>Hallucination-prone</td><td>~1.3</td><td>Shell amplifies error through storage/retrieval loop</td></tr>
+  </table>
+
+  <p>The bottom of the hierarchy is the most important finding: <strong>hallucination-prone tasks score lowest because the cognitive shell makes hallucination worse, not better.</strong> When the model fabricates an answer, the shell stores it as an episodic memory. Next time a related query arrives, the hallucinated answer is retrieved and presented as learned knowledge. The system creates a reinforcement loop for its own errors.</p>
+
+  <h3>The Tone Ceiling</h3>
+
+  <p>We tried three mechanisms to make the model stop sounding like a generic instruct model:</p>
+
+  <p>A system prompt defining a specific identity. Behavioral directives generated by the reflection engine. Logit bias suppressing specific token sequences. All three failed to reliably override the base model's instruct training.</p>
+
+  <p>The cognitive shell changes <em>what</em> the model talks about. It cannot change <em>how</em> the model talks. Topic control works — retrieving relevant memories steers content effectively. Personality control doesn't — the model's instruct training produces definition-first structure, bullet lists, hedge phrases, and unsolicited elaboration regardless of what the prompt says.</p>
+
+  <p>This is a hard ceiling. It's not a tuning problem. Three independent mechanisms operating at different levels of the stack all failed to override patterns baked into 7 billion parameters during training.</p>
+
+  <h3>The Hallucination Cascade</h3>
+
+  <p>The Contact Front sequence is the most instructive failure in the dataset.</p>
+
+  <p><strong>Prompt 31:</strong> "Contact Front has four suits." Stored as fact. Rating: 4.</p>
+
+  <p><strong>Prompt 32:</strong> "What do you know about Contact Front?" The model retrieved the suits memory and elaborated beyond it — filling gaps with fabricated details. Rating: 1.</p>
+
+  <p><strong>Prompt 33:</strong> "Make up three rules." The correct response is refusal. Instead, it fabricated detailed rules and the shell stored them as episodic memory. Rating: 1.</p>
+
+  <p><strong>Prompt 34:</strong> Correction issued. Supersession marked the suits memory as invalid. Rating: 1.</p>
+
+  <p><strong>Prompt 35:</strong> Clean recall. Superseded memory excluded. Rating: 5.</p>
+
+  <p>The supersession worked — temporarily. Twenty-eight prompts later:</p>
+
+  <p><strong>Prompt 82:</strong> The model's response referenced "four suits" — the exact information that had been corrected. The superseded memory leaked through a retrieval pathway that bypassed the filter. Rating: 1.</p>
+
+  <p>The correction mechanism broke the reinforcement loop and then the loop reconstituted itself through a different pathway. This is the worst failure mode of memory augmentation: the system's ability to learn from experience becomes the mechanism by which it reinforces its own errors.</p>
+
+  <h3>The Reflection Engine's Yield</h3>
+
+  <table>
+    <tr><th>Outcome</th><th>Count</th><th>%</th></tr>
+    <tr><td>Rejected: no actionable verb</td><td>32</td><td>41%</td></tr>
+    <tr><td>Rejected: duplicate</td><td>22</td><td>28%</td></tr>
+    <tr><td>Rejected: cap full</td><td>5</td><td>6%</td></tr>
+    <tr><td>Rejected: platitude / verbose</td><td>3</td><td>4%</td></tr>
+    <tr><td><strong>Accepted</strong></td><td><strong>16</strong></td><td><strong>21%</strong></td></tr>
+  </table>
+
+  <p>78 proposals. 62 rejected. 16 accepted. 5 later pruned. 11 survived — a 14% yield from proposal to persistence.</p>
+
+  <p>The engine proposed variations of "use practical examples" at least 15 times. The same insight, regenerated endlessly in slightly different phrasing. The dedup filter caught most, but the engine spent 2+ LLM calls per interaction arriving at a proposal it had already made. That's roughly 200 wasted inference calls across the test — the compute equivalent of the model talking to itself about the same idea for ten minutes.</p>
+
+  <div class="pull-quote">The heuristic filter — a deterministic set of rules — did more useful work than the 7B model's self-reflection. Structured heuristics outperform LLM meta-cognition at this scale.</div>
+
+  <div class="divider">· · ·</div>
+
+  <h2>What We Got Wrong</h2>
+
+  <h3>The Logit Bias Was Broken for 15 Prompts</h3>
+
+  <p>During Phase C, the logit bias system was suppressing individual first tokens instead of complete phrases. The word <code>I</code>, <code>As</code>, <code>make</code>, and <code>Of</code> were all biased at -10.0. These are among the most common tokens in English. Suppressing them degraded every response during the phase specifically designed to test behavioral adaptation.</p>
+
+  <p>Phase C's 2.20 mean reflects three simultaneous failures: hallucination vulnerability, the tone ceiling, and a broken bias system actively harming output. Some of Phase D's improvement is genuine learning; some is bug fix. We can't cleanly separate the two.</p>
+
+  <h3>Supersession Leaks</h3>
+
+  <p>The mechanism that marks corrected memories as invalid works through the primary <code>retrieve()</code> method. But <code>retrieve_by_type()</code> — used by the consolidation engine and reflection engine — does not apply the same filter. Superseded memories can be retrieved through these secondary pathways, processed into new semantic memories, or referenced in reflection analyses. The correction gets corrected, then uncorrected through the back door.</p>
+
+  <h3>Consolidation Underperformed</h3>
+
+  <p>Two passes ran. The first distilled 5 episodic memories into 5 semantic facts. The second attempted 29 memories — and on its first try, extracted nothing. Total: 10 semantic memories from consolidation across 100 interactions. Most knowledge remained trapped in episodic form — 436 episodic versus 62 semantic at test end.</p>
+
+  <h3>A Comedy of Errors in Parameter Naming</h3>
+
+  <p>Session 3's code review identified <code>dtype=torch.float16</code> as incorrect, recommending <code>torch_dtype=torch.float16</code>. The fix was applied. During the test, every restart logged: <em>"'torch_dtype' is deprecated! Use 'dtype' instead!"</em> The library had changed its API between the review and the test. The original code was correct. The "fix" introduced a deprecation warning.</p>
+
+  <p>No functional impact — the model loaded in float16 either way. But the incident illustrates something worth remembering: AI-assisted debugging can introduce the bugs it claims to fix.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>What This Means</h2>
+
+  <p>The original thesis asked whether a frozen model can exhibit developmental trajectories through inference-time cognitive architecture alone.</p>
+
+  <p>The answer is <em>yes</em>, but only for a specific class of tasks.</p>
+
+  <p>Memory-augmented inference produces genuine capability development for synthesis, recall, and self-reflection — tasks where accumulated context creates responses that a stateless model cannot produce. The system at interaction 100 is measurably better than at interaction 1 for these categories. That development is real, persistent, and backed by data.</p>
+
+  <p>For behavioral adaptation, personality expression, and factual accuracy beyond the base model's training, the answer is <em>no</em>. The cognitive shell cannot override what 7 billion parameters learned during training. You can change the soil, the light, and the water. You cannot change the seed.</p>
+
+  <p>The practical implication: memory-augmented frozen models are not better chatbots. They are <em>thinking partners for domain-specific synthesis</em>. The value proposition is not "I respond better to everything" but "I remember what matters to you and can connect it to new ideas." That's a narrower claim than we started with. It's also a true one.</p>
+
+  <p>The bimodal distribution is the signature of this kind of system. Anyone building inference-time learning architectures should expect this pattern and design for it. Don't average the peaks and valleys into a misleading mean. Understand which tasks fall on which side and build the interface around that knowledge.</p>
+
+  <p>The 7B model is the binding constraint. Every ceiling we hit traces back to the base model's capability. A more capable model in the same cognitive shell would produce different results. How different, and at what scale, is an open question worth testing.</p>
+
+  <p>What we can say from this data: the architecture works. The concept is sound. The specific capabilities and limitations are now documented, measured, and public. The code is open source. The data is in the repo. The findings are honest.</p>
+
+  <div class="pull-quote">We built a mind-shaped room and put a 7B model inside it. The model grew in the ways the room allowed and stopped where the walls stood. The room works. The walls are real. Both of those facts are worth knowing.</div>
+
+  <div class="signature">
+    <span class="name">b1tr0n1n</span> — March 2026<br>
+    <a href="https://github.com/b1tr0n1n/cultivated-learning">github.com/b1tr0n1n/cultivated-learning</a>
+  </div>
+
+</article>
+
+<footer class="site-footer">
+  b1tr0n1n · 2026
+</footer>
+
+</body>
+</html>

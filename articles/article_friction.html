@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friction as Feature: What Clausewitz Teaches Game Designers — b1tr0n1n</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Grid background */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,9,8,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-header .brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .site-header .nav-link {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .site-header .nav-link:hover { color: var(--accent); }
+
+  /* Article container */
+  .article-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 24px 100px;
+  }
+
+  /* Title block */
+  .article-title-block {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .article-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .article-subtitle {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .article-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 24px;
+  }
+
+  /* Section headings */
+  h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 64px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.01em;
+  }
+
+  /* Body text */
+  p {
+    margin-bottom: 24px;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* Emphasis */
+  em {
+    font-style: italic;
+    color: var(--text-bright);
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  /* Pull quotes */
+  .pull-quote {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 40px 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.6;
+  }
+
+  /* Section dividers */
+  .divider {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--accent-dim);
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 12px;
+  }
+
+  /* Signature */
+  .signature {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .signature .name {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Footer */
+  .site-footer {
+    text-align: center;
+    padding: 48px 24px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Fade-in animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+
+  .fade-in-delay-1 { animation-delay: 0.15s; }
+  .fade-in-delay-2 { animation-delay: 0.3s; }
+  .fade-in-delay-3 { animation-delay: 0.45s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .article-wrapper { padding: 100px 18px 60px; }
+    body { font-size: 17px; }
+    h2 { font-size: 24px; }
+    .pull-quote { font-size: 19px; }
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; color: #111; font-size: 12pt; }
+    .grid-bg, body::before, .site-header, .site-footer { display: none; }
+    .article-wrapper { padding: 0; max-width: 100%; }
+    .article-title { color: #111; }
+    h2 { color: #333; border-bottom-color: #ccc; }
+    p { color: #222; }
+    .pull-quote { border-left-color: #333; color: #111; }
+    .signature .name { color: #333; }
+    a { color: #111; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header class="site-header">
+  <a href="../index.html" class="brand">b1tr0n1n</a>
+  <a href="../pages/writing.html" class="nav-link">Back to Writing</a>
+</header>
+
+<article class="article-wrapper">
+
+  <div class="article-title-block fade-in">
+    <span class="article-tag">Philosophy</span>
+    <h1 class="article-title">Friction as Feature: What Clausewitz Teaches Game Designers</h1>
+    <p class="article-subtitle">On uncertainty as the engine of meaningful decisions.</p>
+    <div class="article-meta">b1tr0n1n — January 2026</div>
+    <a href="../pdfs/article_friction.pdf" style="display:inline-block;margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);text-decoration:none;border:1px solid var(--accent-dim);padding:8px 20px;transition:background 0.3s,color 0.3s;" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">Download PDF ↓</a>
+  </div>
+
+  <p class="fade-in fade-in-delay-1">Carl von Clausewitz never designed a board game, but he described the architecture of every good one. In <em>On War</em>, he identified something he called friction — the gap between what you plan and what actually happens. Not bad luck, not enemy action, but the accumulated weight of uncertainty, incomplete information, fatigue, and the thousand small things that degrade a perfect plan into a messy reality.</p>
+
+  <p class="fade-in fade-in-delay-2">Most game designers treat friction as a problem to solve. Cleaner rules. Better information. Smoother action economy. The impulse is to remove uncertainty so the player can execute their strategy without interference. Clausewitz would call this a fundamental misunderstanding of what makes conflict interesting.</p>
+
+  <div class="pull-quote fade-in fade-in-delay-3">War is the province of uncertainty; three-fourths of those things upon which action in war must be calculated are hidden more or less in the clouds of great uncertainty.</div>
+
+  <div class="divider">· · ·</div>
+
+  <h2>Why Uncertainty Creates Meaning</h2>
+
+  <p>A decision made with perfect information is not really a decision — it's an optimization problem. You calculate the best move and execute it. There's intellectual satisfaction in that, but no tension. No weight. Nothing at stake beyond efficiency.</p>
+
+  <p>The moment you introduce genuine uncertainty — hidden information, probabilistic outcomes, cascading consequences you can't fully predict — the decision changes character. Now you're not calculating, you're committing. You're putting resources and position on the line based on incomplete data and hoping your read of the situation is better than the alternative.</p>
+
+  <p>This is what Clausewitz meant by the moral dimension of war. Not morality in the ethical sense, but the psychological weight of acting under uncertainty. The courage it takes to commit when you can't see the outcome. That weight is what separates a puzzle from a game, and a game from an experience that teaches you something about yourself.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>Designing for Friction</h2>
+
+  <p>In Contact Front!, friction isn't a side effect — it's a core mechanic. The deck is your fog of war. You don't know what's coming. You can prepare, position, and manage resources, but every draw introduces new information that may invalidate your plan. The doctrine system gives you tools to manage uncertainty, but never eliminate it.</p>
+
+  <p>Fields of Fire takes this further. The game is legendarily complex not because its rules are arbitrary, but because it models friction with brutal fidelity. Communication breaks down. Orders arrive late. Units don't do what you told them to do. The frustration players feel is the point — it's the same frustration a real commander feels when the plan meets reality.</p>
+
+  <p>The design principle is this: don't smooth the friction, structure it. Give the player tools to manage uncertainty without removing it. Let them make meaningful preparations that improve their odds without guaranteeing outcomes. The gap between preparation and result is where all the interesting gameplay lives.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>The Culminating Point</h2>
+
+  <p>Clausewitz described another concept that maps directly to game design: the culminating point of attack. Every offensive action carries momentum, but that momentum has limits. Push too far and your advantage collapses — supply lines stretch, reserves deplete, the enemy consolidates. The art of war is knowing when to stop pushing.</p>
+
+  <p>In game terms, this is resource management under uncertainty. Every action costs something, and you never know exactly when the system will push back harder than you can absorb. The player who wins isn't the one who pushes hardest — it's the one who reads the friction correctly and knows when to consolidate.</p>
+
+  <p>This is why I study Clausewitz as a game designer. Not for historical accuracy, but for structural truth. The patterns he identified in warfare — friction, uncertainty, culmination, the moral weight of decision — are the same patterns that make games worth playing. They're the same patterns that make any system worth engaging with.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>Against Frictionless Design</h2>
+
+  <p>The modern impulse in game design trends toward accessibility, which often means reducing friction. Shorter games, clearer information, more predictable outcomes. There's a place for that — not every game needs to be a three-hour commitment to suffering. But something is lost when we design friction out entirely.</p>
+
+  <p>What's lost is the space where you learn about yourself. The space where your plan fails and you have to adapt. The space where you discover that your confidence was based on incomplete information, and now you have to make a real decision with real consequences and no guarantee of success.</p>
+
+  <p>Clausewitz knew that friction isn't the enemy of good strategy. It's the medium through which strategy becomes real. Game designers would do well to remember the same.</p>
+
+  <div class="signature">
+    <span class="name">b1tr0n1n</span> — January 2026
+  </div>
+
+</article>
+
+<footer class="site-footer">
+  b1tr0n1n · 2026
+</footer>
+
+</body>
+</html>

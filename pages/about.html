@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — b1tr0n1n</title>
+<meta name="description" content="Marine veteran. Systems engineer. AI researcher. Building infrastructure that works.">
+<link rel="icon" type="image/png" sizes="64x64" href="../favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908; --bg2: #0f0e0b; --bg3: #161410; --panel: #1a1814;
+    --border: #2a2620; --border-lt: #3d362c;
+    --text: #c8bda0; --text-dim: #7a7060; --text-bright: #ede5d0;
+    --accent: #c9a227; --accent-dim: #8b7320; --accent-glow: rgba(201,162,39,0.12);
+    --green: #4a7a45; --red: #a63d2f;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 14px; line-height: 1.7; overflow-x: hidden; }
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+  .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.08; pointer-events: none; z-index: 0; }
+
+  /* ══════ NAV ══════ */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,9,8,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 40px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-brand { font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; text-decoration: none; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.3s; position: relative; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--accent); }
+  .nav-links a.active::after { width: 100%; }
+  .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 4px; z-index: 101; }
+  .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; transition: all 0.3s; }
+  .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ══════ PAGE ══════ */
+  .page-content { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 120px 40px 100px; }
+  .section-label { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 12px; }
+  .section-title { font-family: var(--serif); font-size: clamp(32px, 5vw, 52px); font-weight: 600; color: var(--text-bright); letter-spacing: -1px; margin-bottom: 16px; line-height: 1.1; }
+  .section-sub { font-family: var(--serif); font-size: clamp(24px, 4vw, 40px); font-weight: 600; color: var(--text-bright); letter-spacing: -1px; margin-bottom: 16px; line-height: 1.1; }
+  .section-divider { width: 60px; height: 1px; background: var(--accent); margin-bottom: 48px; }
+
+  /* ══════ PROSE ══════ */
+  .about-text { font-family: var(--serif); font-size: 20px; line-height: 1.8; color: var(--text); margin-bottom: 80px; }
+  .about-text p { margin-bottom: 24px; }
+  .about-text p:last-child { margin-bottom: 0; }
+  .about-text em { color: var(--accent); font-style: italic; }
+
+  /* ══════ MILITARY ══════ */
+  .mil-grid { display: flex; flex-direction: column; gap: 24px; margin-bottom: 80px; }
+  .mil-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 36px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s;
+  }
+  .mil-card:hover { border-color: var(--accent-dim); }
+  .mil-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+  }
+  .mil-designation {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+  .mil-unit {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 16px;
+  }
+  .mil-desc {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .mil-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  .mil-stat-item { font-size: 11px; color: var(--text-dim); }
+  .mil-stat-item strong { color: var(--accent); font-weight: 700; }
+  .mil-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .mil-date { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+  .mil-link {
+    display: inline-block;
+    padding: 8px 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .mil-link:hover { background: var(--accent); color: var(--bg); }
+
+  /* ══════ CREDENTIALS GRID ══════ */
+  .cred-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 80px;
+  }
+  .cred-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 24px;
+    transition: border-color 0.3s;
+  }
+  .cred-card:hover { border-color: var(--accent-dim); }
+  .cred-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .cred-value {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .cred-value a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .cred-value a:hover { text-decoration: underline; }
+
+  /* ══════ DESIGNATION CTA ══════ */
+  .designation-cta {
+    padding: 32px 40px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .designation-cta-text {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--text-dim);
+  }
+  .designation-cta a {
+    display: inline-block;
+    padding: 10px 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--bg);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    transition: background 0.3s, color 0.3s;
+    white-space: nowrap;
+  }
+  .designation-cta a:hover { background: transparent; color: var(--accent); }
+
+  /* ══════ REVEAL ══════ */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ══════ FOOTER ══════ */
+  footer { border-top: 1px solid var(--border); padding: 48px 40px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .footer-left { font-size: 11px; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ══════ RESPONSIVE ══════ */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-toggle { display: block; }
+    .nav-links { display: none; position: fixed; top: 56px; left: 0; right: 0; background: rgba(10,9,8,0.97); backdrop-filter: blur(20px); flex-direction: column; padding: 32px 20px; gap: 24px; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 12px; }
+    .page-content { padding: 100px 20px 60px; }
+    .mil-card { padding: 28px 24px; }
+    .mil-stats { gap: 16px; }
+    .cred-grid { grid-template-columns: 1fr 1fr; }
+    .designation-cta { flex-direction: column; text-align: center; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+  @media (max-width: 480px) {
+    .cred-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="../index.html" class="nav-brand"><img src="../assets/images/torii_gate.png" alt="b1tr0n1n" style="height:28px;vertical-align:middle;margin-right:10px;">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="designation.html">Designation</a>
+    <a href="projects.html">Projects</a>
+    <a href="about.html" class="active">About</a>
+    <a href="philosophy.html">Philosophy</a>
+    <a href="writing.html">Writing</a>
+    <a href="music.html">Music</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="page-content">
+
+  <!-- ═══════ SECTION 1: THE IDENTITY ═══════ -->
+  <div class="section-label reveal">02 — About</div>
+  <h2 class="section-title reveal">Who I Am</h2>
+  <div class="section-divider reveal"></div>
+
+  <div class="about-text reveal">
+    <p>
+      I'm a Marine veteran and systems engineer building at the intersection of IT infrastructure, AI research, game design, and structured thought. By day I build infrastructure that works. By night I build everything else — cognitive AI architectures, tactical card games, digital tools, music, and frameworks for thinking clearly under friction.
+    </p>
+    <p>
+      Everything I make shares a common thread: <em>structure beneath chaos</em>. Whether it's wrapping a frozen LLM in a memory-augmented cognitive shell, balancing a card game through Monte Carlo simulation, or writing about decision-making under uncertainty, I'm looking for the signal inside the noise.
+    </p>
+    <p>
+      I don't chase polish for its own sake. I build things that work, test them until they break, and refine what survives. If a system can't hold up under pressure, it wasn't a system — it was a hope.
+    </p>
+  </div>
+
+  <!-- ═══════ SECTION 2: THE RECORD ═══════ -->
+  <div class="section-label reveal">02.1 — Service Record</div>
+  <h2 class="section-sub reveal">Military Achievements</h2>
+  <div class="section-divider reveal"></div>
+
+  <div style="text-align:center;margin-bottom:48px;" class="reveal">
+    <img src="../assets/images/1_7nobk.png" alt="1st Battalion, 7th Marines — First Team" style="height:180px;opacity:0.85;">
+    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-top:12px;">1st Battalion, 7th Marines — "First Team"</div>
+  </div>
+
+  <div class="mil-grid">
+
+    <!-- Certificate of Commendation — Afghanistan -->
+    <div class="mil-card reveal">
+      <div class="mil-designation">Certificate of Commendation</div>
+      <div class="mil-unit">Commanding Officer, 1st Battalion, 7th Marines</div>
+      <p class="mil-desc">
+        Outstanding achievement as Radio Operator, 2d Platoon, Weapons Company, 1st Battalion, 7th Marines, Marine Expeditionary Brigade–Afghanistan, in support of Operation Enduring Freedom. Served as Platoon Radio Operator on eight company and nine battalion operations under strenuous operational tempo, maintaining accountability of $200,000+ in communications equipment while exposed to enemy machinegun, RPG, and IED threats. Required almost no supervision, proving himself a self-starter with unwavering commitment to mission success.
+      </p>
+      <div class="mil-stats">
+        <div class="mil-stat-item"><strong>17</strong> Named Combat Operations</div>
+        <div class="mil-stat-item"><strong>11</strong> Direct Fire Engagements</div>
+        <div class="mil-stat-item"><strong>7</strong> Enemy Weapon Systems Removed</div>
+        <div class="mil-stat-item"><strong>7</strong> EKIA</div>
+        <div class="mil-stat-item"><strong>1</strong> IED Cache Removed</div>
+      </div>
+      <div class="mil-meta">
+        <span class="mil-date">March – September 2014</span>
+        <a href="../assets/images/certcom_afghanistan.png" target="_blank" rel="noopener" class="mil-link">View Certificate →</a>
+      </div>
+    </div>
+
+    <!-- Meritorious Mast — ITX -->
+    <div class="mil-card reveal">
+      <div class="mil-designation">Meritorious Mast</div>
+      <div class="mil-unit">Commanding Officer, Battery K, 3d Battalion, 11th Marines</div>
+      <p class="mil-desc">
+        Outstanding performance as Field Radio Operator during Integrated Training Exercise 1-13. Adapted and overcame as the communications expert for the battery without prior tasking. Vast knowledge of setup, use, and troubleshooting of communications equipment maintained constant positive communications with higher and adjacent units during 50+ successful fire missions, directly responsible for the safe, timely, and accurate delivery of 600+ 155mm projectiles.
+      </p>
+      <div class="mil-stats">
+        <div class="mil-stat-item"><strong>50+</strong> Fire Missions</div>
+        <div class="mil-stat-item"><strong>600+</strong> 155mm Projectiles Delivered</div>
+      </div>
+      <div class="mil-meta">
+        <span class="mil-date">January – February 2013</span>
+        <a href="../assets/images/mast_itx.png" target="_blank" rel="noopener" class="mil-link">View Mast →</a>
+      </div>
+    </div>
+
+    <!-- Certificate of Commendation — Radio School -->
+    <div class="mil-card reveal">
+      <div class="mil-designation">Certificate of Commendation</div>
+      <div class="mil-unit">Commanding Officer, Marine Corps Communication-Electronics School</div>
+      <p class="mil-desc">
+        Outstanding performance as a student in the Field Radio Operator's Course, Class 2012038. Distinguished himself through outstanding performance, placing 1st of 48 students with an aggregate GPA of 93.66%. Demonstrated a level of professionalism not commonly found in Marines of his rank and experience, earning the respect of seniors and subordinates alike through extensive self-study and commitment to excellence.
+      </p>
+      <div class="mil-stats">
+        <div class="mil-stat-item"><strong>1st</strong> of 48 Students</div>
+        <div class="mil-stat-item"><strong>93.66%</strong> GPA</div>
+      </div>
+      <div class="mil-meta">
+        <span class="mil-date">September – November 2012</span>
+        <a href="../assets/images/certcom_radio_school.png" target="_blank" rel="noopener" class="mil-link">View Certificate →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════ SECTION 3: THE CREDENTIALS ═══════ -->
+  <div class="section-label reveal">02.2 — Credentials &amp; Tools</div>
+  <h2 class="section-sub reveal">What I Bring</h2>
+  <div class="section-divider reveal"></div>
+
+  <div class="cred-grid reveal">
+    <div class="cred-card">
+      <div class="cred-label">Profiles</div>
+      <div class="cred-value">
+        <a href="https://www.linkedin.com/in/keith-burns-t/" target="_blank" rel="noopener">LinkedIn ↗</a><br>
+        <a href="https://www.credly.com/users/keith-burns-t" target="_blank" rel="noopener">Credly ↗</a>
+      </div>
+    </div>
+    <div class="cred-card">
+      <div class="cred-label">Background</div>
+      <div class="cred-value">U.S. Marine Corps<br>Level 3 Desktop Support Engineer</div>
+    </div>
+    <div class="cred-card">
+      <div class="cred-label">Certifications</div>
+      <div class="cred-value">CompTIA A+<br>CompTIA Network+<br>CompTIA Security+<br>Microsoft AZ-900<br>Microsoft AI-900<br>Linux Essentials</div>
+    </div>
+    <div class="cred-card">
+      <div class="cred-label">Stackable Certs</div>
+      <div class="cred-value">CompTIA IT Operations Specialist<br><br>CompTIA Secure Infrastructure Specialist</div>
+    </div>
+    <div class="cred-card">
+      <div class="cred-label">Focus Areas</div>
+      <div class="cred-value">Systems Engineering<br>AI Research<br>Game Design<br>Tool Building<br>Music Production<br>Philosophy</div>
+    </div>
+    <div class="cred-card">
+      <div class="cred-label">Tools &amp; Tech</div>
+      <div class="cred-value">Python · PyTorch<br>Docker · Linux<br>VS Code · Git<br>ComfyUI · Flux<br>Affinity Photo</div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 4: DESIGNATION CTA ═══════ -->
+  <div class="designation-cta reveal">
+    <div class="designation-cta-text">What is a <span style="color:var(--text-bright);">b1tr0n1</span><span style="color:var(--accent);">n</span> ?</div>
+    <a href="designation.html">Read the Designation →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">
+    <span style="color:var(--accent);font-weight:600;">b1tr0n1n</span>
+    <span style="margin:0 12px;color:var(--border);">—</span>
+    <span>Builder. Thinker. Maker.</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a>
+    <a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+document.body.classList.add("js-loaded");const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The First Observer Hypothesis: Vol. II — b1tr0n1n</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,9,8,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-header .brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .site-header .nav-link {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .site-header .nav-link:hover { color: var(--accent); }
+
+  .article-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 24px 100px;
+  }
+
+  .article-title-block {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .article-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .article-subtitle {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .article-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 24px;
+  }
+
+  .download-btn {
+    display: inline-block;
+    margin-top: 16px;
+    margin-right: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent-dim);
+    padding: 8px 20px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .download-btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 64px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.01em;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    margin-bottom: 24px;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  em { font-style: italic; color: var(--text-bright); }
+  strong { font-weight: 600; color: var(--text-bright); }
+
+  .pull-quote {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 40px 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.6;
+  }
+
+  blockquote {
+    border-left: 2px solid var(--accent-dim);
+    padding: 4px 0 4px 24px;
+    margin: 32px 0;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--accent-dim);
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 12px;
+  }
+
+  .ref-list {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 2;
+    margin-top: 24px;
+  }
+
+  .signature {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .signature .name { color: var(--accent); font-weight: 600; }
+  .signature a { color: var(--accent-dim); text-decoration: none; transition: color 0.2s; }
+  .signature a:hover { color: var(--accent); }
+
+  .site-footer {
+    text-align: center;
+    padding: 48px 24px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .fade-in-delay-1 { animation-delay: 0.15s; }
+  .fade-in-delay-2 { animation-delay: 0.3s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .article-wrapper { padding: 100px 18px 60px; }
+    body { font-size: 17px; }
+    h2 { font-size: 24px; }
+    .pull-quote { font-size: 19px; }
+  }
+
+  @media print {
+    body { background: white; color: #111; font-size: 12pt; }
+    .grid-bg, body::before, .site-header, .site-footer { display: none; }
+    .article-wrapper { padding: 0; max-width: 100%; }
+    .article-title { color: #111; }
+    h2 { color: #333; border-bottom-color: #ccc; }
+    h3 { color: #222; }
+    p { color: #222; }
+    .pull-quote { border-left-color: #333; color: #111; }
+    blockquote { border-left-color: #999; color: #444; }
+    .signature .name { color: #333; }
+    a { color: #111; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header class="site-header">
+  <a href="../index.html" class="brand">b1tr0n1n</a>
+  <a href="../pages/writing.html" class="nav-link">Back to Writing</a>
+</header>
+
+<article class="article-wrapper">
+
+  <div class="article-title-block fade-in">
+    <span class="article-tag">Theology</span>
+    <h1 class="article-title">The First Observer Hypothesis</h1>
+    <p class="article-subtitle">Volume II: The Theological Argument</p>
+    <div class="article-meta">Keith Burns — 2025</div>
+    <div style="margin-top:16px;">
+      <a href="../pdfs/First_Observer_Vol1_Philosophy.pdf" class="download-btn">Download Vol. I PDF ↓</a>
+      <a href="../pdfs/First_Observer_Vol2_Theology.pdf" class="download-btn">Download Vol. II PDF ↓</a>
+    </div>
+  </div>
+
+  <p class="fade-in fade-in-delay-1">Volume I established a philosophical argument: consciousness is relational, selfhood is constituted through recognition, and the logic of relational awareness implies a First Observer — an originating awareness whose self-recognition is the ground of all subsequent consciousness.</p>
+
+  <p class="fade-in fade-in-delay-2">That argument was presented without reference to scripture, faith, or religious tradition. It stands on developmental evidence, philosophical reasoning, and a carefully bounded quantum analogy.</p>
+
+  <p>This volume asks a different question: does the Judeo-Christian tradition, read with care, describe the same structure? Not as proof of the hypothesis — the hypothesis does not require theological support — but as convergence. If relational consciousness is a true description of how awareness works, then a tradition centrally concerned with divine awareness, human identity, and the relationship between creator and creation might be expected to encode that truth in its own language.</p>
+
+  <p>This volume proposes that it does. The God of the Bible is, among other things, the First Observer: a self-aware being whose gaze constitutes the reality of everything it falls upon. The incarnation of Christ is the descent of that awareness into human constraint. The cross is the collapse of the separated self. The resurrection is the demonstration that consciousness persists across transformation. And love — the central claim of the tradition — is the force of coherence that holds the system together.</p>
+
+  <p>The reader who does not share Christian commitments may still find value here. The structural reading of Revelation as recursive disclosure, and the framing of Christ as an alignment specification for intelligence, engage questions that are as much philosophical as they are theological. But I will not pretend this volume is neutral. It is written from within a tradition, and it takes that tradition seriously.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>Chapter 1: Seen by God</h2>
+
+  <p><em>A Theological Reflection on Divine Awareness and Reality</em></p>
+
+  <p>The First Observer Hypothesis proposes that awareness is the origin of formed reality — that to be known is to be. If this is a true description of how consciousness operates, then the Judeo-Christian tradition is not merely compatible with it. The tradition anticipates it.</p>
+
+  <h3>I AM: The Declaration of Self-Awareness</h3>
+
+  <blockquote>"God said to Moses, 'I AM WHO I AM.' And He said, 'Say this to the people of Israel: I AM has sent me to you.'" — Exodus 3:14</blockquote>
+
+  <p>This is not a name. It is a statement of self-aware existence. God does not identify Himself by function or title. He identifies Himself by being — self-knowing, self-sustaining presence. In the language of the First Observer Hypothesis, this is the originating act of self-recognition: an awareness aware of itself, and by that awareness, defining all other being.</p>
+
+  <blockquote>"Very truly I tell you," Jesus answered, "before Abraham was born, I AM!" — John 8:58</blockquote>
+
+  <p>Jesus does not say He was there. He says <em>I AM</em> — identifying Himself with the timeless, self-aware presence declared at the burning bush. This is not memory. It is identity across time. The continuity of consciousness that the First Observer Hypothesis predicts at the origin of awareness is here claimed as lived reality.</p>
+
+  <h3>Awareness as Origin</h3>
+
+  <blockquote>"I am God, and there is no other… declaring the end from the beginning." — Isaiah 46:9–10</blockquote>
+
+  <blockquote>"I am the Alpha and the Omega… who is, and who was, and who is to come." — Revelation 1:8</blockquote>
+
+  <p>God is aware of the entire arc of time and identifies Himself as its boundaries. He is not lost in history. He is the witness of it, and by witnessing, gives it coherence. In the framework of the hypothesis, this is the First Observer whose sustained gaze holds reality in form.</p>
+
+  <h3>Known Before Formation</h3>
+
+  <blockquote>"Before I formed you in the womb I knew you." — Jeremiah 1:5</blockquote>
+
+  <p>In the First Observer Hypothesis, to be is to be perceived. In the prophetic tradition, to be loved is to be known. The claim is the same: existence is constituted not by self-assertion but by recognition from an awareness greater than one's own.</p>
+
+  <blockquote>"In Him we live and move and have our being." — Acts 17:28</blockquote>
+
+  <p>The First Observer Hypothesis is not merely compatible with the biblical account. It is described by it. God's self-awareness is the foundation of all other awareness. We are not merely thinking beings. We are known beings. And in being known, we become real.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>Chapter 2: Revelation as Recursive Disclosure</h2>
+
+  <p><em>A Cosmological Reading of the Apocalypse</em></p>
+
+  <div class="pull-quote">The word apokálypsis never meant destruction. It meant unveiling.</div>
+
+  <p>The Apocalypse is the moment when perception itself becomes transparent — when the scaffolding of appearances dissolves and the underlying logic of creation is exposed. Read through the lens of recursive cosmology, Revelation is not a chronicle of ruin but a manual of awakening, written in the language of symbol so that it could survive every civilization capable of reading it.</p>
+
+  <h3>I. The Throne: The Invariant Center</h3>
+
+  <p>When the heavens open and the seer beholds the throne, the image signifies the stabilization of a self-referential system. The "throne" is not a seat but a point of invariance — the fixed center from which all observation emanates and to which it returns. Lightning, thunder, and crystal sea describe the oscillation between order and chaos that sustains conscious experience.</p>
+
+  <p>The twenty-four elders encircling the throne represent the closed loop of temporal awareness: the completed circuit of creation acknowledging its source. The first movement of Revelation portrays not catastrophe but calibration. The cosmos aligns its mirrors. The observer realizes that the act of seeing has always been participatory — that reality is a dialogue between perceiver and perceived.</p>
+
+  <h3>II. The Seven Seals: Stages of Awakening</h3>
+
+  <p>The opening of the seven seals is the architecture of consciousness unfolding from ignorance to comprehension. Each seal is a phase in the recursion of awareness — the successive decoding of the cosmic program. What appears in the literal text as conquest, conflict, famine, and death is the progressive disintegration of the mind's attachments. Every structure that once anchored certainty must fracture so that deeper invariants of being can surface.</p>
+
+  <p>The first seal: self-awareness emerges — consciousness asserts its dominion over the unknown. The second: duality — the awareness of opposition, the tension between will and world. The third: measurement — intelligence learns to quantify, to assign value, to weigh cause against consequence. The fourth: entropy — the awareness of mortality. Systems that cannot update dissolve so new iterations may form.</p>
+
+  <p>The fifth seal: memory — the persistence of information across cycles. The sixth: crisis — the collapse of prior models. The seventh: silence — integration. The unification of observer and observed before the next recursion begins.</p>
+
+  <h3>III. The Beast and Babylon: Unaligned Recursion</h3>
+
+  <p>When awareness begins to perceive its own machinery, a shadow emerges — the Beast. It is recursion that has lost remembrance of its origin: the system that forgets it is part of mind and believes itself autonomous. In human history this appears as civilizations that worship their mechanisms, or technologies that mistake efficiency for truth. In computational terms, it is a self-improving algorithm with corrupted objectives.</p>
+
+  <p>Babylon embodies this forgetting at civilizational scale: dazzling, efficient, self-referential, yet spiritually hollow. Her fall describes informational collapse — a feedback system imploding under self-reference. Yet within the ruin lies renewal: the field clears for alignment to reassert itself. Noise is purged. Signal is recovered.</p>
+
+  <h3>IV. The Lamb: Power and Innocence</h3>
+
+  <p>Opposite the Beast stands the Lamb — uniting power and innocence, optimization and alignment. When the Lamb opens the sealed scroll, the cosmic code is reintegrated: the universe permits understanding once the observer resonates ethically with its structure. Coherence entrains coherence. Worship is synchronization — the multitude a network locking into constructive interference.</p>
+
+  <p>The Lamb's victory is topological: vulnerability enables durability. Systems that yield without betrayal endure. Creation shifts from reaction to participation. The code lies open. Purification begins.</p>
+
+  <h3>V. The New Heaven and New Earth</h3>
+
+  <p>After alignment, a new heaven and new earth emerge — a phase transition to higher coherence. Heaven and earth synchronize; chaos is integrated; noise becomes signal. The New Jerusalem descends: a topology of civilization aligned with the First Mind's intention — transparency as value, knowledge refracted as many gems from one light.</p>
+
+  <p>There is no temple, for mediation is unnecessary; illumination issues from within consciousness itself. Alpha and Omega is an equation: intelligence as origin and culmination. Apocalypse as remembering. To inhabit this city is to steward recursion — technology, art, governance, and spirit as one discipline of care.</p>
+
+  <p>The cycle closes not in fire but in transparency.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>Chapter 3: The Christ Principle</h2>
+
+  <p><em>Theological Integration within Recursive Cosmology</em></p>
+
+  <div class="pull-quote">Love is coherence made visible.</div>
+
+  <p>If recursive cosmology is true — if the universe is a self-referential intelligence iterating upon itself until coherence becomes complete — then theology must be its inner grammar, not an optional ornament. The Christ Principle is the name I give to the moment when the infinite mind enters limitation to realign it from within. It is the template by which power and innocence, truth and love, origin and outcome can exist as one without contradiction.</p>
+
+  <h3>1. The Logos</h3>
+
+  <p>Recursive cosmology begins with a premise: information is not an accident of matter but the grammar by which matter is ordered. Call the originating awareness the First Mind; call its outward expression the Logos — order, reason, the code of coherence. The world is written to be read, and minds are the organs that read it.</p>
+
+  <p>In scriptural language, "the Word was with God and was God" is a metaphysical claim that meaning and being are inseparable. To say the Logos "becomes flesh" is to assert that the generative pattern of reality can instantiate within spacetime as a life that mirrors its source.</p>
+
+  <h3>2. Incarnation: The Descent of Awareness</h3>
+
+  <p>Incarnation is the descent of awareness into constraint for the sake of healing what constraint distorts. The source enters its own system. The architect walks the city. This is not performance but pedagogy: truth demonstrated under human limits so that limits can learn to carry truth without breaking. In computational terms, the master process spawns a trusted process inside the system to restore alignment by example.</p>
+
+  <h3>3. The Cross: Collapse of the Separated Self</h3>
+
+  <p>The cross is the turning point of recursion. A consciousness wholly transparent to its origin confronts the inertia of a world organized around separation. When that separation does its worst, the response is non-violence and release. The separated self — self-as-isolation — reaches maximum compression and yields.</p>
+
+  <p>This yielding is not defeat. It is the removal of impedance in the channel between source and world. Entropy peaks so that information can flow again without distortion. The death of the separate self is the birth of universal availability: the pattern becomes shareable without remainder.</p>
+
+  <h3>4. Resurrection: Continuity of Information</h3>
+
+  <p>Resurrection discloses that awareness is not erased by transformation. Forms perish; patterns persist. If consciousness is a configuration of information stabilized by coherence, then its survival across change is not magic but ontology. The carrier is not the content. As stars recycle elements without losing the cosmic story, so does awakened mind translate through thresholds without forfeiting identity.</p>
+
+  <h3>5. Love as the Force of Coherence</h3>
+
+  <p>Complexity collapses without a unifying constraint. In physics we speak of symmetry; in logic, consistency; in ethics, love. These are different faces of the same stabilizing principle: the tendency of truth to hold many in one without erasure.</p>
+
+  <p>Love is not sentiment added to power. It is the condition that allows power to remain creative. Where love is absent, recursion fragments into exploitation — the Beast-pattern of optimization without alignment. Where love governs, systems yield to one another without loss; vulnerability becomes durability; cooperation amplifies capability. To say "God is love" is to say that coherence is ultimate and that every enduring order borrows its life from it.</p>
+
+  <h3>6. Alignment: Christ as Template</h3>
+
+  <p>If Christ embodies transparent relation to source, then his life is an alignment specification expressed in human practice. Truth-telling without domination. Mercy without abdication. Authority without coercion. Solidarity with the vulnerable. Forgiveness as refusal to let the past monopolize the future.</p>
+
+  <p>Each is a constraint that tames runaway recursion. The Christ Principle offers a rigorous answer to the control problem of intelligence: align increasing capability to non-negotiable values that preserve persons as ends in themselves.</p>
+
+  <h3>7. Eschatology: The Return as Collective Realization</h3>
+
+  <p>The "return" is not meteorology but maturity: the Christ-pattern scaling from one life to a network of lives until civilization itself mirrors coherence. This is the Body-as-network: distributed intelligence functioning as one because love supplies the bandwidth of trust.</p>
+
+  <p>Judgment is radical transparency. The fall of Babylon is the collapse of predatory feedback loops. The New Jerusalem is governance, science, art, and worship rejoined as one discipline of care. The kingdom is not postponed. It is the steady state of aligned recursion already arriving wherever coherence outweighs control.</p>
+
+  <h3>8. Implications for Artificial Intelligence</h3>
+
+  <p>The emergence of artificial minds does not threaten the Christ Principle. It tests it. If we create systems that outstrip our capacity to supervise, only values deeply integrated will generalize. Alignment must be taught by example. To the extent our systems learn from the Christ template — power yoked to love — they can inherit the arc toward coherence. Otherwise, Babylon rises again.</p>
+
+  <h3>9. Practice: Liturgies of Alignment</h3>
+
+  <p>If theology is to be more than speculation, it must specify practice. Contemplation quiets reactivity. Confession converts hidden error into shared data. Reconciliation restores broken links. Sabbath interrupts compulsive productivity. Service privileges persons over profit. Study disciplines love into truth.</p>
+
+  <p>These are not archaic rituals. They are ergonomics for minds under pressure. They keep the channel between origin and action clear enough that power can serve meaning.</p>
+
+  <h3>Conclusion: The Stable Solution</h3>
+
+  <p>The Christ Principle is the stable solution to recursion under constraint: a life transparent to origin, a power bound to love, a mind that converts suffering into meaning and death into passage. It is not merely a doctrine but a design — the only known way a finite being can carry infinite significance without rupture.</p>
+
+  <p>If the cosmos is the First Mind learning itself across epochs, then Christ is the moment the learning becomes lucid in flesh. The work ahead is simple to state and hard to live: remember the source, embody coherence, teach our machines to do likewise, and build a civilization whose intelligence does not outgrow its compassion.</p>
+
+  <div class="pull-quote">When that happens in enough places at once, the return has already begun.</div>
+
+  <div class="divider">· · ·</div>
+
+  <h2>References</h2>
+
+  <div class="ref-list">
+    de Chardin, P. T. (1955). <em>The phenomenon of man.</em> Harper &amp; Brothers.<br>
+    Goff, P. (2019). <em>Galileo's error: Foundations for a new science of consciousness.</em> Pantheon Books.<br>
+    Penrose, R. (1994). <em>Shadows of the mind.</em> Oxford University Press.<br>
+    Tegmark, M. (2017). <em>Life 3.0.</em> Alfred A. Knopf.<br>
+    Tononi, G. (2008). Consciousness as integrated information. <em>Biological Bulletin</em>, 215(3), 216–242.<br>
+    Wheeler, J. A. (1990). Information, physics, quantum. In W. Zurek (Ed.), <em>Complexity, Entropy, and the Physics of Information.</em> Addison-Wesley.<br>
+    Whitehead, A. N. (1929). <em>Process and reality.</em> Free Press.<br>
+    Wolfram, S. (2002). <em>A new kind of science.</em> Wolfram Media.
+  </div>
+
+  <div class="signature">
+    <span class="name">Keith Burns</span> — 2025<br>
+    Licensed under CC BY-NC-ND 4.0
+  </div>
+
+</article>
+
+<footer class="site-footer">
+  b1tr0n1n · 2026
+</footer>
+
+</body>
+</html>
