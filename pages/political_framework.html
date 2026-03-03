@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Political Framework — b1tr0n1n</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,9,8,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-header .brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .site-header .nav-link {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .site-header .nav-link:hover { color: var(--accent); }
+
+  .article-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 24px 100px;
+  }
+
+  .article-title-block {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .article-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 600;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .article-subtitle {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .article-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 24px;
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 64px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.01em;
+  }
+
+  h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+
+  p { margin-bottom: 24px; color: var(--text); font-weight: 400; }
+  em { font-style: italic; color: var(--text-bright); }
+  strong { font-weight: 600; color: var(--text-bright); }
+
+  .pull-quote {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 40px 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.6;
+  }
+
+  .divider {
+    text-align: center;
+    margin: 48px 0;
+    color: var(--accent-dim);
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 12px;
+  }
+
+  .position-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .position-domain {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-bright);
+  }
+
+  .position-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-glow);
+    padding: 3px 10px;
+    border: 1px solid var(--accent-dim);
+  }
+
+  .axiom {
+    border-left: 3px solid var(--accent);
+    padding: 16px 24px;
+    margin-bottom: 20px;
+    background: var(--bg2);
+  }
+
+  .axiom-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .tension {
+    margin-bottom: 32px;
+    padding: 20px 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+  }
+
+  .tension-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 10px;
+  }
+
+  .neighbor {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .neighbor-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .signature {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .signature .name { color: var(--accent); font-weight: 600; }
+
+  .site-footer {
+    text-align: center;
+    padding: 48px 24px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s ease forwards; }
+  .fade-in-delay-1 { animation-delay: 0.15s; }
+  .fade-in-delay-2 { animation-delay: 0.3s; }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 600px) {
+    .article-wrapper { padding: 100px 18px 60px; }
+    body { font-size: 17px; }
+    h2 { font-size: 24px; }
+    .pull-quote { font-size: 19px; }
+    .position-header { flex-direction: column; gap: 8px; }
+  }
+
+  @media print {
+    body { background: white; color: #111; font-size: 12pt; }
+    .grid-bg, body::before, .site-header, .site-footer { display: none; }
+    .article-wrapper { padding: 0; max-width: 100%; }
+    .article-title { color: #111; }
+    h2 { color: #333; border-bottom-color: #ccc; }
+    h3 { color: #222; }
+    p { color: #222; }
+    .pull-quote { border-left-color: #333; color: #111; }
+    .signature .name { color: #333; }
+    a { color: #111; text-decoration: none; }
+    .axiom { background: #f5f5f5; border-left-color: #999; }
+    .tension { background: #f5f5f5; border-color: #ccc; }
+    .neighbor { background: #f5f5f5; border-color: #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header class="site-header">
+  <a href="../index.html" class="brand">b1tr0n1n</a>
+  <a href="philosophy.html" class="nav-link">Back to Philosophy</a>
+</header>
+
+<article class="article-wrapper">
+
+  <div class="article-title-block fade-in">
+    <span class="article-tag">First-Principles Assessment</span>
+    <h1 class="article-title">Political Framework</h1>
+    <p class="article-subtitle">A First-Principles Map of Political Conviction. Not a label — a coordinate system.</p>
+    <div class="article-meta">b1tr0n1n — February 2026</div>
+    <a href="../pdfs/political_framework.pdf" style="display:inline-block;margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);text-decoration:none;border:1px solid var(--accent-dim);padding:8px 20px;transition:background 0.3s,color 0.3s;" onmouseover="this.style.background='var(--accent)';this.style.color='var(--bg)'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">Download PDF ↓</a>
+  </div>
+
+  <p class="fade-in fade-in-delay-1">Compiled from structured self-assessment. Not a label — a coordinate system.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>I. Core Axioms</h2>
+
+  <p>These are the non-negotiable principles that generate the rest of the framework. Everything below derives from these. If a policy or position contradicts one of these, it fails.</p>
+
+  <div class="axiom">
+    <div class="axiom-title">Labor is the source of value.</div>
+    <p>Work should exchange for work. Wealth generated by ownership alone — rent, interest, speculation — is extraction, not creation. Value flows from effort, skill, and contribution.</p>
+  </div>
+
+  <div class="axiom">
+    <div class="axiom-title">Reciprocity is the basis of obligation.</div>
+    <p>Shared community creates shared duty. If we occupy the same space and depend on the same systems, we owe each other a baseline. Not unlimited — but real.</p>
+  </div>
+
+  <div class="axiom">
+    <div class="axiom-title">Systems deserve confrontation. People deserve restoration.</div>
+    <p>Broken institutions should be challenged directly, with force if necessary. But individuals who do wrong deserve a path back through repair, not permanent punishment.</p>
+  </div>
+
+  <div class="axiom">
+    <div class="axiom-title">Freedom exists in context.</div>
+    <p>Personal liberty is the default, but it operates within community. Your freedom is real — and so is the space you share with others.</p>
+  </div>
+
+  <div class="axiom">
+    <div class="axiom-title">Pragmatism over ideology.</div>
+    <p>No structure of authority is sacred. What matters is whether it works. Power should flow to whatever arrangement actually serves the people it governs.</p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <h2>II. Position Map</h2>
+
+  <p>Each domain mapped from the structured assessment, with the position stated and its implications traced.</p>
+
+  <div class="position-header"><span class="position-domain">Authority</span><span class="position-label">Pragmatic</span></div>
+  <p>No fixed allegiance to any form of government. Decentralization, hierarchy, democracy, council — all are tools. The test is function, not form. This rejects both anarchist purism and authoritarian worship of the state.</p>
+
+  <div class="position-header"><span class="position-domain">Property</span><span class="position-label">Commons-First</span></div>
+  <p>Resources belong to the commons by default. Private ownership is permitted but not sacred — it exists as exception, not rule. Land, water, energy, and essential infrastructure are collective. Personal possessions are yours. This is the sharpest left-economic position in the framework.</p>
+
+  <div class="position-header"><span class="position-domain">Obligation</span><span class="position-label">Reciprocal Duty</span></div>
+  <p>Community membership creates mutual responsibility. Not charity — duty. If you benefit from shared systems, you contribute to them. This is communitarian, not collectivist: the unit is the community, not the state.</p>
+
+  <div class="position-header"><span class="position-domain">Economy</span><span class="position-label">Labor-Exchange</span></div>
+  <p>Value derives from work, not from ownership or financial instruments. Rent-seeking, speculation, and interest are parasitic extractions. This directly descends from Proudhon's mutualism and the labor theory of value. It does not reject markets — it rejects markets that reward non-labor.</p>
+
+  <div class="position-header"><span class="position-domain">Foreign Policy</span><span class="position-label">Internationalist</span></div>
+  <p>Global problems require cooperative solutions. This is not idealism — it is strategic recognition that isolation is a luxury no one can afford. Cooperation as pragmatic necessity, not moral performance.</p>
+
+  <div class="position-header"><span class="position-domain">Individual Liberty</span><span class="position-label">Broad with Communal Limits</span></div>
+  <p>Live how you want. But shared spaces require negotiated norms. Freedom is not abstract — it is exercised in a world with other people. This is communitarian liberalism: strong personal autonomy, tempered by context.</p>
+
+  <div class="position-header"><span class="position-domain">Change</span><span class="position-label">Direct Action</span></div>
+  <p>When institutions refuse to reform, they get moved. This is not a preference for violence — it is a refusal to wait for permission from the systems that are failing. Reform is fine when it works. When it doesn't, escalate.</p>
+
+  <div class="position-header"><span class="position-domain">Justice</span><span class="position-label">Restorative</span></div>
+  <p>The purpose of justice is repair, not punishment. Harm should be addressed by healing what was broken and reintegrating the person who caused it. Cages don't fix people. Accountability does.</p>
+
+  <div class="position-header"><span class="position-domain">Environment</span><span class="position-label">Sustainable Use</span></div>
+  <p>Use the natural world, but don't break it. Not mystical reverence — practical stewardship. Extraction is acceptable when renewal is ensured. The economy and the ecology are not separate systems.</p>
+
+  <div class="position-header"><span class="position-domain">Healthcare & Education</span><span class="position-label">Universal Right</span></div>
+  <p>Everyone gets access. No means-testing, no gatekeeping. These are infrastructure, not luxury. A society that lets people die or stay ignorant for lack of funds has failed its own reciprocal contract.</p>
+
+  <div class="position-header"><span class="position-domain">Identity & Culture</span><span class="position-label">Cultural Pluralism</span></div>
+  <p>No dominant narrative required. Many cultures coexist. Belonging comes from participation, not conformity. This rejects both ethno-nationalism and forced assimilation.</p>
+
+  <div class="position-header"><span class="position-domain">Technology</span><span class="position-label">Accelerationist</span></div>
+  <p>Push forward hard. Innovation drives adaptation. This is the most divergent position from the communal/cautious tendencies elsewhere in the framework — a genuine belief that technological progress is a net liberator, and that slowing down costs more than speeding up.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>III. Synthesis — What This Is</h2>
+
+  <p>There is no single label that captures this framework. It draws from several traditions without belonging fully to any of them. Here is what it is, stated plainly:</p>
+
+  <p><strong>Economically left.</strong> Labor creates value. Commons before private property. Universal provision of essentials. This is not centrist or moderate — it is a clear left-economic position rooted in mutualist and communitarian thought.</p>
+
+  <p><strong>Socially liberal-communitarian.</strong> Maximum personal freedom, but exercised within community context. Cultural pluralism, not monoculture. Individual rights balanced against shared space.</p>
+
+  <p><strong>Politically pragmatic.</strong> No worship of any governmental form. Judged by results, not ideology. Willing to use direct action when systems refuse to move.</p>
+
+  <p><strong>Internationally cooperative.</strong> Not isolationist, not imperialist. Shared problems, shared work.</p>
+
+  <p><strong>Technologically accelerationist.</strong> This is the sharpest tension in the framework — a strong communal ethic combined with an aggressive pro-technology stance. Most communitarian thinkers are cautious about technology. This framework says push forward anyway, and build the social structures to absorb the change.</p>
+
+  <p><strong>Restoratively just.</strong> Justice means repair, not revenge. Systems get confronted. People get restored.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2>IV. Nearest Neighbors & Divergences</h2>
+
+  <p>No existing ideology is a perfect match. These are the closest, with notes on where the framework diverges from each.</p>
+
+  <div class="neighbor">
+    <div class="neighbor-name">Mutualism (Proudhon)</div>
+    <p>Closest match on economics. Labor-exchange, rejection of rent-seeking, commons ownership. Divergence: Proudhon was more anarchist on authority — this framework is pragmatic about governance structures, not ideologically anti-state.</p>
+  </div>
+
+  <div class="neighbor">
+    <div class="neighbor-name">Libertarian Socialism</div>
+    <p>Strong overlap on personal liberty, worker-centered economics, and skepticism of concentrated power (both state and corporate). Divergence: most libertarian socialists are cautious about technology. This framework is accelerationist.</p>
+  </div>
+
+  <div class="neighbor">
+    <div class="neighbor-name">Social Democracy (Left Flank)</div>
+    <p>Shares universal provision of essentials, internationalism, and cultural pluralism. Divergence: social democracy typically works within capitalist markets with regulation. This framework rejects the legitimacy of non-labor income more fundamentally.</p>
+  </div>
+
+  <div class="neighbor">
+    <div class="neighbor-name">Communitarianism</div>
+    <p>Shares the emphasis on reciprocal duty, community standards, and contextual freedom. Divergence: communitarianism can shade conservative on cultural questions. This framework is pluralist.</p>
+  </div>
+
+  <div class="neighbor">
+    <div class="neighbor-name">Left-Accelerationism (Srnicek & Williams)</div>
+    <p>Shares the belief that technology should be pushed forward aggressively and harnessed for liberation. Divergence: left-accelerationism is often more focused on automation replacing labor. This framework still centers labor as the source of value — a fundamental tension worth continuing to examine.</p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <h2>V. Internal Tensions</h2>
+
+  <p>Every honest framework has contradictions. These are not flaws — they are the live edges where thinking is still developing. A framework without tensions is one that stopped asking questions.</p>
+
+  <div class="tension">
+    <div class="tension-title">Labor value vs. technological acceleration</div>
+    <p>If you believe labor is the source of value, what happens when AI and automation replace labor? Accelerationism pushes technology forward. Mutualism centers human work. At some point these collide. The resolution might be redefining what counts as 'work' — or it might require a deeper restructuring of the value theory itself.</p>
+  </div>
+
+  <div class="tension">
+    <div class="tension-title">Direct action vs. restorative justice</div>
+    <p>You are willing to force systemic change, but you want justice to focus on repair. What happens when direct action causes harm to individuals within the system? The framework distinguishes systems from people — but in practice, systems are made of people. The boundary requires ongoing discipline.</p>
+  </div>
+
+  <div class="tension">
+    <div class="tension-title">Commons-first vs. accelerationism</div>
+    <p>Communal resource management tends toward caution and consensus. Technological acceleration tends toward disruption and rapid iteration. Governing shared resources while pushing aggressive innovation requires institutional designs that don't fully exist yet.</p>
+  </div>
+
+  <div class="tension">
+    <div class="tension-title">Pragmatic authority vs. universal rights</div>
+    <p>If authority is judged by results, what happens when an effective authority restricts a universal right? The framework currently resolves this by making essentials non-negotiable (healthcare, education), but the full boundary between pragmatic governance and inviolable rights needs further definition.</p>
+  </div>
+
+  <div class="divider">· · ·</div>
+
+  <h2>VI. Standing Orders</h2>
+
+  <p>This framework is version 1.0. It is not a finished ideology — it is a working map. It should be pressure-tested against real policy questions, refined through argument, and updated when new information or experience demands it.</p>
+
+  <p>The goal was never to find a label. The goal was to find the structure beneath the convictions. That structure is now visible. What remains is to stress-test it — to run real-world scenarios through these axioms and see where they hold, where they bend, and where they need revision.</p>
+
+  <div class="pull-quote">The framework belongs to no party, no movement, no tradition. It belongs to the person who built it.</div>
+
+  <div class="signature">
+    <span class="name">b1tr0n1n</span> — February 2026
+  </div>
+
+</article>
+
+<footer class="site-footer">
+  b1tr0n1n · 2026
+</footer>
+
+</body>
+</html>
