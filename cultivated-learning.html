@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cultivated Learning — b1tr0n1n</title>
+<meta name="description" content="Longitudinal behavioral development in frozen LLMs through memory-augmented reflective interaction. A cognitive architecture by b1tr0n1n.">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --panel: #1a1814;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --green: #4a7a45;
+    --red: #a63d2f;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ══════ NAV ══════ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,9,8,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 56px;
+  }
+  .nav-brand {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-brand img { height: 28px; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+    padding: 4px 0;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a.active {
+    color: var(--accent);
+    border-bottom: 1px solid var(--accent);
+  }
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background: var(--text);
+    transition: 0.3s;
+  }
+
+  /* ══════ PAGE CONTENT ══════ */
+  .page-content {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 120px 40px 80px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .section-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 48px;
+  }
+
+  /* ══════ HERO BLOCK ══════ */
+  .project-hero {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 48px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-dim), transparent);
+  }
+  .hero-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .project-status {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+  .status-active { background: rgba(74,122,69,0.2); color: var(--green); border: 1px solid rgba(74,122,69,0.3); }
+  .status-complete { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(201,162,39,0.2); }
+  .project-type {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .hero-subtitle {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .hero-quote {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text);
+    border-left: 2px solid var(--accent);
+    padding-left: 20px;
+    margin: 24px 0;
+    line-height: 1.6;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .hero-tags span {
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 2px;
+  }
+  .hero-links {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .btn-gold {
+    display: inline-block;
+    padding: 10px 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--bg);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .btn-gold:hover {
+    background: transparent;
+    color: var(--accent);
+  }
+  .btn-ghost {
+    display: inline-block;
+    padding: 10px 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .btn-ghost:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* ══════ ARCHITECTURE DIAGRAM ══════ */
+  .arch-section {
+    margin-bottom: 56px;
+  }
+  .arch-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 20px;
+  }
+  .arch-diagram {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-x: auto;
+    position: relative;
+  }
+  .arch-diagram::before {
+    content: 'SYSTEM ARCHITECTURE';
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--border-lt);
+  }
+  .arch-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .arch-row.full {
+    grid-template-columns: 1fr;
+  }
+  .arch-node {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 16px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .arch-node:hover {
+    border-color: var(--accent-dim);
+  }
+  .arch-node-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .arch-node-desc {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .arch-connector {
+    text-align: center;
+    color: var(--border-lt);
+    font-size: 11px;
+    padding: 4px 0;
+    letter-spacing: 4px;
+  }
+
+  /* ══════ FEATURE GRID ══════ */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  .feature-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 28px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .feature-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+  .feature-icon {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .feature-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+  }
+  .feature-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* ══════ MEMORY TYPES TABLE ══════ */
+  .memory-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 56px;
+    font-size: 12px;
+  }
+  .memory-table th {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .memory-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .memory-table tr:hover td {
+    background: var(--bg2);
+  }
+  .mem-type {
+    font-weight: 600;
+    color: var(--text-bright);
+    font-size: 13px;
+  }
+  .mem-purpose {
+    color: var(--text);
+  }
+  .mem-example {
+    color: var(--text-dim);
+    font-style: italic;
+    font-family: var(--serif);
+    font-size: 13px;
+  }
+
+  /* ══════ TECH STACK ══════ */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+  .stack-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 20px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .stack-item:hover {
+    border-color: var(--accent-dim);
+  }
+  .stack-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .stack-value {
+    font-size: 12px;
+    color: var(--text-bright);
+    font-weight: 600;
+  }
+
+  /* ══════ DESIGN PHILOSOPHY ══════ */
+  .philosophy-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 2px;
+    padding: 32px 36px;
+    margin-bottom: 56px;
+  }
+  .philosophy-block h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+  .philosophy-block p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* ══════ RESEARCH QUESTIONS ══════ */
+  .research-list {
+    margin-bottom: 56px;
+  }
+  .research-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: baseline;
+  }
+  .research-num {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    width: 32px;
+  }
+  .research-text {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ══════ ROADMAP ══════ */
+  .roadmap {
+    margin-bottom: 56px;
+  }
+  .phase {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 4px;
+    padding: 14px 0;
+    align-items: center;
+  }
+  .phase-marker {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .phase-marker.done {
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  .phase-marker.done::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 4px;
+    width: 2px;
+    height: 28px;
+    background: var(--accent-dim);
+  }
+  .phase-marker.current {
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(74,122,69,0.3);
+  }
+  .phase-marker.current::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 4px;
+    width: 2px;
+    height: 28px;
+    background: var(--border);
+  }
+  .phase-marker.pending {
+    background: transparent;
+    border: 1px solid var(--border-lt);
+  }
+  .phase-marker.pending::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 4px;
+    width: 2px;
+    height: 28px;
+    background: var(--border);
+  }
+  .phase:last-child .phase-marker::after { display: none; }
+  .phase-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    width: 64px;
+    flex-shrink: 0;
+  }
+  .phase-name {
+    font-size: 13px;
+    color: var(--text);
+  }
+  .phase-name.done-text { color: var(--text-dim); }
+
+  /* ══════ PROSE SECTIONS ══════ */
+  .prose {
+    margin-bottom: 48px;
+  }
+  .prose h3 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 16px;
+  }
+  .prose p {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+
+  /* ══════ REVEAL ══════ */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ══════ FOOTER ══════ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-left { font-size: 11px; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ══════ RESPONSIVE ══════ */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-toggle { display: flex; }
+    .nav-links {
+      display: none;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      background: rgba(10,9,8,0.97);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      padding: 32px 20px;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-links.open { display: flex; }
+    .page-content { padding: 100px 20px 60px; }
+    .section-title { font-size: 30px; }
+    .hero-title { font-size: 28px; }
+    .project-hero { padding: 28px; }
+    .arch-row { grid-template-columns: 1fr 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="../index.html" class="nav-brand">
+    <img src="../assets/images/torii_gate.png" alt="">
+    b1tr0n1n
+  </a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links">
+    <a href="../pages/designation.html">Designation</a>
+    <a href="../pages/projects.html" class="active">Projects</a>
+    <a href="../pages/about.html">About</a>
+    <a href="../pages/philosophy.html">Philosophy</a>
+    <a href="../pages/writing.html">Writing</a>
+    <a href="../pages/music.html">Music</a>
+    <a href="../pages/contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="page-content">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <div class="section-label reveal">01.5 — Project Deep Dive</div>
+  <h1 class="section-title reveal">Cultivated Learning</h1>
+  <div class="section-divider reveal"></div>
+
+  <!-- ═══════ HERO BLOCK ═══════ -->
+  <div class="project-hero reveal">
+    <div class="hero-top">
+      <span class="project-status status-complete">Complete</span>
+      <span class="project-type">Cognitive Architecture · AI Research</span>
+    </div>
+    <h2 class="hero-title">Longitudinal Behavioral Development in Frozen Language Models</h2>
+    <p class="hero-subtitle">Through Memory-Augmented Reflective Interaction</p>
+    <div class="hero-quote">
+      The model is the organism. The human is the gardener.<br>
+      Traditional training changes the brain. Cultivated Learning changes the environment the brain operates in.
+    </div>
+    <div class="hero-tags">
+      <span>PyTorch</span>
+      <span>Mistral 7B</span>
+      <span>ChromaDB</span>
+      <span>Sentence Transformers</span>
+      <span>Recursive Reflection</span>
+      <span>Memory Systems</span>
+    </div>
+    <div class="hero-links">
+      <a href="https://github.com/B1tR0n1n/cultivated-learning" target="_blank" rel="noopener" class="btn-gold">View on GitHub →</a>
+    </div>
+  </div>
+
+  <!-- ═══════ THE THESIS ═══════ -->
+  <div class="prose reveal">
+    <h3>The Thesis</h3>
+    <p>Every LLM chatbot forgets you the moment the conversation ends. Memory systems exist — but they treat persistence as a feature bolted onto the side. Cultivated Learning inverts the entire priority: accumulated knowledge about you outranks the conversation you're currently having.</p>
+    <p>The system wraps a frozen Mistral 7B in a stateful cognitive shell. Persistent memory with semantic search. Dynamic context assembly that budgets tokens like a finite resource. Recursive self-reflection that generates behavioral directives. Human feedback translated into salience adjustments. The model never changes — not one weight. But its behavior evolves through memory alone.</p>
+    <p>The question this project asks is precise: can inference-time architecture alone produce measurable behavioral development over extended interaction?</p>
+  </div>
+
+  <!-- ═══════ ARCHITECTURE ═══════ -->
+  <div class="arch-section reveal">
+    <div class="arch-label">System Architecture</div>
+    <div class="arch-diagram">
+      <div class="arch-row full">
+        <div class="arch-node">
+          <div class="arch-node-title">Interaction Layer</div>
+          <div class="arch-node-desc">User ↔ System Interface · Gradio UI</div>
+        </div>
+      </div>
+      <div class="arch-connector">│ │ │ │</div>
+      <div class="arch-row">
+        <div class="arch-node">
+          <div class="arch-node-title">Memory Store</div>
+          <div class="arch-node-desc">Semantic vectors + metadata · ChromaDB · Salience decay</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-title">Context Assembler</div>
+          <div class="arch-node-desc">Token-budgeted prompt packing · Memory over history</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-title">Reflection Engine</div>
+          <div class="arch-node-desc">4-depth recursive self-analysis · Directive generation</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-title">Feedback Integrator</div>
+          <div class="arch-node-desc">Human signal → salience adjustments · Corrections</div>
+        </div>
+      </div>
+      <div class="arch-connector">│ │ │ │</div>
+      <div class="arch-row full">
+        <div class="arch-node">
+          <div class="arch-node-title">Base LLM</div>
+          <div class="arch-node-desc">Mistral 7B Instruct v0.3 · Frozen · Stateless Inference</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ CORE FEATURES ═══════ -->
+  <div class="arch-label reveal">Core Systems</div>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-icon">Memory</div>
+      <div class="feature-title">Semantic Memory Store</div>
+      <div class="feature-desc">ChromaDB-backed vector store with four memory types — episodic, semantic, procedural, reflective. Blended retrieval ranks by 60% semantic similarity + 40% salience score. Exponential decay ensures stale memories fade while reinforced knowledge persists.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">Context</div>
+      <div class="feature-title">Context Assembler</div>
+      <div class="feature-desc">Token-budgeted prompt packing that allocates context like a finite resource. Behavioral directives first, then retrieved memories, then conversation history with remaining space. Memories outrank recency — always.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">Reflection</div>
+      <div class="feature-title">Reflection Engine</div>
+      <div class="feature-desc">Post-interaction self-analysis at four depths. D0: factual evaluation. D1: pattern recognition across interactions. D2: prescriptive directive generation. D3: meta-coherence check for contradictions. Each depth feeds the next.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">Persistence</div>
+      <div class="feature-title">Consolidation &amp; Cold Storage</div>
+      <div class="feature-desc">Fading episodic memories get distilled into durable semantic memories through LLM-powered consolidation. Below the salience floor, memories archive to cold storage with semantic resurfacing on strong query match. Nothing is permanently lost.</div>
+    </div>
+  </div>
+
+  <!-- ═══════ MEMORY TYPES ═══════ -->
+  <div class="reveal">
+    <div class="arch-label">Memory Taxonomy</div>
+    <table class="memory-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Purpose</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mem-type">Episodic</td>
+          <td class="mem-purpose">Raw interaction records</td>
+          <td class="mem-example">"User asked about ML basics on Feb 14"</td>
+        </tr>
+        <tr>
+          <td class="mem-type">Semantic</td>
+          <td class="mem-purpose">Distilled facts and preferences</td>
+          <td class="mem-example">"User prefers concise, direct answers"</td>
+        </tr>
+        <tr>
+          <td class="mem-type">Procedural</td>
+          <td class="mem-purpose">Behavioral directives</td>
+          <td class="mem-example">"Ground explanations in practical examples"</td>
+        </tr>
+        <tr>
+          <td class="mem-type">Reflective</td>
+          <td class="mem-purpose">Self-analysis observations</td>
+          <td class="mem-example">"Technical responses tend toward verbosity"</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════ DESIGN PHILOSOPHY ═══════ -->
+  <div class="philosophy-block reveal">
+    <h3>Design Philosophy</h3>
+    <p>Most chatbots drop old memories to keep recent turns. This system does the opposite — it will forget what was just said before it forgets what it has learned about you. Accumulated knowledge is more valuable than short-term context for longitudinal development. The context assembler enforces this at the token level: memories get budget priority, conversation history fills whatever space remains.</p>
+  </div>
+
+  <!-- ═══════ TECH STACK ═══════ -->
+  <div class="arch-label reveal">Tech Stack</div>
+  <div class="stack-grid reveal">
+    <div class="stack-item">
+      <div class="stack-label">Base Model</div>
+      <div class="stack-value">Mistral 7B<br>Instruct v0.3</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-label">Embeddings</div>
+      <div class="stack-value">all-MiniLM-L6-v2<br>384-dim</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-label">Vector DB</div>
+      <div class="stack-value">ChromaDB<br>Cosine Space</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-label">GPU</div>
+      <div class="stack-value">RTX 5090<br>34 GB VRAM</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-label">Framework</div>
+      <div class="stack-value">PyTorch 2.9.1<br>Transformers 4.57</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-label">UI</div>
+      <div class="stack-value">Gradio<br>Tabbed Interface</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-label">Environment</div>
+      <div class="stack-value">Docker<br>Ubuntu 24.04</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-label">Language</div>
+      <div class="stack-value">Python<br>73% Jupyter / 27% Py</div>
+    </div>
+  </div>
+
+  <!-- ═══════ RESEARCH QUESTIONS ═══════ -->
+  <div class="prose reveal">
+    <h3>Research Questions</h3>
+  </div>
+  <div class="research-list">
+    <div class="research-item reveal">
+      <div class="research-num">1</div>
+      <div class="research-text">Can a frozen model exhibit measurable behavioral evolution through inference-time architecture alone?</div>
+    </div>
+    <div class="research-item reveal">
+      <div class="research-num">2</div>
+      <div class="research-text">Does the reflection engine produce better outcomes than feedback alone?</div>
+    </div>
+    <div class="research-item reveal">
+      <div class="research-num">3</div>
+      <div class="research-text">Where does inference-time learning hit its ceiling, and what causes it?</div>
+    </div>
+    <div class="research-item reveal">
+      <div class="research-num">4</div>
+      <div class="research-text">Does memory consolidation improve retrieval quality over time?</div>
+    </div>
+  </div>
+
+  <!-- ═══════ ROADMAP ═══════ -->
+  <div class="arch-label reveal">Project Roadmap</div>
+  <div class="roadmap reveal">
+    <div class="phase">
+      <div class="phase-marker done"></div>
+      <div class="phase-label">Phase 1</div>
+      <div class="phase-name done-text">Memory + Context + Interaction Loop</div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker done"></div>
+      <div class="phase-label">Phase 1.5</div>
+      <div class="phase-name done-text">Dedicated Embeddings + Blended Retrieval + Gradio UI</div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker done"></div>
+      <div class="phase-label">Phase 2</div>
+      <div class="phase-name done-text">Reflection Engine</div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker done"></div>
+      <div class="phase-label">Phase 2</div>
+      <div class="phase-name done-text">Memory Consolidation</div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker done"></div>
+      <div class="phase-label">Phase 2</div>
+      <div class="phase-name done-text">Cold Storage</div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker done"></div>
+      <div class="phase-label">Phase 3</div>
+      <div class="phase-name done-text">Longitudinal Evaluation — 100+ Interactions</div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker done"></div>
+      <div class="phase-label">Phase 3</div>
+      <div class="phase-name done-text">A/B Testing — Framework vs. Vanilla Model</div>
+    </div>
+  </div>
+
+  <!-- ═══════ BOTTOM CTA ═══════ -->
+  <div class="project-hero reveal" style="text-align:center; padding: 40px;">
+    <div class="project-type" style="margin-bottom:12px;">Open Source · MIT License</div>
+    <div class="hero-title" style="font-size:28px; margin-bottom:20px;">The code is the argument.</div>
+    <div class="hero-links" style="justify-content:center;">
+      <a href="https://github.com/B1tR0n1n/cultivated-learning" target="_blank" rel="noopener" class="btn-gold">View Repository →</a>
+      <a href="../pages/projects.html" class="btn-ghost">← All Projects</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">
+    <span style="color:var(--accent);font-weight:600;">b1tr0n1n</span>
+    <span style="margin:0 12px;color:var(--border);">—</span>
+    <span>Builder. Thinker. Maker.</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a>
+    <a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a>
+    <a href="../pages/contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

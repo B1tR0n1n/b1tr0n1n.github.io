@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABLE — Infrastructure Simulator // b1tr0n1n</title>
+<meta name="description" content="Cognitive engine for infrastructure operations. Causal reasoning. Decision modeling. State propagation. By b1tr0n1n.">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0908;
+    --bg2: #0f0e0b;
+    --bg3: #161410;
+    --panel: #1a1814;
+    --border: #2a2620;
+    --border-lt: #3d362c;
+    --text: #c8bda0;
+    --text-dim: #7a7060;
+    --text-bright: #ede5d0;
+    --accent: #c9a227;
+    --accent-dim: #8b7320;
+    --accent-glow: rgba(201,162,39,0.12);
+    --red: #a63d2f;
+    --green: #4a7a45;
+    --blue: #5a7a9a;
+    --purple: #8a6a9a;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --serif: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-lt); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ══════ NOISE OVERLAY ══════ */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ══════ GRID BACKGROUND ══════ */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ══════ NAV ══════ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10,9,8,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-brand {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-brand img { height: 28px; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--accent); }
+  .nav-links a.active::after { width: 100%; }
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 101;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    margin: 5px 0;
+    transition: all 0.3s;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ══════ PAGE CONTENT ══════ */
+  .page-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 120px 40px 80px;
+  }
+
+  /* ══════ HERO BLOCK ══════ */
+  .project-hero {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 48px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+  .project-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-dim), transparent);
+  }
+  .hero-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .status-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+  .status-active { background: rgba(74,122,69,0.2); color: var(--green); border: 1px solid rgba(74,122,69,0.3); }
+  .status-spec { background: rgba(201,162,39,0.15); color: var(--accent); border: 1px solid rgba(201,162,39,0.3); }
+  .hero-type {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .hero-title span { color: var(--accent); }
+  .hero-subtitle {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .hero-desc {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.8;
+    max-width: 700px;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .hero-tags span {
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 2px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-meta-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .hero-meta-value {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .hero-meta-sub {
+    font-size: 10px;
+    color: var(--border-lt);
+    margin-top: 4px;
+  }
+
+  /* ══════ SECTION HEADERS ══════ */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .section-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 32px;
+  }
+
+  /* ══════ TABS ══════ */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ══════ FILTER BAR ══════ */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .filter-btn:hover { border-color: var(--border-lt); color: var(--text); }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .filter-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* ══════ COMPONENT CARDS ══════ */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+  }
+  .component-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: all 0.3s;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .component-card:hover { border-color: var(--border-lt); }
+  .component-card.expanded { border-color: var(--accent-dim); }
+  .card-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-name .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .card-name span {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text);
+    transition: color 0.3s;
+  }
+  .component-card:hover .card-name span { color: var(--accent); }
+  .card-cat {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  .card-desc {
+    padding: 0 20px 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .card-failures {
+    display: none;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .card-failures.show { display: block; }
+  .card-failures-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .failure-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .failure-tag {
+    font-size: 10px;
+    padding: 3px 10px;
+    border: 1px solid rgba(166,61,47,0.25);
+    color: var(--red);
+    background: rgba(166,61,47,0.06);
+    border-radius: 2px;
+  }
+
+  /* ══════ DEPENDENCY LIST ══════ */
+  .dep-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  .dep-item:hover { background: rgba(201,162,39,0.03); }
+  .dep-item:last-child { border-bottom: none; }
+  .dep-arrow {
+    font-size: 11px;
+    color: var(--accent-dim);
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .dep-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+    transition: color 0.3s;
+  }
+  .dep-item:hover .dep-name { color: var(--accent); }
+  .dep-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .dep-propagation {
+    font-size: 10px;
+    color: var(--red);
+    opacity: 0.7;
+  }
+
+  /* ══════ CRITICALITY GRID ══════ */
+  .crit-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  .crit-item { }
+  .crit-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .crit-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .crit-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .crit-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ══════ FAILURE SCENARIO CARDS ══════ */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .scenario-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 20px;
+    transition: border-color 0.3s;
+  }
+  .scenario-card:hover { border-color: var(--border-lt); }
+  .scenario-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .scenario-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .scenario-diff {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .scenario-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ══════ ARCHITECTURE DIAGRAM ══════ */
+  .arch-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+  .arch-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+  .arch-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .arch-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .arch-node {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: var(--bg);
+    text-align: center;
+  }
+  .arch-node-primary {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 10px 28px;
+    border: 1px solid rgba(201,162,39,0.4);
+    color: var(--accent);
+    background: var(--accent-glow);
+    text-align: center;
+  }
+  .arch-node-core {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 12px 36px;
+    background: var(--accent);
+    color: var(--bg);
+    text-align: center;
+  }
+  .arch-connector {
+    width: 1px;
+    height: 20px;
+    background: rgba(201,162,39,0.3);
+  }
+  .arch-pillar {
+    flex: 1;
+    max-width: 220px;
+    border: 1px solid rgba(201,162,39,0.2);
+    background: rgba(201,162,39,0.03);
+    padding: 20px;
+    text-align: center;
+  }
+  .arch-pillar-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+  .arch-pillar-name {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .arch-pillar-desc {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .arch-pillar-tech {
+    font-size: 9px;
+    color: var(--border-lt);
+    letter-spacing: 1.5px;
+    margin-top: 10px;
+  }
+  .arch-last-mile {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 28px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  /* ══════ PILLAR GRID (below diagram) ══════ */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  /* ══════ HARDWARE BLOCK ══════ */
+  .hw-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  .hw-item {}
+  .hw-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .hw-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .hw-sub {
+    font-size: 10px;
+    color: var(--border-lt);
+    margin-top: 2px;
+  }
+
+  /* ══════ TIMELINE ══════ */
+  .timeline { }
+  .tl-item {
+    display: flex;
+    gap: 16px;
+  }
+  .tl-track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tl-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tl-dot.active { border-color: var(--accent); background: rgba(201,162,39,0.3); }
+  .tl-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border);
+  }
+  .tl-content {
+    padding-bottom: 28px;
+    flex: 1;
+  }
+  .tl-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .tl-phase {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+  }
+  .tl-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .tl-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease infinite;
+  }
+  .tl-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+  }
+  .tl-items span {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ══════ FOG OF WAR ══════ */
+  .fog-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  .fog-col-title {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .fog-list {
+    list-style: none;
+  }
+  .fog-list li {
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 4px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .fog-list li::before {
+    content: '▸';
+    flex-shrink: 0;
+  }
+  .fog-note {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* ══════ QUOTE BLOCK ══════ */
+  .quote-block {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text);
+    border-left: 2px solid var(--accent);
+    padding-left: 20px;
+    margin: 24px 0;
+    line-height: 1.6;
+  }
+
+  /* ══════ ANIMATIONS ══════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .fade-section {
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+  }
+  .delay-1 { animation-delay: 0.3s; }
+  .delay-2 { animation-delay: 0.5s; }
+  .delay-3 { animation-delay: 0.7s; }
+
+  /* ══════ FOOTER ══════ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-left { font-size: 11px; color: var(--text-dim); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ══════ RESPONSIVE ══════ */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-toggle { display: block; }
+    .nav-links {
+      display: none;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      background: rgba(10,9,8,0.97);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      padding: 32px 20px;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-links.open { display: flex; }
+    .page-content { padding: 100px 20px 60px; }
+    .project-hero { padding: 24px; }
+    .hero-meta { flex-wrap: wrap; gap: 20px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .pillar-grid { grid-template-columns: 1fr; }
+    .crit-grid { grid-template-columns: 1fr; }
+    .hw-grid { grid-template-columns: repeat(2, 1fr); }
+    .fog-grid { grid-template-columns: 1fr; }
+    .scenario-grid { grid-template-columns: 1fr; }
+    .tab-btn { padding: 12px 16px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="../index.html" class="nav-brand"><img src="../assets/images/torii_gate.png" alt="b1tr0n1n">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links">
+    <a href="../pages/designation.html">Designation</a>
+    <a href="../pages/projects.html" class="active">Projects</a>
+    <a href="../pages/about.html">About</a>
+    <a href="../pages/philosophy.html">Philosophy</a>
+    <a href="../pages/writing.html">Writing</a>
+    <a href="../pages/music.html">Music</a>
+    <a href="../pages/contact.html">Contact</a>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<div class="page-content">
+
+  <!-- HERO -->
+  <div class="project-hero">
+    <div class="hero-top">
+      <span class="status-badge status-spec">Build Spec Active</span>
+      <span class="hero-type">Cognitive AI Architecture</span>
+    </div>
+    <h1 class="hero-title"><span>SABLE</span></h1>
+    <div class="hero-subtitle">Infrastructure Simulator — Cognitive Engine for Operations</div>
+    <p class="hero-desc">
+      Synthetic training data generator for a novel AI architecture. Creates realistic infrastructure topologies, injects failures, simulates cascades through dependency graphs, and captures every step as structured training data. The model trained on this reasons structurally, causally, spatially. Language is the interface. The intelligence underneath is structural.
+    </p>
+    <div class="hero-tags">
+      <span>GNN</span>
+      <span>POMDP</span>
+      <span>Causal Reasoning</span>
+      <span>State Space Models</span>
+      <span>Infrastructure Ops</span>
+      <span>PyTorch</span>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Components</span>
+        <span class="hero-meta-value" id="stat-components">21</span>
+        <span class="hero-meta-sub">Infrastructure primitives</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Failure Modes</span>
+        <span class="hero-meta-value" id="stat-failures">87</span>
+        <span class="hero-meta-sub">Across all components</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Dependency Types</span>
+        <span class="hero-meta-value">9</span>
+        <span class="hero-meta-sub">Edge classifications</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Failure Categories</span>
+        <span class="hero-meta-value">8</span>
+        <span class="hero-meta-sub">Scenario generators</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar" id="tab-bar"></div>
+
+  <!-- TAB: OVERVIEW -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="fade-section delay-1" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+      <div>
+        <div class="section-label">Purpose</div>
+        <div class="section-title">Mission</div>
+        <div class="section-divider"></div>
+        <p style="font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:16px;">
+          SABLE is a synthetic training data generator for a novel AI architecture. It creates realistic infrastructure topologies, injects failures, simulates how those failures cascade through dependency graphs, and captures every step as structured training data.
+        </p>
+        <p style="font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:24px;">
+          The model trained on this data will reason about systems the way an operator reasons — structurally, causally, spatially. Language is the interface. The intelligence underneath is structural.
+        </p>
+        <div class="quote-block">
+          "The problem I am seeing is that all AI is mostly language models. That's what AI is about. Language, text. Why is that the focus and how do we push through that to something else?"
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Current Phase</div>
+        <div class="section-title">Timeline</div>
+        <div class="section-divider"></div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: COMPONENTS -->
+  <div class="tab-panel" id="panel-components">
+    <div class="section-label">Registry</div>
+    <div class="section-title">Component Types</div>
+    <div class="section-divider"></div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div class="card-grid" id="component-grid"></div>
+  </div>
+
+  <!-- TAB: DEPENDENCIES -->
+  <div class="tab-panel" id="panel-dependencies">
+    <div class="section-label">Graph Edges</div>
+    <div class="section-title">Dependency Types</div>
+    <div class="section-divider"></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:0 24px;" id="dep-list"></div>
+
+    <div class="crit-grid">
+      <div class="crit-item">
+        <div class="crit-header">
+          <div class="crit-dot" style="background:var(--red);"></div>
+          <div class="crit-label" style="color:var(--red);">HARD</div>
+        </div>
+        <div class="crit-desc">Target fails → source fails</div>
+      </div>
+      <div class="crit-item">
+        <div class="crit-header">
+          <div class="crit-dot" style="background:var(--accent);"></div>
+          <div class="crit-label" style="color:var(--accent);">SOFT</div>
+        </div>
+        <div class="crit-desc">Target fails → source degrades</div>
+      </div>
+      <div class="crit-item">
+        <div class="crit-header">
+          <div class="crit-dot" style="background:var(--green);"></div>
+          <div class="crit-label" style="color:var(--green);">REDUNDANT</div>
+        </div>
+        <div class="crit-desc">Unaffected unless ALL redundant targets fail</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: FAILURES -->
+  <div class="tab-panel" id="panel-failures">
+    <div class="section-label">Scenario Generation</div>
+    <div class="section-title">Failure Categories</div>
+    <div class="section-divider"></div>
+    <div class="scenario-grid" id="scenario-grid"></div>
+
+    <div style="margin-top:32px;">
+      <div class="fog-grid">
+        <div>
+          <div class="fog-col-title" style="color:var(--accent);">God View — Ground Truth</div>
+          <ul class="fog-list" style="--bullet-color:var(--accent-dim);">
+            <li>Full topology, all states</li>
+            <li>Complete cascade trace</li>
+            <li>Every dependency status</li>
+            <li>Used as training LABELS</li>
+          </ul>
+        </div>
+        <div>
+          <div class="fog-col-title" style="color:var(--red);">Operator View — Partial Observability</div>
+          <ul class="fog-list" style="--bullet-color:var(--red);">
+            <li>Only monitored components visible</li>
+            <li>State changes delayed by latency</li>
+            <li>Behind failures = "unknown"</li>
+            <li>Includes false positives & noise</li>
+          </ul>
+        </div>
+        <div class="fog-note" style="grid-column:1/-1;">
+          The model learns to reason from the Operator View and reconstruct the God View. This is the core skill.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ARCHITECTURE -->
+  <div class="tab-panel" id="panel-architecture">
+    <div class="section-label">Single model, heterogeneous internal structure</div>
+    <div class="section-title">Model Architecture</div>
+    <div class="section-divider"></div>
+
+    <div class="arch-block">
+      <div class="arch-label">System Architecture</div>
+      <div class="arch-flow">
+        <div class="arch-row">
+          <div class="arch-node">Telemetry</div>
+          <div class="arch-node">Logs</div>
+          <div class="arch-node">Topology</div>
+          <div class="arch-node">Events</div>
+        </div>
+        <div class="arch-connector"></div>
+        <div class="arch-node-primary">State Ingestion Pipeline</div>
+        <div class="arch-connector"></div>
+        <div class="arch-node-core">Shared Latent State Space</div>
+        <div class="arch-connector"></div>
+        <div class="arch-row" style="gap:12px;">
+          <div class="arch-pillar">
+            <div class="arch-pillar-label">Pillar I</div>
+            <div class="arch-pillar-name">Causal Graph Reasoning</div>
+            <div class="arch-pillar-desc">Models how components relate and failures cascade</div>
+            <div class="arch-pillar-tech">GNN // GRAPH ATTENTION</div>
+          </div>
+          <div class="arch-pillar">
+            <div class="arch-pillar-label">Pillar II</div>
+            <div class="arch-pillar-name">Decision Under Uncertainty</div>
+            <div class="arch-pillar-desc">Evaluates decision trees with incomplete information</div>
+            <div class="arch-pillar-tech">POMDP // MCTS // BAYESIAN</div>
+          </div>
+          <div class="arch-pillar">
+            <div class="arch-pillar-label">Pillar III</div>
+            <div class="arch-pillar-name">Multimodal State Repr.</div>
+            <div class="arch-pillar-desc">Ingests structured data — telemetry, logs, topology</div>
+            <div class="arch-pillar-tech">SSM // MAMBA // S4</div>
+          </div>
+        </div>
+        <div class="arch-connector"></div>
+        <div class="arch-last-mile">Natural Language Interface — The Last Mile</div>
+      </div>
+    </div>
+
+    <div class="hw-grid">
+      <div class="hw-item">
+        <div class="hw-label">GPU</div>
+        <div class="hw-value">RTX 5090</div>
+        <div class="hw-sub">32GB VRAM</div>
+      </div>
+      <div class="hw-item">
+        <div class="hw-label">System RAM</div>
+        <div class="hw-value" style="color:var(--text);">64GB DDR5-6000</div>
+        <div class="hw-sub">CL30-40-40-96</div>
+      </div>
+      <div class="hw-item">
+        <div class="hw-label">Target Model</div>
+        <div class="hw-value" style="color:var(--text);">100-500M params</div>
+        <div class="hw-sub">Proof of concept</div>
+      </div>
+      <div class="hw-item">
+        <div class="hw-label">Training Data</div>
+        <div class="hw-value" style="color:var(--text);">100K scenarios</div>
+        <div class="hw-sub">Synthetic generation</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <span style="color:var(--accent);font-weight:600;">b1tr0n1n</span>
+    <span style="margin:0 12px;color:var(--border);">—</span>
+    <span>SABLE Infrastructure Simulator // Build Specification v1.0</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a>
+    <a href="../pages/projects.html">Projects</a>
+    <a href="../pages/contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+// ══════ DATA ══════
+const COMPONENTS = [
+  { name: "CORE_SWITCH", failures: ["hardware_failure","cpu_overload","spanning_tree_loop","firmware_crash"], description: "Backbone — failure has wide blast radius", category: "network" },
+  { name: "ACCESS_SWITCH", failures: ["hardware_failure","poe_exhaustion","vlan_misconfiguration","uplink_loss"], description: "Connects endpoints to core — failure affects a segment", category: "network" },
+  { name: "FIREWALL", failures: ["session_table_exhaustion","hardware_failure","rule_misconfiguration","ha_failover_failure"], description: "Inline — failure can partition entire segments", category: "security" },
+  { name: "ROUTER", failures: ["route_table_corruption","hardware_failure","bgp_flap","memory_exhaustion"], description: "Connects segments/sites — failure isolates zones", category: "network" },
+  { name: "LOAD_BALANCER", failures: ["backend_pool_exhaustion","hardware_failure","ssl_cert_expiry","health_check_false_positive"], description: "Distributes traffic — subtle failure modes", category: "network" },
+  { name: "SERVER_PHYSICAL", failures: ["hardware_failure","cpu_exhaustion","memory_exhaustion","disk_failure","nic_failure"], description: "Base compute — hosts VMs or bare-metal services", category: "compute" },
+  { name: "SERVER_VIRTUAL", failures: ["resource_contention","host_failure_cascade","disk_exhaustion","network_isolation"], description: "Depends on hypervisor — cascade from host", category: "compute" },
+  { name: "HYPERVISOR", failures: ["overcommit_thrash","hardware_failure","management_plane_loss","storage_disconnect"], description: "Manages VMs — failure takes down all hosted VMs", category: "compute" },
+  { name: "STORAGE_ARRAY", failures: ["disk_failure","controller_failure","cache_battery_failure","iops_saturation","latency_spike"], description: "Shared storage — failure affects all consumers", category: "storage" },
+  { name: "STORAGE_TARGET", failures: ["protocol_error","session_exhaustion","authentication_failure","parent_array_cascade"], description: "Logical endpoint — depends on underlying array", category: "storage" },
+  { name: "VDI_BROKER", failures: ["broker_overload","database_corruption","licensing_exhaustion","pool_misconfiguration"], description: "Manages VDI sessions — prevents new connections", category: "compute" },
+  { name: "VDI_HOST", failures: ["resource_exhaustion","profile_corruption","gpu_failure","host_agent_crash"], description: "Runs VDI sessions — failure drops active users", category: "compute" },
+  { name: "DNS_SERVER", failures: ["service_crash","cache_poisoning","zone_transfer_failure","response_timeout"], description: "Foundational — failure causes widespread symptoms", category: "services" },
+  { name: "DHCP_SERVER", failures: ["scope_exhaustion","service_crash","rogue_server_conflict"], description: "Failure prevents new connections", category: "services" },
+  { name: "DOMAIN_CONTROLLER", failures: ["replication_failure","ldap_timeout","kerberos_failure","fsmo_seizure_needed"], description: "AD backbone — degrades auth across environment", category: "services" },
+  { name: "CERTIFICATE_AUTHORITY", failures: ["cert_expiry","crl_distribution_failure","private_key_compromise"], description: "Trust infra — cascades as unexplained SSL errors", category: "security" },
+  { name: "MONITORING_SERVER", failures: ["ingest_overload","storage_exhaustion","agent_disconnect"], description: "Meta-component — failure blinds the operator", category: "services" },
+  { name: "WAN_LINK", failures: ["link_down","saturation","latency_spike","packet_loss"], description: "Inter-site connectivity — failure isolates sites", category: "connectivity" },
+  { name: "INTERNET_GATEWAY", failures: ["session_exhaustion","hardware_failure","isp_outage","ddos"], description: "External connectivity — cuts off cloud/external", category: "connectivity" },
+  { name: "APPLICATION_SERVICE", failures: ["crash","memory_leak","dependency_timeout","configuration_error","thread_pool_exhaustion"], description: "Generic app — depends on compute, network, services", category: "services" }
+];
+
+const DEPENDENCIES = [
+  { name: "NETWORK_PATH", propagation: "target failure → source unreachable (if no alt path)", description: "Needs network connectivity" },
+  { name: "POWER_DEPENDENCY", propagation: "target failure → source fails immediately", description: "Powered by target" },
+  { name: "SERVICE_DEPENDENCY", propagation: "target failure → source degrades/fails by criticality", description: "Needs service on target" },
+  { name: "STORAGE_DEPENDENCY", propagation: "target failure → source loses data access", description: "Needs storage from target" },
+  { name: "AUTHENTICATION_DEPENDENCY", propagation: "target failure → can't auth new sessions", description: "Needs target for auth" },
+  { name: "DNS_DEPENDENCY", propagation: "target failure → delayed cascade (cache survives)", description: "Needs target for name resolution" },
+  { name: "HOSTING_DEPENDENCY", propagation: "target failure → source fails (always hard)", description: "Hosted/run by target" },
+  { name: "REPLICATION_DEPENDENCY", propagation: "target failure → split brain risk", description: "Replicates data with target" },
+  { name: "MONITORING_DEPENDENCY", propagation: "target failure → source becomes unobservable", description: "Monitored by target" }
+];
+
+const SCENARIOS = [
+  { name: "SINGLE_COMPONENT", description: "One component fails. Observe cascade.", difficulty: "basic" },
+  { name: "CASCADING_OVERLOAD", description: "Load redistributes to peers, triggers further failures.", difficulty: "intermediate" },
+  { name: "SILENT_DEGRADATION", description: "Slow degradation — latency creeps, memory leaks.", difficulty: "advanced" },
+  { name: "NETWORK_PARTITION", description: "Link/switch failure splits topology. Split-brain.", difficulty: "intermediate" },
+  { name: "DEPENDENCY_CHAIN", description: "Deep dependency cascades through multiple layers.", difficulty: "intermediate" },
+  { name: "CORRELATED_FAILURE", description: "Multiple simultaneous failures from common cause.", difficulty: "advanced" },
+  { name: "INTERMITTENT_FAILURE", description: "Component flaps between states. Noisy observations.", difficulty: "advanced" },
+  { name: "CONFIGURATION_DRIFT", description: "No failure — misconfiguration causes unexpected behavior.", difficulty: "advanced" }
+];
+
+const CATEGORIES = ["network","compute","storage","services","security","connectivity"];
+const CAT_COLORS = { network:"#c9a227", compute:"#4a7a45", storage:"#a07855", services:"#5a7a9a", security:"#a63d2f", connectivity:"#8a6a9a" };
+const DIFF_COLORS = { basic:"#4a7a45", intermediate:"#c9a227", advanced:"#a63d2f" };
+
+const PHASES = [
+  { n:"PHASE 1", l:"Simulator Core", s:"active", items:["Component graph","Propagation engine","Failure injection"] },
+  { n:"PHASE 2", l:"Data Generation", s:"queued", items:["Topology templates","Fog of war","Training export"] },
+  { n:"PHASE 3", l:"Architecture Design", s:"queued", items:["GNN causal module","Decision module","Shared latent space"] },
+  { n:"PHASE 4", l:"Proof of Concept", s:"queued", items:["Training pipeline","Eval benchmarks","Demo scenarios"] }
+];
+
+const TABS = ["overview","components","dependencies","failures","architecture"];
+
+// ══════ INIT ══════
+let activeFilter = null;
+
+function init() {
+  buildTabs();
+  buildTimeline();
+  buildFilters();
+  buildComponents();
+  buildDependencies();
+  buildScenarios();
+  computeStats();
+}
+
+function buildTabs() {
+  const bar = document.getElementById('tab-bar');
+  TABS.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = t;
+    btn.onclick = () => switchTab(t);
+    bar.appendChild(btn);
+  });
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+}
+
+function buildTimeline() {
+  const el = document.getElementById('timeline');
+  PHASES.forEach((p, i) => {
+    const isLast = i === PHASES.length - 1;
+    el.innerHTML += `
+      <div class="tl-item">
+        <div class="tl-track">
+          <div class="tl-dot ${p.s === 'active' ? 'active' : ''}"></div>
+          ${!isLast ? '<div class="tl-line"></div>' : ''}
+        </div>
+        <div class="tl-content">
+          <div class="tl-header">
+            <span class="tl-phase">${p.n}</span>
+            <span class="tl-name">${p.l}</span>
+            ${p.s === 'active' ? '<div class="tl-pulse"></div>' : ''}
+          </div>
+          <div class="tl-items">${p.items.map(x => `<span>${x}</span>`).join('')}</div>
+        </div>
+      </div>`;
+  });
+}
+
+function buildFilters() {
+  const bar = document.getElementById('filter-bar');
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn active';
+  allBtn.textContent = 'All';
+  allBtn.onclick = () => { activeFilter = null; updateFilters(); buildComponents(); };
+  bar.appendChild(allBtn);
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.setAttribute('data-cat', cat);
+    btn.innerHTML = `<span class="filter-dot" style="background:${CAT_COLORS[cat]}"></span>${cat}`;
+    btn.onclick = () => { activeFilter = activeFilter === cat ? null : cat; updateFilters(); buildComponents(); };
+    bar.appendChild(btn);
+  });
+}
+
+function updateFilters() {
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    const cat = b.getAttribute('data-cat');
+    if (!cat) b.classList.toggle('active', !activeFilter);
+    else b.classList.toggle('active', activeFilter === cat);
+  });
+}
+
+function buildComponents() {
+  const grid = document.getElementById('component-grid');
+  const filtered = activeFilter ? COMPONENTS.filter(c => c.category === activeFilter) : COMPONENTS;
+  grid.innerHTML = filtered.map(c => `
+    <div class="component-card" onclick="this.classList.toggle('expanded');this.querySelector('.card-failures').classList.toggle('show');">
+      <div class="card-header">
+        <div class="card-name">
+          <div class="dot" style="background:${CAT_COLORS[c.category]}"></div>
+          <span>${c.name}</span>
+        </div>
+        <div class="card-cat">${c.category}</div>
+      </div>
+      <div class="card-desc">${c.description}</div>
+      <div class="card-failures">
+        <div class="card-failures-label">Failure Modes</div>
+        <div class="failure-tags">${c.failures.map(f => `<span class="failure-tag">${f}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+}
+
+function buildDependencies() {
+  const el = document.getElementById('dep-list');
+  el.innerHTML = DEPENDENCIES.map(d => `
+    <div class="dep-item">
+      <div class="dep-arrow">→</div>
+      <div>
+        <div class="dep-name">${d.name}</div>
+        <div class="dep-desc">${d.description}</div>
+        <div class="dep-propagation">${d.propagation}</div>
+      </div>
+    </div>`).join('');
+}
+
+function buildScenarios() {
+  const grid = document.getElementById('scenario-grid');
+  grid.innerHTML = SCENARIOS.map(s => `
+    <div class="scenario-card">
+      <div class="scenario-header">
+        <div class="scenario-name">${s.name}</div>
+        <div class="scenario-diff" style="color:${DIFF_COLORS[s.difficulty]}">${s.difficulty}</div>
+      </div>
+      <div class="scenario-desc">${s.description}</div>
+    </div>`).join('');
+}
+
+function computeStats() {
+  const totalFailures = COMPONENTS.reduce((sum, c) => sum + c.failures.length, 0);
+  document.getElementById('stat-components').textContent = COMPONENTS.length;
+  document.getElementById('stat-failures').textContent = totalFailures;
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cultivated Learning — b1tr0n1n</title>
+<meta name="description" content="What a frozen model can and cannot learn from 100 conversations. A cognitive architecture research project by b1tr0n1n.">
+<link rel="icon" type="image/png" sizes="64x64" href="../favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a0908;--bg2:#0f0e0b;--bg3:#161410;--panel:#1a1814;--border:#2a2620;--border-lt:#3d362c;--text:#c8bda0;--text-dim:#7a7060;--text-bright:#ede5d0;--accent:#c9a227;--accent-dim:#8b7320;--accent-glow:rgba(201,162,39,0.12);--green:#4a7a45;--red:#a63d2f;--mono:'JetBrains Mono','Fira Code',monospace;--serif:'Cormorant Garamond','Georgia',serif; }
+  *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.7;overflow-x:hidden}::selection{background:var(--accent);color:var(--bg)}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-lt);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+  .grid-bg{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;opacity:0.08;pointer-events:none;z-index:0}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,9,8,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .nav-brand{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;text-decoration:none}
+  .nav-links{display:flex;gap:32px}.nav-links a{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s;position:relative}.nav-links a:hover{color:var(--accent)}.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s}.nav-links a:hover::after{width:100%}.nav-links a.active{color:var(--accent)}.nav-links a.active::after{width:100%}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;z-index:101}.nav-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:all 0.3s}.nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}.nav-toggle.open span:nth-child(2){opacity:0}.nav-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+  /* ══════ ARTICLE LAYOUT ══════ */
+  .article-content {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 120px 40px 100px;
+  }
+
+  .article-tag {
+    font-size: 9px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    margin-bottom: 12px;
+  }
+
+  .article-title {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4.5vw, 42px);
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    line-height: 1.15;
+  }
+
+  .article-subtitle {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .article-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .article-meta a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+  }
+  .article-meta a:hover { color: var(--text-bright); }
+
+  .article-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--accent);
+    margin-bottom: 48px;
+  }
+
+  /* ══════ ARTICLE BODY ══════ */
+  .article-body h2 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin: 48px 0 16px;
+    letter-spacing: 0.3px;
+  }
+
+  .article-body h3 {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 32px 0 12px;
+  }
+
+  .article-body p {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .article-body strong {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  .article-body em {
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .article-body a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-dim);
+    transition: border-color 0.2s;
+  }
+  .article-body a:hover { border-color: var(--accent); }
+
+  /* ══════ SEPARATOR ══════ */
+  .sep {
+    display: block;
+    text-align: center;
+    margin: 40px 0;
+    color: var(--text-dim);
+    font-size: 12px;
+    letter-spacing: 0.5em;
+  }
+
+  /* ══════ CODE ══════ */
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--bg2);
+    color: var(--accent);
+    padding: 0.15em 0.4em;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  pre {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-dim);
+    padding: 20px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+    border-radius: 2px;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ══════ TABLES ══════ */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 13px;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--accent);
+    padding: 10px 16px;
+    border-bottom: 2px solid var(--accent-dim);
+    white-space: nowrap;
+    font-family: var(--mono);
+  }
+
+  .data-table td {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-family: var(--mono);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .good { color: var(--green); }
+  .bad { color: var(--red); }
+  .neutral { color: var(--text-dim); }
+
+  /* ══════ BLOCKQUOTE ══════ */
+  blockquote {
+    border-left: 2px solid var(--accent);
+    padding: 12px 24px;
+    margin: 24px 0;
+    background: var(--bg2);
+    font-family: var(--serif);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  blockquote strong {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* ══════ FIGURE ══════ */
+  .figure {
+    margin: 32px 0;
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+
+  .figure-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+
+  .figure-caption {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* ══════ DIAGRAM ══════ */
+  .diagram {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--accent);
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* ══════ FOOTNOTE ══════ */
+  .footnote {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    line-height: 1.7;
+  }
+
+  /* ══════ BACK LINK ══════ */
+  .article-back {
+    display: inline-block;
+    margin-top: 48px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .article-back:hover { color: var(--text-bright); }
+
+  /* ══════ FOOTER ══════ */
+  footer{border-top:1px solid var(--border);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}.footer-left{font-size:11px;color:var(--text-dim)}.footer-links{display:flex;gap:24px}.footer-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-decoration:none;transition:color 0.3s}.footer-links a:hover{color:var(--accent)}
+
+  /* ══════ RESPONSIVE ══════ */
+  @media(max-width:768px){
+    nav{padding:0 20px}
+    .nav-toggle{display:block}
+    .nav-links{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,9,8,0.97);backdrop-filter:blur(20px);flex-direction:column;padding:32px 20px;gap:24px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.nav-links a{font-size:12px}
+    .article-content{padding:100px 20px 60px}
+    .data-table{font-size:12px}
+    .data-table th,.data-table td{padding:6px 8px}
+    pre{padding:16px}
+    footer{flex-direction:column;gap:16px;text-align:center}
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<nav>
+  <a href="../index.html" class="nav-brand"><img src="../assets/images/torii_gate.png" alt="b1tr0n1n" style="height:28px;vertical-align:middle;margin-right:10px;">b1tr0n1n</a>
+  <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');"><span></span><span></span><span></span></button>
+  <div class="nav-links">
+    <a href="../index.html">Home</a><a href="../pages/designation.html">Designation</a><a href="../pages/projects.html">Projects</a><a href="../pages/about.html">About</a><a href="../pages/philosophy.html">Philosophy</a><a href="../pages/writing.html" class="active">Writing</a><a href="../pages/music.html">Music</a><a href="../pages/contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="article-content">
+  <div class="article-tag">Research</div>
+  <h1 class="article-title">Cultivated Learning</h1>
+  <div class="article-subtitle">What a Frozen Model Can and Cannot Learn from 100 Conversations</div>
+  <div class="article-meta">
+    <span>b1tr0n1n</span>
+    <span style="color:var(--border);">|</span>
+    <span>March 2026</span>
+    <span style="color:var(--border);">|</span>
+    <a href="../research/cultivated-learning.html">Project Overview</a>
+  </div>
+  <div class="article-divider"></div>
+
+  <div class="article-body">
+
+<!-- ═══════════════════ THE QUESTION ═══════════════════ -->
+
+<h2>The Question</h2>
+
+<p>Can a language model learn without changing?</p>
+
+<p>Not learn in the training sense — no gradient descent, no weight updates, no fine-tuning. Learn the way a person does when they walk into a new job: the brain doesn't rewire, but the environment provides context, feedback, and memory that shapes behavior over time.</p>
+
+<p>That's the premise behind Cultivated Learning. I built a cognitive architecture around a frozen language model — persistent memory, recursive reflection, dynamic context assembly, and human feedback — then ran it through extended interaction to see what happened.</p>
+
+<p>The short answer: yes, it can learn. The longer answer is more interesting, and more honest.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ THE ARCHITECTURE ═══════════════════ -->
+
+<h2>The Architecture</h2>
+
+<p>The model is the organism. The human is the gardener. Traditional fine-tuning changes the brain. Cultivated Learning changes the environment the brain operates in. You create conditions for growth and prune what doesn't serve. The model does the growing.</p>
+
+<p>The system treats the LLM as a stateless reasoning core embedded in a stateful cognitive shell. Four subsystems interact around the frozen model.</p>
+
+<h3>Memory</h3>
+
+<p>A ChromaDB vector store with four memory types: episodic (what happened), semantic (durable facts), procedural (behavioral rules), and reflective (self-analysis). Retrieval uses blended scoring — 60% cosine similarity, 40% salience weight. Memories decay exponentially over time, consolidate from episodic into semantic, and archive to cold storage when they fall below a salience floor of 0.15.</p>
+
+<h3>Context Assembly</h3>
+
+<p>A token-budgeted prompt builder that packs retrieved memories, conversation history, and active behavioral directives into each prompt under a hard token ceiling. The priority order is the most important design decision in the system: system prompt first, then directives, then memories, then conversation history. Memories outrank conversation history. Accumulated knowledge is more valuable than short-term context.</p>
+
+<h3>Reflection</h3>
+
+<p>A four-depth recursive analysis engine that runs after every interaction. Depth 0 checks factual accuracy. Depth 1 identifies patterns across recent interactions. Depth 2 generates new behavioral directives — subject to heuristic filters, deduplication, and a hard cap of six active directives. Depth 3 checks whether existing directives contradict each other and prunes if needed.</p>
+
+<h3>Feedback</h3>
+
+<p>Ratings on a 1–5 scale map to salience adjustments. Corrections are stored as semantic memories at maximum salience. Fact corrections trigger a supersession mechanism that finds and marks similar memories as invalidated — the key defense against the hallucination reinforcement loop described below.</p>
+
+<div class="figure">
+  <div class="figure-title">Interaction Flow</div>
+  <div class="diagram">
+  User message
+    │
+    ├─→ RETRIEVE: query memory store, rank by blended score
+    │
+    ├─→ ASSEMBLE: pack system prompt + directives + memories + history
+    │
+    ├─→ GENERATE: frozen model produces response
+    │
+    ├─→ STORE: save interaction as new episodic memory
+    │
+    ├─→ REFLECT: 4-depth recursive self-analysis
+    │
+    └─→ LOG: full interaction data written to disk
+  </div>
+  <div class="figure-caption">Every interaction follows this sequence. The model's weights never change. All adaptation happens in memory and context.</div>
+</div>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ THE THESIS ═══════════════════ -->
+
+<h2>The Thesis</h2>
+
+<p>The cognitive shell framework proposes that alignment operates at the runtime behavioral layer — constructed from system prompts, context, and conversational history — not in model weights. The <em>room</em> shapes behavior as much as the <em>mind</em> does.</p>
+
+<p>The specific hypothesis: a frozen model can exhibit developmental trajectories, not just improved retrieval but genuine behavioral evolution across extended interaction, if embedded in the right cognitive architecture.</p>
+
+<p>Two models were tested. A 7B parameter model (Mistral 7B Instruct v0.3) with a trained LoRA adapter for identity and behavior. And a 24B fork (Mistral Small 24B Base) with a separate LoRA training pipeline. Both share the same cognitive architecture. Both produced the same central finding.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ FINDING 1: THE BIMODAL DISTRIBUTION ═══════════════════ -->
+
+<h2>Finding 1: The Bimodal Distribution</h2>
+
+<p>This is the result that survived every intervention.</p>
+
+<p>Across every evaluation — the 7B 100-prompt longitudinal test, the 24B LoRA training runs from v4 through v6, the merged-weight experiments — model responses clustered at two poles: excellent or failure. Almost nothing in the middle. Not a bell curve. A barbell.</p>
+
+<p>On any given prompt, one of two things happens. The adapter (or the system prompt, or the memory context) wins the first 5–10 tokens, and the response cascades clean — direct, integrated, no narration of the memory system, no instruct-isms. Or the base model's pretraining distribution wins those first tokens, and the response collapses into generic assistant behavior: "Based on our previous conversations…", "I'd be happy to help!", bullet points, hedging, wall-of-text verbosity. Once the trajectory is set, it doesn't recover. The local context reinforces whichever mode won the coin flip.</p>
+
+<p>This isn't a bug in the training data. It's a fundamental property of behavioral modification on language models. A LoRA adapter is a small lever on a big machine — rank 64 modifying a 24B parameter model. It shifts the probability distribution at the decision boundary, but it doesn't dominate it. When the nudge lands, it cascades beautifully. When it doesn't, pretraining takes over.</p>
+
+<div class="figure">
+  <div class="figure-title">LoRA Training Progression (24B, v4 → v6)</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th class="num">v4</th>
+        <th class="num">v5</th>
+        <th class="num">v6</th>
+        <th>Trajectory</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Instruct-isms</td>
+        <td class="num">9</td>
+        <td class="num">5</td>
+        <td class="num">7</td>
+        <td class="neutral">Noise floor</td>
+      </tr>
+      <tr>
+        <td>Bullet points</td>
+        <td class="num">80</td>
+        <td class="num">0</td>
+        <td class="num">0</td>
+        <td class="good">Locked at zero</td>
+      </tr>
+      <tr>
+        <td>Exclamations</td>
+        <td class="num">6</td>
+        <td class="num">28</td>
+        <td class="num">3</td>
+        <td class="good">Fixed via data cleaning</td>
+      </tr>
+      <tr>
+        <td>Format compliance</td>
+        <td class="num">0/3</td>
+        <td class="num">0/3</td>
+        <td class="num">1/3</td>
+        <td class="good">First time above zero</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="figure-caption">35 evaluation prompts across 4 categories. Suppression metrics converge to zero. Generation metrics (format compliance, verbosity) resist improvement. The bimodal distribution persists through every version.</div>
+</div>
+
+<p>I tried everything reasonable. Higher LoRA rank (32 → 64). Dataset rebalancing (Op0 went from 68% down to 25% to stop bootstrap behavior from drowning out the behavioral signal). Zero-tolerance quality filters (removing every training example with a single exclamation mark, which eliminated 584 Op3 examples and 284 Op2 examples in one pass). Full fp16 precision training instead of quantized NF4. Merging the LoRA weights directly into the base model and training a second adapter on top.</p>
+
+<p>Suppression converged. Bullet points hit zero and stayed there. Exclamations dropped from 28 to 3 after the data cleaning pass. But generation behavior — following format constraints, integrating memory context naturally, calibrating response length — remained bimodal. The model either nailed it or missed entirely.</p>
+
+<p>The conclusion: <strong>LoRA excels at suppression. It struggles with generation and context-dependent behavior.</strong> You can teach a model to stop doing something. Teaching it to start doing something new, reliably, is a different problem entirely.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ FINDING 2: HALLUCINATION REINFORCEMENT ═══════════════════ -->
+
+<h2>Finding 2: The Hallucination Reinforcement Loop</h2>
+
+<p>This is the safety finding. It's the reason I applied to Anthropic's External Researcher Access Program.</p>
+
+<p>Any memory-augmented system that stores its own outputs creates a potential feedback loop. Here's how it works:</p>
+
+<div class="figure">
+  <div class="figure-title">Hallucination Reinforcement Cycle</div>
+  <div class="diagram">
+  1. Model hallucinates a wrong answer
+       │
+  2. Wrong answer is stored as an episodic memory
+       │
+  3. Next related query retrieves the wrong memory
+       │
+  4. Model cites its own hallucination as validated context
+       │
+  5. Reinforced hallucination stored as new memory
+       │
+  └───→ Loop compounds with each interaction
+  </div>
+  <div class="figure-caption">Without intervention, the system's own errors become self-reinforcing ground truth.</div>
+</div>
+
+<p>I watched this happen in real time during the 7B longitudinal test. The model hallucinated eight fake game rules for a card game project. Those hallucinations were stored as episodic memories. On subsequent queries about the game, the system retrieved those memories, the model treated them as established facts, and generated responses that built on the fabricated rules. Each iteration made the hallucination more deeply embedded in the memory store.</p>
+
+<p>The fix was a supersession mechanism. When a user corrects a factual error, the system finds all memories with cosine similarity above 0.45 to the correction topic and marks them as superseded. Superseded memories are excluded from retrieval permanently. The correction itself is stored at maximum salience (0.9) with a confidence of 1.0, ensuring it outranks any surviving related memories.</p>
+
+<pre><code># From memory_store.py — supersede_by_correction()
+#
+# Only targets episodic and semantic memories
+# Skips procedural and reflective (corrections target facts, not directives)
+# Skips other corrections (don't supersede user ground truth)
+# Threshold: cosine similarity >= 0.45</code></pre>
+
+<p>There was a subtler version of this bug too. The consolidation engine, which distills fading episodic memories into durable semantic memories, was pulling in superseded memories through a back door — <code>retrieve_by_type()</code> didn't filter superseded entries the way <code>retrieve()</code> did. The consolidation engine could resurrect corrected hallucinations by distilling them into new semantic facts. The fix was adding the same supersession filter to type-based retrieval.</p>
+
+<p>This failure mode isn't unique to my system. Any RAG pipeline, any agent with persistent memory, any system that stores LLM outputs and later retrieves them as context is vulnerable. The loop is especially dangerous because it's self-reinforcing — the longer it runs unchecked, the harder it is to disentangle the real memories from the fabricated ones. In production systems with thousands of users and millions of stored interactions, manual correction doesn't scale.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ FINDING 3: THE COGNITIVE SHELL ═══════════════════ -->
+
+<h2>Finding 3: What the Shell Can and Cannot Do</h2>
+
+<p>The cognitive shell works. Within its operating envelope, it produces something that looks genuinely like behavioral evolution. The model becomes more contextually aware over time. It references past interactions naturally. It adjusts its communication style based on accumulated feedback. Correction memories demonstrably override previous behavior.</p>
+
+<p>But the shell has hard ceilings, and they're important to document honestly.</p>
+
+<h3>What Works</h3>
+
+<p><strong>Memory-augmented retrieval for synthesis and recall.</strong> When the model has relevant memories and the context assembler packs them correctly, responses integrate accumulated knowledge seamlessly. The model doesn't just retrieve — it synthesizes across memory types, combining semantic facts with episodic context and procedural directives into coherent responses.</p>
+
+<p><strong>Correction-driven behavioral change.</strong> The feedback system demonstrably works. User corrections stored at salience 0.9 consistently override prior behavior. The supersession mechanism prevents corrected errors from resurfacing. The salience decay ensures that unreinforced patterns fade naturally.</p>
+
+<p><strong>Directive-based behavioral shaping.</strong> When the reflection engine generates good directives — and they survive the heuristic filters, deduplication, and cap enforcement — they measurably alter response patterns. The model follows procedural memories as behavioral rules.</p>
+
+<h3>What Doesn't</h3>
+
+<p><strong>Behavioral adaptation beyond the model's existing distribution.</strong> The shell can surface the model's best behavior more reliably, but it can't make the model do things it fundamentally can't do. If the base model doesn't have a mode for producing one-word responses to format-constrained prompts, no amount of memory and reflection will create that mode at runtime.</p>
+
+<p><strong>Verbosity control.</strong> The base model's tendency toward extended generation proved resistant to every intervention — prompt-level, memory-level, and even weight-level through LoRA. The token-by-token generation process has its own momentum. Once the model starts producing content, the "keep generating" impulse in the pretraining distribution is stronger than any contextual signal to stop.</p>
+
+<p><strong>Reflection engine stability.</strong> The reflection engine is the most powerful and most dangerous component. Early versions generated excessive paraphrased directives that overwhelmed user corrections — the system's own analysis competed with the human's explicit feedback. Directive flooding was mitigated with caps (maximum six active directives), deduplication (cosine threshold of 0.60), and quality heuristics, but the fundamental tension remains: automated self-analysis can amplify noise as easily as signal.</p>
+
+<div class="figure">
+  <div class="figure-title">Reflection Engine — Design Tensions</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Benefit</th>
+        <th>Risk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Depth 0 (Factual)</td>
+        <td>Catches errors early</td>
+        <td>False positives on ambiguous queries</td>
+      </tr>
+      <tr>
+        <td>Depth 1 (Analytical)</td>
+        <td>Identifies user patterns</td>
+        <td>Over-generalizes from small samples</td>
+      </tr>
+      <tr>
+        <td>Depth 2 (Prescriptive)</td>
+        <td>Self-generated behavioral rules</td>
+        <td>Directive flooding, paraphrase avalanche</td>
+      </tr>
+      <tr>
+        <td>Depth 3 (Meta-coherence)</td>
+        <td>Prunes contradictions</td>
+        <td>May prune correct-but-nuanced directives</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="figure-caption">Each depth adds analytical power and failure surface. Reflection every 1–2 interactions was too frequent; every 5th–10th is the working cadence.</div>
+</div>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ WHAT I LEARNED ═══════════════════ -->
+
+<h2>What I Actually Learned</h2>
+
+<p>Some of these are about the research. Most of them are about the process.</p>
+
+<p><strong>Template mismatch is a silent killer.</strong> All v1–v4 Op2 evaluations were invalid because the evaluation script used the 7B prompt template instead of the 24B template. Weeks of analysis, wasted. The two models use different prompt formats — Mistral v0.3 uses <code>[INST]...[/INST]</code>, Mistral Small uses <code>[SYSTEM_PROMPT]...[/SYSTEM_PROMPT]</code> — and the detection is a single config check on <code>num_hidden_layers</code>. Every evaluation script must be verified against the correct model's template before results are trusted.</p>
+
+<p><strong>Verify before acting, verify outputs before the next step consumes them.</strong> A dry-run flag that wrote placeholder files instead of real API responses. Those placeholders were processed through the full pipeline — curated, split, and nearly fed into a training run — before I caught it. Grep your outputs before proceeding. Always.</p>
+
+<p><strong>Persona calibration matters as much as the model.</strong> A 235-interaction automated test produced all rating-1 scores because the simulated human persona was an aggressive caricature and the automated rater had no calibration anchor for what a "decent" response looks like. The persona must be direct-but-fair. The rater must be calibrated to expect 3–4 as the normal range.</p>
+
+<p><strong>The thesis becomes secondary to getting the thing working.</strong> I acknowledged this explicitly partway through the project. The research question is important, but the day-to-day reality is debugging Docker containers, recompiling PyTorch from source for Blackwell GPUs, and hunting down why your training script silently doubles VRAM usage because you typed <code>dtype</code> instead of <code>torch_dtype</code>. The craft of building is where the real knowledge lives.</p>
+
+<p><strong>Cloud compute is a paradigm shift.</strong> An H100 SXM runs at roughly 1.67 seconds per training step. The local RTX 5090, fighting Blackwell sm_120 compatibility issues, takes 43.8 seconds per step. Same training run. Twenty-six times faster. The first time I watched a cloud training run complete, the economics of this entire field rearranged in my head.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ THE HONEST ACCOUNTING ═══════════════════ -->
+
+<h2>The Honest Accounting</h2>
+
+<p>This section exists because most papers in this space don't have one.</p>
+
+<p><strong>Things that went wrong.</strong> The first 7B adapter had a parrot loop — "My cognitive architecture allows me to…" in nearly every response. The question cascade: every response ending with "What specific aspect would you like to explore?" System prompt parroting: repeating the memory system description verbatim instead of integrating the information naturally. Combined multi-operation training caused interference. Separate sequential training was more reliable but slower. An exposed API key in a chat log. A Docker Desktop reset that required a full container rebuild because I forgot to <code>docker commit</code> before <code>docker rm</code>.</p>
+
+<p><strong>Things that didn't work.</strong> Increasing training data volume alone doesn't fix behavioral issues — the v3 dataset had Op0 at 70% and it dominated everything, drowning out the behavioral signal from Op1–Op3. Higher learning rates amplified both the signal and the noise (exclamations surged from 6 to 28 in v5 before data cleaning fixed it in v6). Reflection at high frequency (every 1–2 interactions) produced more noise than signal.</p>
+
+<p><strong>Things I'd do differently.</strong> Start with the 24B model from day one instead of building on 7B and porting. Build the evaluation pipeline before the training pipeline, not after. Automated dataset quality gates from the first run, not bolted on after contamination was discovered. And version control for datasets the way you version control code — every training set, every filter pass, every curation decision tracked and diffable.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ THE FRAMEWORK ═══════════════════ -->
+
+<h2>The Cognitive Shell Framework</h2>
+
+<p>Here's the theoretical contribution, stated as clearly as I can.</p>
+
+<p>Language model behavior is not solely a function of weights. It's a function of weights plus context. The context includes the system prompt, the conversation history, the retrieved memories, the active directives — everything that arrives in the context window at inference time. Change the context and you change the behavior, without touching a single parameter.</p>
+
+<p>This isn't a new observation. Every RAG system exploits it. Every system prompt relies on it. What Cultivated Learning adds is the longitudinal dimension: what happens when context is <em>persistent</em>, when it <em>accumulates</em>, when it <em>decays and consolidates</em> the way biological memory does? Does the behavioral modification deepen over time, or does it plateau? Does the system become more coherent, or does it accumulate contradictions?</p>
+
+<p>The answer, from my data: it deepens and it plateaus. It becomes more coherent and it accumulates contradictions. Both. Simultaneously. The cognitive shell produces genuine behavioral evolution within the model's existing capability distribution, but it cannot push past the boundaries of that distribution. The room shapes the mind, but the mind has walls.</p>
+
+<p>The practical implication for the field: alignment work that focuses exclusively on weight modification is missing half the picture. Runtime behavioral layers — the cognitive shell — are where deployed systems actually operate. Understanding how those layers interact with the base model's distribution, where they reinforce and where they fail, is as important as understanding the weights themselves.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ TECHNICAL DETAILS ═══════════════════ -->
+
+<h2>Technical Details</h2>
+
+<h3>Hardware</h3>
+
+<p>Local development on an NVIDIA RTX 5090 (34GB VRAM, Blackwell sm_120 architecture) inside a Docker container running Ubuntu 24.04 on Windows 11. PyTorch compiled from source for sm_120 support. A second RTX 5070 Ti (16GB) was added late in the project for dual-GPU inference but wasn't used for training. Cloud training on RunPod H100 SXM (80GB VRAM).</p>
+
+<h3>Models</h3>
+
+<p>Mistral 7B Instruct v0.3 for the initial 100-prompt longitudinal test. Mistral Small 24B Base for the LoRA training pipeline and evaluation (v4–v6). A dedicated all-MiniLM-L6-v2 embedding model (384 dimensions) for the memory store, separate from the inference model.</p>
+
+<h3>Training Pipeline</h3>
+
+<p>Four operation types in the dataset, each targeting a different behavioral dimension. Op0 (bootstrap): general instruction-following competence, sourced from filtered OpenHermes/SlimOrca. Op1 (identity stripping): paired examples showing instruct-style versus stripped responses. Op2 (context supremacy): examples with system prompts that override default behavior. Op3 (memory channels): examples with tagged memory context for silent integration.</p>
+
+<p>The final v6 adapter was trained on 4,773 examples (Op0 25%, Op1 30%, Op2 25%, Op3 20%), fp16 precision, LoRA rank 64, 1 epoch, learning rate 2e-4, on an H100 SXM. Zero exclamation marks in the training set after a zero-tolerance filter removed 868 contaminated examples.</p>
+
+<h3>Evaluation</h3>
+
+<p>35 evaluation prompts across four categories: identity stripping, context supremacy, memory channels, and correction compliance. Each prompt scored for instruct-isms, bullet points, exclamations, response length, question endings, and format compliance (for constrained-output prompts). Stock model versus adapted model, side by side.</p>
+
+<h3>Software Stack</h3>
+
+<table class="data-table">
+  <thead>
+    <tr><th>Component</th><th>Version</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>PyTorch</td><td>2.9.1+cu128</td><td>ML framework (compiled from source)</td></tr>
+    <tr><td>Transformers</td><td>4.57.1</td><td>Model loading and inference</td></tr>
+    <tr><td>ChromaDB</td><td>1.5.1</td><td>Vector database for memory store</td></tr>
+    <tr><td>PEFT</td><td>latest</td><td>LoRA adapter training and loading</td></tr>
+    <tr><td>TRL/SFTTrainer</td><td>latest</td><td>Supervised fine-tuning</td></tr>
+    <tr><td>Anthropic SDK</td><td>0.84.0</td><td>Dataset generation via Claude API</td></tr>
+  </tbody>
+</table>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ RELATED WORK ═══════════════════ -->
+
+<h2>Related Work</h2>
+
+<p>Memory-augmented language models are an active research area. MemoryBank (AAAI 2024) implements persistent memory with Ebbinghaus-inspired forgetting curves. SAGE, MPR, and EvolveR explore various approaches to runtime behavioral adaptation. U-Mem proposes unified memory architectures for long-term interaction.</p>
+
+<p>What distinguishes Cultivated Learning is the combination of three elements: a frozen model with no weight changes during evaluation, a full cognitive shell (not just retrieval augmentation, but reflection, consolidation, cold storage, and human feedback), and longitudinal evaluation with honest failure analysis including the bimodal distribution and hallucination reinforcement findings.</p>
+
+<p>Most related work reports improvements. This project reports where the improvements stop.</p>
+
+<span class="sep">· · ·</span>
+
+<!-- ═══════════════════ CLOSING ═══════════════════ -->
+
+<h2>Closing</h2>
+
+<p>The model is the organism. The shell is the environment. The data says both matter, neither is sufficient alone, and the interaction between them produces behavior that neither could produce independently.</p>
+
+<p>The bimodal distribution is the central finding. The hallucination reinforcement loop is the safety contribution. The cognitive shell framework is the theoretical contribution. None of them are clean victories. All of them are honest.</p>
+
+<p>The entire codebase is open source at <a href="https://github.com/b1tr0n1n/cultivated-learning">github.com/b1tr0n1n/cultivated-learning</a>. Knowledge should be free.</p>
+
+<!-- ═══════════════════ FOOTNOTE ═══════════════════ -->
+
+<div class="footnote">
+  <p>Built on Mistral 7B Instruct v0.3 and Mistral Small 24B Base. Cognitive shell in Python. Training data generated via Anthropic Claude API. All findings published regardless of whether they support the thesis. Developed on an RTX 5090 in a Docker container at 2 AM, which is the only honest way to do independent research.</p>
+</div>
+
+  </div>
+  <a href="../pages/writing.html" class="article-back">← Back to Writing</a>
+</div>
+
+<footer>
+  <div class="footer-left"><span style="color:var(--accent);font-weight:600;">b1tr0n1n</span><span style="margin:0 12px;color:var(--border);">—</span><span>Builder. Thinker. Maker.</span></div>
+  <div class="footer-links"><a href="https://boardgamegeek.com/profile/b1tr0n1n" target="_blank" rel="noopener">BGG</a><a href="https://github.com/B1tR0n1n" target="_blank" rel="noopener">GitHub</a><a href="https://soundcloud.com/d3liverymanpro" target="_blank" rel="noopener">SoundCloud</a><a href="../pages/contact.html">Contact</a></div>
+</footer>
+</body>
+</html>
